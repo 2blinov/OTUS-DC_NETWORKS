@@ -2,7 +2,7 @@
 
 ## Задание:
 1. Подготовка стенда\
-<img width="611" height="351" alt="image" src="https://github.com/user-attachments/assets/ea13c3e9-2048-4ce4-b97d-1343b581cd9e" />\
+<img width="611" height="351" alt="image" src="https://github.com/user-attachments/assets/ea13c3e9-2048-4ce4-b97d-1343b581cd9e" />
 3. Разработка адресного плана
 4. Настройка Underlay для будущей фабрики VXLAN/EVPN
 
@@ -14,7 +14,7 @@
 - Возможность освоить новую платформу
 - Возможность познакомиться с особенностями настройки оборудования Arista
 
-Получившийся стенд выглядит следующим образом ( [Топология для Containetlab](lab01.yaml) ):
+Получившийся стенд выглядит следующим образом ([Топология для Containetlab](lab01.yaml)):
 
 <img width="638" height="488" alt="image" src="https://github.com/user-attachments/assets/bda2c84c-6cab-4758-967a-651d6b85fb95" />
 
