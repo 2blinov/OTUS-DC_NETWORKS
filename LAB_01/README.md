@@ -1,8 +1,8 @@
 # Лабораторная работа №1 "Проектирование адресного пространства"
 
 ## Задание:
-1. Подготовка стенда\
-<img width="611" height="351" alt="image" src="https://github.com/user-attachments/assets/ea13c3e9-2048-4ce4-b97d-1343b581cd9e" />
+1. Подготовка стенда<br>
+<img width="611" height="351" alt="image" src="https://github.com/user-attachments/assets/ea13c3e9-2048-4ce4-b97d-1343b581cd9e" /><br>
 3. Разработка адресного плана
 4. Настройка Underlay для будущей фабрики VXLAN/EVPN
 
