@@ -235,3 +235,87 @@ VRF: default
            via 10.1.2.11, Ethernet3
 ```
 </details>
+
+<details>
+<summary>SPINE1 / ping до Lo0 устройств фабрики</summary>
+  
+```eos
+SPINE1#ping 10.1.0.2 source loopback 0 repeat 3
+PING 10.1.0.2 (10.1.0.2) from 10.1.0.1 : 72(100) bytes of data.
+80 bytes from 10.1.0.2: icmp_seq=1 ttl=63 time=0.958 ms
+80 bytes from 10.1.0.2: icmp_seq=2 ttl=63 time=0.667 ms
+80 bytes from 10.1.0.2: icmp_seq=3 ttl=63 time=0.344 ms
+--- 10.1.0.2 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2ms
+rtt min/avg/max/mdev = 0.344/0.656/0.958/0.250 ms, ipg/ewma 1.028/0.849 ms
+
+SPINE1#ping 10.1.0.3 source loopback 0 repeat 3
+PING 10.1.0.3 (10.1.0.3) from 10.1.0.1 : 72(100) bytes of data.
+80 bytes from 10.1.0.3: icmp_seq=1 ttl=64 time=0.121 ms
+80 bytes from 10.1.0.3: icmp_seq=2 ttl=64 time=0.015 ms
+80 bytes from 10.1.0.3: icmp_seq=3 ttl=64 time=0.011 ms
+--- 10.1.0.3 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.011/0.049/0.121/0.050 ms, ipg/ewma 0.104/0.095 ms
+
+SPINE1#ping 10.1.0.4 source loopback 0 repeat 3
+PING 10.1.0.4 (10.1.0.4) from 10.1.0.1 : 72(100) bytes of data.
+80 bytes from 10.1.0.4: icmp_seq=1 ttl=64 time=0.159 ms
+80 bytes from 10.1.0.4: icmp_seq=2 ttl=64 time=0.019 ms
+80 bytes from 10.1.0.4: icmp_seq=3 ttl=64 time=0.013 ms
+--- 10.1.0.4 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.013/0.063/0.159/0.067 ms, ipg/ewma 0.131/0.125 ms
+
+SPINE1#ping 10.1.0.5 source loopback 0 repeat 3
+PING 10.1.0.5 (10.1.0.5) from 10.1.0.1 : 72(100) bytes of data.
+80 bytes from 10.1.0.5: icmp_seq=1 ttl=64 time=0.229 ms
+80 bytes from 10.1.0.5: icmp_seq=2 ttl=64 time=0.018 ms
+80 bytes from 10.1.0.5: icmp_seq=3 ttl=64 time=0.013 ms
+--- 10.1.0.5 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.013/0.086/0.229/0.100 ms, ipg/ewma 0.168/0.179 ms
+```
+</details>
+
+<details>
+<summary>SPINE2 / ping до Lo0 устройств фабрики</summary>
+  
+```eos
+SPINE2#ping 10.1.0.1 source loopback 0 repeat 3
+PING 10.1.0.1 (10.1.0.1) from 10.1.0.2 : 72(100) bytes of data.
+80 bytes from 10.1.0.1: icmp_seq=1 ttl=63 time=0.610 ms
+80 bytes from 10.1.0.1: icmp_seq=2 ttl=63 time=0.307 ms
+80 bytes from 10.1.0.1: icmp_seq=3 ttl=63 time=0.323 ms
+--- 10.1.0.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2ms
+rtt min/avg/max/mdev = 0.307/0.413/0.610/0.139 ms, ipg/ewma 1.001/0.541 ms
+
+SPINE2#ping 10.1.0.3 source loopback 0 repeat 3
+PING 10.1.0.3 (10.1.0.3) from 10.1.0.2 : 72(100) bytes of data.
+80 bytes from 10.1.0.3: icmp_seq=1 ttl=64 time=0.110 ms
+80 bytes from 10.1.0.3: icmp_seq=2 ttl=64 time=0.014 ms
+80 bytes from 10.1.0.3: icmp_seq=3 ttl=64 time=0.013 ms
+--- 10.1.0.3 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.013/0.045/0.110/0.045 ms, ipg/ewma 0.096/0.087 ms
+
+SPINE2#ping 10.1.0.4 source loopback 0 repeat 3
+PING 10.1.0.4 (10.1.0.4) from 10.1.0.2 : 72(100) bytes of data.
+80 bytes from 10.1.0.4: icmp_seq=1 ttl=64 time=0.115 ms
+80 bytes from 10.1.0.4: icmp_seq=2 ttl=64 time=0.014 ms
+80 bytes from 10.1.0.4: icmp_seq=3 ttl=64 time=0.011 ms
+--- 10.1.0.4 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.011/0.046/0.115/0.048 ms, ipg/ewma 0.099/0.091 ms
+
+SPINE2#ping 10.1.0.5 source loopback 0 repeat 3
+PING 10.1.0.5 (10.1.0.5) from 10.1.0.2 : 72(100) bytes of data.
+80 bytes from 10.1.0.5: icmp_seq=1 ttl=64 time=0.118 ms
+80 bytes from 10.1.0.5: icmp_seq=2 ttl=64 time=0.014 ms
+80 bytes from 10.1.0.5: icmp_seq=3 ttl=64 time=0.011 ms
+--- 10.1.0.5 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.011/0.047/0.118/0.049 ms, ipg/ewma 0.101/0.093 ms
+```
+</details>
