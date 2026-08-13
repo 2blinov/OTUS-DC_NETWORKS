@@ -38,7 +38,9 @@
 ## 3. Настройка Underlay
 В качестве лабораторной работы настроим стенд согласно плану
 
-[Конфигурация Spine1](./config/spine1.cfg)
+```Конфигурация Spine1
+{% include "config/spine1.cfg" %}<br>
+
 [Конфигурация Spine2](./config/spine2.cfg)
 [Конфигурация Leaf1](./config/leaf1.cfg)
 [Конфигурация Leaf2](./config/leaf2.cfg)
