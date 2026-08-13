@@ -38,6 +38,10 @@
 ## 3. Настройка Underlay
 В качестве лабораторной работы настроим стенд согласно плану
 
-[Конфигурация Spine1](./configs/spine11.cfg)
+[Конфигурация Spine1](./config/spine1.cfg)
+[Конфигурация Spine2](./config/spine2.cfg)
+[Конфигурация Leaf1](./config/leaf1.cfg)
+[Конфигурация Leaf2](./config/leaf2.cfg)
+[Конфигурация Leaf3](./config/leaf3.cfg)
 
 ## 4. Проверка связности
