@@ -66,6 +66,7 @@ Loopback0
 ## 4. Проверка связности
 <details>
 <summary>Доступность транспортных адресов соседей SPINE1 -> LEAFX</summary>
+  
 ```
 SPINE1#ping 10.1.2.1 repeat 3
 PING 10.1.2.1 (10.1.2.1) 72(100) bytes of data.
