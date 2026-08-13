@@ -129,3 +129,18 @@ PING 10.1.2.11 (10.1.2.11) 72(100) bytes of data.
 rtt min/avg/max/mdev = 0.012/0.062/0.161/0.069 ms, ipg/ewma 0.126/0.126 ms
 ```
 </details>
+
+<details>
+<summary>SPINE1 / sh bfd peers</summary>
+  
+```eos
+SPINE1#sh bfd peers 
+VRF name: default
+-----------------
+DstAddr               MyDisc         YourDisc       Interface/Transport         Type               LastUp       LastDown            LastDiag    State
+-------------- ---------------- ---------------- ------------------------- ------------ -------------------- -------------- ------------------- -----
+10.1.2.1           112724123       1740842210            Ethernet1(235)       normal       08/12/26 11:44             NA       No Diagnostic       Up
+10.1.2.3            65125797       1052311716            Ethernet2(236)       normal       08/12/26 11:44             NA       No Diagnostic       Up
+10.1.2.5          1163616502       2330403263            Ethernet3(232)       normal       08/12/26 11:45             NA       No Diagnostic       Up
+```
+</details>
