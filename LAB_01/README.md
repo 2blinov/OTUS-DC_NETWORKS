@@ -40,8 +40,8 @@
 
 
 ### Конфигурация Spine1
-<!-- START include [code:eos] config/spine1.cfg -->
-<!-- END include [code:eos] config/spine1.cfg -->
+<!-- START include [code:eos] configs/spine1.cfg -->
+<!-- END include [code:eos] configs/spine1.cfg -->
 
 [Конфигурация Spine2](./config/spine2.cfg)
 [Конфигурация Leaf1](./config/leaf1.cfg)
