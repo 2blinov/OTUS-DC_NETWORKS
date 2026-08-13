@@ -67,7 +67,7 @@ Loopback0
 <details>
 <summary>Доступность транспортных адресов соседей SPINE1 -> LEAFX</summary>
   
-```console
+```eos
 SPINE1#ping 10.1.2.1 repeat 3
 PING 10.1.2.1 (10.1.2.1) 72(100) bytes of data.
 80 bytes from 10.1.2.1: icmp_seq=1 ttl=64 time=0.082 ms
@@ -100,7 +100,7 @@ rtt min/avg/max/mdev = 0.011/0.035/0.078/0.030 ms, ipg/ewma 0.081/0.062 ms
 <details>
 <summary>Доступность транспортных адресов соседей SPINE2 -> LEAFX</summary>
   
-```console
+```eos
 SPINE2#ping 10.1.2.7 repeat 3
 PING 10.1.2.7 (10.1.2.7) 72(100) bytes of data.
 80 bytes from 10.1.2.7: icmp_seq=1 ttl=64 time=0.217 ms
@@ -131,10 +131,10 @@ rtt min/avg/max/mdev = 0.012/0.062/0.161/0.069 ms, ipg/ewma 0.126/0.126 ms
 </details>
 
 <details>
-<summary>SPINE1 / sh bfd peers</summary>
+<summary>SPINE1 / show bfd peers</summary>
   
 ```eos
-SPINE1#sh bfd peers 
+SPINE1#show bfd peers 
 VRF name: default
 -----------------
 DstAddr               MyDisc         YourDisc       Interface/Transport         Type               LastUp       LastDown            LastDiag    State
@@ -142,5 +142,96 @@ DstAddr               MyDisc         YourDisc       Interface/Transport         
 10.1.2.1           112724123       1740842210            Ethernet1(235)       normal       08/12/26 11:44             NA       No Diagnostic       Up
 10.1.2.3            65125797       1052311716            Ethernet2(236)       normal       08/12/26 11:44             NA       No Diagnostic       Up
 10.1.2.5          1163616502       2330403263            Ethernet3(232)       normal       08/12/26 11:45             NA       No Diagnostic       Up
+```
+</details>
+
+<details>
+<summary>SPINE2 / show bfd peers</summary>
+  
+```eos
+SPINE2#show bfd peers 
+VRF name: default
+-----------------
+DstAddr                MyDisc         YourDisc       Interface/Transport         Type               LastUp       LastDown            LastDiag    State
+--------------- ---------------- ---------------- ------------------------- ------------ -------------------- -------------- ------------------- -----
+10.1.2.7           2298128045       3300776703            Ethernet1(239)       normal       08/12/26 11:44             NA       No Diagnostic       Up
+10.1.2.9           1658097009       2867581067            Ethernet2(242)       normal       08/12/26 11:44             NA       No Diagnostic       Up
+10.1.2.11          2165676111        515240408            Ethernet3(240)       normal       08/12/26 11:45             NA       No Diagnostic       Up
+```
+</details>
+
+
+<details>
+<summary>SPINE1 / show ip ospf neighbor </summary>
+  
+```eos
+SPINE1#show ip ospf neighbor 
+Neighbor ID     Instance VRF      Pri State                  Dead Time   Address         Interface
+10.1.0.5        100      default  0   FULL                   00:00:38    10.1.2.5        Ethernet3
+10.1.0.3        100      default  0   FULL                   00:00:29    10.1.2.1        Ethernet1
+10.1.0.4        100      default  0   FULL                   00:00:31    10.1.2.3        Ethernet2
+```
+</details>
+
+<details>
+<summary>SPINE2 / show ip ospf neighbor</summary>
+  
+```eos
+SPINE2#show ip ospf neighbor 
+Neighbor ID     Instance VRF      Pri State                  Dead Time   Address         Interface
+10.1.0.4        100      default  0   FULL                   00:00:32    10.1.2.9        Ethernet2
+10.1.0.3        100      default  0   FULL                   00:00:33    10.1.2.7        Ethernet1
+10.1.0.5        100      default  0   FULL                   00:00:33    10.1.2.11       Ethernet3
+```
+</details>
+
+<details>
+<summary>SPINE1 / show ip route ospf</summary>
+  
+```eos
+SPINE1#show ip route ospf
+VRF: default
+
+ O        10.1.0.2/32 [110/30]
+           via 10.1.2.1, Ethernet1
+           via 10.1.2.3, Ethernet2
+           via 10.1.2.5, Ethernet3
+ O        10.1.0.3/32 [110/20]
+           via 10.1.2.1, Ethernet1
+ O        10.1.0.4/32 [110/20]
+           via 10.1.2.3, Ethernet2
+ O        10.1.0.5/32 [110/20]
+           via 10.1.2.5, Ethernet3
+ O        10.1.2.6/31 [110/20]
+           via 10.1.2.1, Ethernet1
+ O        10.1.2.8/31 [110/20]
+           via 10.1.2.3, Ethernet2
+ O        10.1.2.10/31 [110/20]
+           via 10.1.2.5, Ethernet3
+```
+</details>
+
+<details>
+<summary>SPINE2 / show ip route ospf</summary>
+  
+```eos
+SPINE2#show ip route ospf
+VRF: default
+ O        10.1.0.1/32 [110/30]
+           via 10.1.2.7, Ethernet1
+           via 10.1.2.9, Ethernet2
+           via 10.1.2.11, Ethernet3
+ O        10.1.0.3/32 [110/20]
+           via 10.1.2.7, Ethernet1
+ O        10.1.0.4/32 [110/20]
+           via 10.1.2.9, Ethernet2
+ O        10.1.0.5/32 [110/20]
+           via 10.1.2.11, Ethernet3
+ O        10.1.2.0/31 [110/20]
+           via 10.1.2.7, Ethernet1
+ O        10.1.2.2/31 [110/20]
+           via 10.1.2.9, Ethernet2
+ O        10.1.2.4/31 [110/20]
+           via 10.1.2.11, Ethernet3
 ```
 </details>
