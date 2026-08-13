@@ -67,7 +67,7 @@ Loopback0
 <details>
 <summary>Доступность транспортных адресов соседей SPINE1 -> LEAFX</summary>
   
-```text
+```console
 SPINE1#ping 10.1.2.1 repeat 3
 PING 10.1.2.1 (10.1.2.1) 72(100) bytes of data.
 80 bytes from 10.1.2.1: icmp_seq=1 ttl=64 time=0.082 ms
@@ -94,5 +94,38 @@ PING 10.1.2.5 (10.1.2.5) 72(100) bytes of data.
 --- 10.1.2.5 ping statistics ---
 3 packets transmitted, 3 received, 0% packet loss, time 0ms
 rtt min/avg/max/mdev = 0.011/0.035/0.078/0.030 ms, ipg/ewma 0.081/0.062 ms
+```
+</details>
+
+<details>
+<summary>Доступность транспортных адресов соседей SPINE2 -> LEAFX</summary>
+  
+```console
+SPINE2#ping 10.1.2.7 repeat 3
+PING 10.1.2.7 (10.1.2.7) 72(100) bytes of data.
+80 bytes from 10.1.2.7: icmp_seq=1 ttl=64 time=0.217 ms
+80 bytes from 10.1.2.7: icmp_seq=2 ttl=64 time=0.018 ms
+80 bytes from 10.1.2.7: icmp_seq=3 ttl=64 time=0.017 ms
+--- 10.1.2.7 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.017/0.084/0.217/0.094 ms, ipg/ewma 0.185/0.170 ms
+
+SPINE2#ping 10.1.2.9 repeat 3
+PING 10.1.2.9 (10.1.2.9) 72(100) bytes of data.
+80 bytes from 10.1.2.9: icmp_seq=1 ttl=64 time=0.208 ms
+80 bytes from 10.1.2.9: icmp_seq=2 ttl=64 time=0.017 ms
+80 bytes from 10.1.2.9: icmp_seq=3 ttl=64 time=0.009 ms
+--- 10.1.2.9 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.009/0.078/0.208/0.091 ms, ipg/ewma 0.141/0.162 ms
+
+SPINE2#ping 10.1.2.11 repeat 3
+PING 10.1.2.11 (10.1.2.11) 72(100) bytes of data.
+80 bytes from 10.1.2.11: icmp_seq=1 ttl=64 time=0.161 ms
+80 bytes from 10.1.2.11: icmp_seq=2 ttl=64 time=0.014 ms
+80 bytes from 10.1.2.11: icmp_seq=3 ttl=64 time=0.012 ms
+--- 10.1.2.11 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.012/0.062/0.161/0.069 ms, ipg/ewma 0.126/0.126 ms
 ```
 </details>
