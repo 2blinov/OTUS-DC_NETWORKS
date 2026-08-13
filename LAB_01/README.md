@@ -64,3 +64,33 @@ Loopback0
 [Конфигурация Leaf3](./configs/leaf3.cfg)<br>
 
 ## 4. Проверка связности
+<details>
+<summary>Доступность транспортных адресов соседей SPINE1 -> LEAFX</summary>
+SPINE1#ping 10.1.2.1 repeat 3
+PING 10.1.2.1 (10.1.2.1) 72(100) bytes of data.
+80 bytes from 10.1.2.1: icmp_seq=1 ttl=64 time=0.082 ms
+80 bytes from 10.1.2.1: icmp_seq=2 ttl=64 time=0.014 ms
+80 bytes from 10.1.2.1: icmp_seq=3 ttl=64 time=0.010 ms
+
+--- 10.1.2.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.010/0.035/0.082/0.033 ms, ipg/ewma 0.083/0.065 ms
+SPINE1#ping 10.1.2.3 repeat 3
+PING 10.1.2.3 (10.1.2.3) 72(100) bytes of data.
+80 bytes from 10.1.2.3: icmp_seq=1 ttl=64 time=0.089 ms
+80 bytes from 10.1.2.3: icmp_seq=2 ttl=64 time=0.014 ms
+80 bytes from 10.1.2.3: icmp_seq=3 ttl=64 time=0.011 ms
+
+--- 10.1.2.3 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.011/0.038/0.089/0.036 ms, ipg/ewma 0.087/0.071 ms
+SPINE1#ping 10.1.2.5 repeat 3
+PING 10.1.2.5 (10.1.2.5) 72(100) bytes of data.
+80 bytes from 10.1.2.5: icmp_seq=1 ttl=64 time=0.078 ms
+80 bytes from 10.1.2.5: icmp_seq=2 ttl=64 time=0.016 ms
+80 bytes from 10.1.2.5: icmp_seq=3 ttl=64 time=0.011 ms
+
+--- 10.1.2.5 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.011/0.035/0.078/0.030 ms, ipg/ewma 0.081/0.062 ms
+</details>
