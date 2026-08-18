@@ -44,6 +44,37 @@ Loopback0
 | SPINE2 — LEAF2 | 10.1.2.8/31  |
 | SPINE2 — LEAF3 | 10.1.2.10/31 |
 
+Пояснения касательно настройки
+<details>
+<summary>Контекст: Процесс OSPF</summary>
+```eos
+router ospf 100
+   router-id 10.1.0.1              # Явно настраиваем Router ID
+   bfd default                     # Включаем BFD для OSPF
+   passive-interface default       # Не пытаться устанавливать OSPF-соседство на всех интерфейсах по умолчанию
+   no passive-interface Ethernet1  # Кроме тех интерфейсов, на которых мы это это разрешаем.
+   no passive-interface Ethernet2
+   no passive-interface Ethernet3
+```
+</details>
+<details>
+<summary>Контекст: Интерфейс</summary>
+```eos
+interface Ethernet1
+   description P2P-LEAF1
+   mtu 9214                                                      # Увеличиваем MTU
+   no switchport 
+   ip address 10.1.2.0/31
+   bfd interval 100 min_rx 100 multiplier 3                      # Настраиваем таймеры BFD
+   ip ospf dead-interval 3                                       # Таймеры OSPF: DEAD-интервал (Таймаут (в секундах) для признания соседа отсутствующим, 3xHELLO)
+   ip ospf hello-interval 1                                      # Таймеры OSPF: HELLO-интервал (Время (в секундах) между посылками HELLO-пакетов)
+   ip ospf network point-to-point                                # Тип сети OSPF точка-точка (нет выборов DR/BDR)
+   ip ospf authentication message-digest                         # Включаем аутентификацию OSPF на интерфейсе
+   ip ospf area 0.0.0.0                                          # Настраиваем принадлежность интерфейса Backbone-зоне
+   ip ospf message-digest-key 1 md5 7 OTlMNR5qzL6ViDjejl1JwA==   # Настраиваем ключ, используемый при аутентификации
+```
+</details>
+
 [Конфигурация Spine1](./configs/spine1.cfg)<br>
 [Конфигурация Spine2](./configs/spine2.cfg)<br>
 [Конфигурация Leaf1](./configs/leaf1.cfg)<br>
