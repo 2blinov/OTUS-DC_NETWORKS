@@ -50,10 +50,11 @@ Loopback0
 
 ```eos
 router ospf 100
-   router-id 10.1.0.1              # Явно настраиваем Router ID
-   bfd default                     # Включаем BFD для OSPF
-   passive-interface default       # Не пытаться устанавливать OSPF-соседство на всех интерфейсах по умолчанию
-   no passive-interface Ethernet1  # Кроме тех интерфейсов, на которых мы это это разрешаем.
+   router-id 10.1.0.1                    # Явно настраиваем Router ID
+   auto-cost reference-bandwidth 100000  # Настройка эталонной пропускной способности, от которой рассчитывается стоимость интерфейса
+   bfd default                           # Включаем BFD для OSPF
+   passive-interface default             # Не пытаться устанавливать OSPF-соседство на всех интерфейсах по умолчанию
+   no passive-interface Ethernet1        # Кроме тех интерфейсов, на которых мы это это разрешаем.
    no passive-interface Ethernet2
    no passive-interface Ethernet3
 ```
@@ -182,7 +183,6 @@ DstAddr                MyDisc         YourDisc       Interface/Transport        
 ```
 </details>
 
-
 <details>
 <summary>SPINE1 / show ip ospf neighbor </summary>
   
@@ -207,6 +207,27 @@ Neighbor ID     Instance VRF      Pri State                  Dead Time   Address
 ```
 </details>
 
+
+<details>
+<summary>show ip ospf interface</summary>
+  
+```eos
+SPINE1#show ip ospf interface ethernet 1
+Ethernet1 is up
+  Interface Address 10.1.2.0/31, instance 100, VRF default, Area 0.0.0.0   # Принадлежность интерфейса процессу OSPF 100 и зоне 0
+  Network Type Point-To-Point, Cost: 100                                   # Тип сети OSPF: P-2-P, стоимость интерфейса (с настройкой auto-cost reference-bandwidth)
+  Transmit Delay is 1 sec, State P2P, BFD Enabled                          # BFD включен
+  Interface Speed: 1000 mbps
+  No Designated Router on this network                                     # DR/BDR не выбирается в P-2-P сетях
+  No Backup Designated Router on this network
+  Timer intervals configured, Hello 1, Dead 3, Retransmit 5                # Настроенные таймеры OSPF
+  Neighbor Count is 1
+  Message-digest authentication, using key id 1                            # Используется аутентификация
+  Traffic engineering is disabled
+  TI-LFA protection is disabled
+```
+</details>
+
 <details>
 <summary>SPINE1 / show ip route ospf</summary>
   
@@ -214,23 +235,22 @@ Neighbor ID     Instance VRF      Pri State                  Dead Time   Address
 SPINE1#show ip route ospf
 
 VRF: default
- O        10.1.0.2/32 [110/30]
+ O        10.1.0.2/32 [110/210]
            via 10.1.2.1, Ethernet1
            via 10.1.2.3, Ethernet2
            via 10.1.2.5, Ethernet3
- O        10.1.0.3/32 [110/20]
+ O        10.1.0.3/32 [110/110]
            via 10.1.2.1, Ethernet1
- O        10.1.0.4/32 [110/20]
+ O        10.1.0.4/32 [110/110]
            via 10.1.2.3, Ethernet2
- O        10.1.0.5/32 [110/20]
+ O        10.1.0.5/32 [110/110]
            via 10.1.2.5, Ethernet3
- O        10.1.2.6/31 [110/20]
+ O        10.1.2.6/31 [110/200]
            via 10.1.2.1, Ethernet1
- O        10.1.2.8/31 [110/20]
+ O        10.1.2.8/31 [110/200]
            via 10.1.2.3, Ethernet2
- O        10.1.2.10/31 [110/20]
+ O        10.1.2.10/31 [110/200]
            via 10.1.2.5, Ethernet3
-
 ```
 </details>
 
@@ -241,23 +261,22 @@ VRF: default
 SPINE2#show ip route ospf
 
 VRF: default
- O        10.1.0.1/32 [110/30]
+ O        10.1.0.1/32 [110/210]
            via 10.1.2.7, Ethernet1
            via 10.1.2.9, Ethernet2
            via 10.1.2.11, Ethernet3
- O        10.1.0.3/32 [110/20]
+ O        10.1.0.3/32 [110/110]
            via 10.1.2.7, Ethernet1
- O        10.1.0.4/32 [110/20]
+ O        10.1.0.4/32 [110/110]
            via 10.1.2.9, Ethernet2
- O        10.1.0.5/32 [110/20]
+ O        10.1.0.5/32 [110/110]
            via 10.1.2.11, Ethernet3
- O        10.1.2.0/31 [110/20]
+ O        10.1.2.0/31 [110/200]
            via 10.1.2.7, Ethernet1
- O        10.1.2.2/31 [110/20]
+ O        10.1.2.2/31 [110/200]
            via 10.1.2.9, Ethernet2
- O        10.1.2.4/31 [110/20]
+ O        10.1.2.4/31 [110/200]
            via 10.1.2.11, Ethernet3
-
 ```
 </details>
 
