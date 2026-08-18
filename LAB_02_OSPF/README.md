@@ -114,7 +114,8 @@ PING 10.1.2.5 (10.1.2.5) 72(100) bytes of data.
 
 --- 10.1.2.5 ping statistics ---
 3 packets transmitted, 3 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 0.010/0.056/0.143/0.061 ms, ipg/ewma 0.115/0.112 ms```
+rtt min/avg/max/mdev = 0.010/0.056/0.143/0.061 ms, ipg/ewma 0.115/0.112 ms
+```
 </details>
 
 <details>
