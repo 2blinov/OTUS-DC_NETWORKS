@@ -47,6 +47,7 @@ Loopback0
 Пояснения касательно настройки
 <details>
 <summary>Контекст: Процесс OSPF</summary>
+
 ```eos
 router ospf 100
    router-id 10.1.0.1              # Явно настраиваем Router ID
@@ -59,6 +60,7 @@ router ospf 100
 </details>
 <details>
 <summary>Контекст: Интерфейс</summary>
+
 ```eos
 interface Ethernet1
    description P2P-LEAF1
