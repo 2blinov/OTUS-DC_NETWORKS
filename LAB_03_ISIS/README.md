@@ -184,7 +184,7 @@ DstAddr                MyDisc         YourDisc       Interface/Transport        
 </details>
 
 <details>
-<summary>SPINE1 / show isis neighbor </summary>
+<summary>SPINE1 / show isis neighbor</summary>
   
 ```eos
 SPINE1#show isis neighbor
@@ -197,7 +197,7 @@ UNDERLAY  default  LEAF3            L2   Ethernet3          P2P               UP
 </details>
 
 <details>
-<summary>SPINE2 / show ip ospf neighbor</summary>
+<summary>SPINE2 / show isis neighbor</summary>
   
 ```eos
 SPINE2#show isis neighbor
