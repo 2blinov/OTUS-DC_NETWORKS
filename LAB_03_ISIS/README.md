@@ -462,7 +462,8 @@ VRF: default
  I L2     10.1.2.2/31 [115/20]
            via 10.1.2.9, Ethernet2
  I L2     10.1.2.4/31 [115/20]
-           via 10.1.2.11, Ethernet3```
+           via 10.1.2.11, Ethernet3
+```
 </details>
 
 <details>
