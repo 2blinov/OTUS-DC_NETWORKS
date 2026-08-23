@@ -78,11 +78,11 @@ interface Ethernet1
 ```
 </details>
 
-[Конфигурация Spine1](./configs/spine1.cfg)<br>
-[Конфигурация Spine2](./configs/spine2.cfg)<br>
-[Конфигурация Leaf1](./configs/leaf1.cfg)<br>
-[Конфигурация Leaf2](./configs/leaf2.cfg)<br>
-[Конфигурация Leaf3](./configs/leaf3.cfg)<br>
+[Конфигурация Spine1](./configs/spine01.cfg)<br>
+[Конфигурация Spine2](./configs/spine02.cfg)<br>
+[Конфигурация Leaf1](./configs/leaf01.cfg)<br>
+[Конфигурация Leaf2](./configs/leaf02.cfg)<br>
+[Конфигурация Leaf3](./configs/leaf03.cfg)<br>
 
 ## 4. Проверка связности
 <details>
@@ -91,31 +91,31 @@ interface Ethernet1
 ```eos
 SPINE1#ping 10.1.2.1 repeat 3
 PING 10.1.2.1 (10.1.2.1) 72(100) bytes of data.
-80 bytes from 10.1.2.1: icmp_seq=1 ttl=64 time=0.233 ms
+80 bytes from 10.1.2.1: icmp_seq=1 ttl=64 time=0.241 ms
 80 bytes from 10.1.2.1: icmp_seq=2 ttl=64 time=0.018 ms
-80 bytes from 10.1.2.1: icmp_seq=3 ttl=64 time=0.011 ms
+80 bytes from 10.1.2.1: icmp_seq=3 ttl=64 time=0.013 ms
 
 --- 10.1.2.1 ping statistics ---
 3 packets transmitted, 3 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 0.011/0.087/0.233/0.103 ms, ipg/ewma 0.183/0.181 ms
+rtt min/avg/max/mdev = 0.013/0.090/0.241/0.106 ms, ipg/ewma 0.184/0.188 ms
 SPINE1#ping 10.1.2.3 repeat 3
 PING 10.1.2.3 (10.1.2.3) 72(100) bytes of data.
-80 bytes from 10.1.2.3: icmp_seq=1 ttl=64 time=0.158 ms
-80 bytes from 10.1.2.3: icmp_seq=2 ttl=64 time=0.018 ms
-80 bytes from 10.1.2.3: icmp_seq=3 ttl=64 time=0.015 ms
+80 bytes from 10.1.2.3: icmp_seq=1 ttl=64 time=0.169 ms
+80 bytes from 10.1.2.3: icmp_seq=2 ttl=64 time=0.015 ms
+80 bytes from 10.1.2.3: icmp_seq=3 ttl=64 time=0.012 ms
 
 --- 10.1.2.3 ping statistics ---
 3 packets transmitted, 3 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 0.015/0.063/0.158/0.066 ms, ipg/ewma 0.131/0.124 ms
+rtt min/avg/max/mdev = 0.012/0.065/0.169/0.073 ms, ipg/ewma 0.135/0.132 ms
 SPINE1#ping 10.1.2.5 repeat 3
 PING 10.1.2.5 (10.1.2.5) 72(100) bytes of data.
-80 bytes from 10.1.2.5: icmp_seq=1 ttl=64 time=0.143 ms
-80 bytes from 10.1.2.5: icmp_seq=2 ttl=64 time=0.015 ms
-80 bytes from 10.1.2.5: icmp_seq=3 ttl=64 time=0.010 ms
+80 bytes from 10.1.2.5: icmp_seq=1 ttl=64 time=0.173 ms
+80 bytes from 10.1.2.5: icmp_seq=2 ttl=64 time=0.018 ms
+80 bytes from 10.1.2.5: icmp_seq=3 ttl=64 time=0.011 ms
 
 --- 10.1.2.5 ping statistics ---
 3 packets transmitted, 3 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 0.010/0.056/0.143/0.061 ms, ipg/ewma 0.115/0.112 ms
+rtt min/avg/max/mdev = 0.011/0.067/0.173/0.074 ms, ipg/ewma 0.141/0.135 ms
 ```
 </details>
 
@@ -125,31 +125,31 @@ rtt min/avg/max/mdev = 0.010/0.056/0.143/0.061 ms, ipg/ewma 0.115/0.112 ms
 ```eos
 SPINE2#ping 10.1.2.7 repeat 3
 PING 10.1.2.7 (10.1.2.7) 72(100) bytes of data.
-80 bytes from 10.1.2.7: icmp_seq=1 ttl=64 time=0.210 ms
-80 bytes from 10.1.2.7: icmp_seq=2 ttl=64 time=0.019 ms
-80 bytes from 10.1.2.7: icmp_seq=3 ttl=64 time=0.017 ms
+80 bytes from 10.1.2.7: icmp_seq=1 ttl=64 time=0.123 ms
+80 bytes from 10.1.2.7: icmp_seq=2 ttl=64 time=0.014 ms
+80 bytes from 10.1.2.7: icmp_seq=3 ttl=64 time=0.011 ms
 
 --- 10.1.2.7 ping statistics ---
 3 packets transmitted, 3 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 0.017/0.082/0.210/0.090 ms, ipg/ewma 0.180/0.165 ms
+rtt min/avg/max/mdev = 0.011/0.049/0.123/0.052 ms, ipg/ewma 0.105/0.097 ms
 SPINE2#ping 10.1.2.9 repeat 3
 PING 10.1.2.9 (10.1.2.9) 72(100) bytes of data.
-80 bytes from 10.1.2.9: icmp_seq=1 ttl=64 time=0.166 ms
-80 bytes from 10.1.2.9: icmp_seq=2 ttl=64 time=0.014 ms
+80 bytes from 10.1.2.9: icmp_seq=1 ttl=64 time=0.159 ms
+80 bytes from 10.1.2.9: icmp_seq=2 ttl=64 time=0.015 ms
 80 bytes from 10.1.2.9: icmp_seq=3 ttl=64 time=0.011 ms
 
 --- 10.1.2.9 ping statistics ---
 3 packets transmitted, 3 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 0.011/0.063/0.166/0.072 ms, ipg/ewma 0.129/0.130 ms
+rtt min/avg/max/mdev = 0.011/0.061/0.159/0.068 ms, ipg/ewma 0.126/0.124 ms
 SPINE2#ping 10.1.2.11 repeat 3
 PING 10.1.2.11 (10.1.2.11) 72(100) bytes of data.
-80 bytes from 10.1.2.11: icmp_seq=1 ttl=64 time=0.192 ms
-80 bytes from 10.1.2.11: icmp_seq=2 ttl=64 time=0.014 ms
-80 bytes from 10.1.2.11: icmp_seq=3 ttl=64 time=0.009 ms
+80 bytes from 10.1.2.11: icmp_seq=1 ttl=64 time=0.145 ms
+80 bytes from 10.1.2.11: icmp_seq=2 ttl=64 time=0.015 ms
+80 bytes from 10.1.2.11: icmp_seq=3 ttl=64 time=0.011 ms
 
 --- 10.1.2.11 ping statistics ---
 3 packets transmitted, 3 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 0.009/0.071/0.192/0.085 ms, ipg/ewma 0.140/0.149 ms
+rtt min/avg/max/mdev = 0.011/0.057/0.145/0.062 ms, ipg/ewma 0.117/0.114 ms
 ```
 </details>
 
@@ -157,14 +157,14 @@ rtt min/avg/max/mdev = 0.009/0.071/0.192/0.085 ms, ipg/ewma 0.140/0.149 ms
 <summary>SPINE1 / show bfd peers</summary>
   
 ```eos
-SPINE1#show bfd peers
+SPINE1#show bfd peers 
 VRF name: default
 -----------------
 DstAddr               MyDisc         YourDisc       Interface/Transport         Type               LastUp       LastDown            LastDiag    State
 -------------- ---------------- ---------------- ------------------------- ------------ -------------------- -------------- ------------------- -----
-10.1.2.1           595824028       1573309871            Ethernet1(235)       normal       08/18/26 15:49             NA       No Diagnostic       Up
-10.1.2.3          3910891998        843495901            Ethernet2(236)       normal       08/18/26 15:49             NA       No Diagnostic       Up
-10.1.2.5           313397289        815350499            Ethernet3(232)       normal       08/18/26 15:49             NA       No Diagnostic       Up
+10.1.2.1          1104648192        483150795            Ethernet1(299)       normal       08/23/26 13:57             NA       No Diagnostic       Up
+10.1.2.3           562675910       2285687862            Ethernet2(296)       normal       08/23/26 13:57             NA       No Diagnostic       Up
+10.1.2.5          1987680360       2316176272            Ethernet3(300)       normal       08/23/26 13:57             NA       No Diagnostic       Up
 ```
 </details>
 
@@ -177,21 +177,22 @@ VRF name: default
 -----------------
 DstAddr                MyDisc         YourDisc       Interface/Transport         Type               LastUp       LastDown            LastDiag    State
 --------------- ---------------- ---------------- ------------------------- ------------ -------------------- -------------- ------------------- -----
-10.1.2.7           1837659122       4020764370            Ethernet1(239)       normal       08/18/26 15:49             NA       No Diagnostic       Up
-10.1.2.9            338608076        456061250            Ethernet2(242)       normal       08/18/26 15:49             NA       No Diagnostic       Up
-10.1.2.11          3855739668       3272348628            Ethernet3(240)       normal       08/18/26 15:49             NA       No Diagnostic       Up
+10.1.2.7            736691354       2529852040            Ethernet1(295)       normal       08/23/26 13:56             NA       No Diagnostic       Up
+10.1.2.9           3652861756       3361988941            Ethernet2(302)       normal       08/23/26 13:56             NA       No Diagnostic       Up
+10.1.2.11          1735839849       3139066771            Ethernet3(304)       normal       08/23/26 13:56             NA       No Diagnostic       Up
 ```
 </details>
 
 <details>
-<summary>SPINE1 / show ip ospf neighbor </summary>
+<summary>SPINE1 / show isis neighbor </summary>
   
 ```eos
-SPINE1#show ip ospf neighbor
-Neighbor ID     Instance VRF      Pri State                  Dead Time   Address         Interface
-10.1.0.3        100      default  0   FULL                   00:00:01    10.1.2.1        Ethernet1
-10.1.0.4        100      default  0   FULL                   00:00:01    10.1.2.3        Ethernet2
-10.1.0.5        100      default  0   FULL                   00:00:01    10.1.2.5        Ethernet3
+SPINE1#show isis neighbor
+ 
+Instance  VRF      System Id        Type Interface          SNPA              State Hold time   Circuit Id          
+UNDERLAY  default  LEAF1            L2   Ethernet1          P2P               UP    26          2B                  
+UNDERLAY  default  LEAF2            L2   Ethernet2          P2P               UP    22          2A                  
+UNDERLAY  default  LEAF3            L2   Ethernet3          P2P               UP    26          2E
 ```
 </details>
 
@@ -199,85 +200,269 @@ Neighbor ID     Instance VRF      Pri State                  Dead Time   Address
 <summary>SPINE2 / show ip ospf neighbor</summary>
   
 ```eos
-SPINE2#show ip ospf neighbor
-Neighbor ID     Instance VRF      Pri State                  Dead Time   Address         Interface
-10.1.0.3        100      default  0   FULL                   00:00:01    10.1.2.7        Ethernet1
-10.1.0.4        100      default  0   FULL                   00:00:01    10.1.2.9        Ethernet2
-10.1.0.5        100      default  0   FULL                   00:00:01    10.1.2.11       Ethernet3
+SPINE2#show isis neighbor
+ 
+Instance  VRF      System Id        Type Interface          SNPA              State Hold time   Circuit Id          
+UNDERLAY  default  LEAF1            L2   Ethernet1          P2P               UP    27          27                  
+UNDERLAY  default  LEAF2            L2   Ethernet2          P2P               UP    27          30                  
+UNDERLAY  default  LEAF3            L2   Ethernet3          P2P               UP    28          32
 ```
 </details>
 
 
 <details>
-<summary>show ip ospf interface</summary>
+<summary> SPINE1 / show isis database detail</summary>
   
 ```eos
-SPINE1#show ip ospf interface ethernet 1
-Ethernet1 is up
-  Interface Address 10.1.2.0/31, instance 100, VRF default, Area 0.0.0.0   # Принадлежность интерфейса процессу OSPF 100 и зоне 0
-  Network Type Point-To-Point, Cost: 100                                   # Тип сети OSPF: P-2-P, стоимость интерфейса (с настройкой auto-cost reference-bandwidth)
-  Transmit Delay is 1 sec, State P2P, BFD Enabled                          # BFD включен
-  Interface Speed: 1000 mbps
-  No Designated Router on this network                                     # DR/BDR не выбирается в P-2-P сетях
-  No Backup Designated Router on this network
-  Timer intervals configured, Hello 1, Dead 3, Retransmit 5                # Настроенные таймеры OSPF
-  Neighbor Count is 1
-  Message-digest authentication, using key id 1                            # Используется аутентификация
-  Traffic engineering is disabled
-  TI-LFA protection is disabled
+SPINE1#show isis database detail
+Legend:
+H - hostname conflict
+U - node unreachable
+
+IS-IS Instance: UNDERLAY VRF: default
+  IS-IS Level 2 Link State Database
+    LSPID                   Seq Num  Cksum  Life Length IS  Received LSPID        Flags
+    SPINE1.00-00                443  65155  1095    146 L2  0000.0000.0001.00-00  <>
+      LSP generation remaining wait time: 0 ms
+      Time remaining until refresh: 795 s
+      NLPID: 0xCC(IPv4)
+      Hostname: SPINE1
+      Area addresses: 49.0001
+      Interface address: 10.1.2.4
+      Interface address: 10.1.2.2
+      Interface address: 10.1.2.0
+      Interface address: 10.1.0.1
+      IS Neighbor          : LEAF1.00            Metric: 10
+      IS Neighbor          : LEAF3.00            Metric: 10
+      IS Neighbor          : LEAF2.00            Metric: 10
+      Reachability         : 10.1.2.4/31 Metric: 10 Type: 1 Up
+      Reachability         : 10.1.2.2/31 Metric: 10 Type: 1 Up
+      Reachability         : 10.1.2.0/31 Metric: 10 Type: 1 Up
+      Reachability         : 10.1.0.1/32 Metric: 10 Type: 1 Up
+      Router Capabilities: Router Id: 10.1.0.1 Flags: []
+        Area leader priority: 250 algorithm: 0
+    SPINE2.00-00                 31  46401   824    146 L2  0000.0000.0002.00-00  <>
+      LSP received time: 2026-08-23 15:01:19
+      Remaining lifetime received: 1199 s Modified to: 1200 s
+      NLPID: 0xCC(IPv4)
+      Hostname: SPINE2
+      Area addresses: 49.0001
+      Interface address: 10.1.2.10
+      Interface address: 10.1.2.6
+      Interface address: 10.1.2.8
+      Interface address: 10.1.0.2
+      IS Neighbor          : LEAF3.00            Metric: 10
+      IS Neighbor          : LEAF1.00            Metric: 10
+      IS Neighbor          : LEAF2.00            Metric: 10
+      Reachability         : 10.1.2.10/31 Metric: 10 Type: 1 Up
+      Reachability         : 10.1.2.6/31 Metric: 10 Type: 1 Up
+      Reachability         : 10.1.2.8/31 Metric: 10 Type: 1 Up
+      Reachability         : 10.1.0.2/32 Metric: 10 Type: 1 Up
+      Router Capabilities: Router Id: 10.1.0.2 Flags: []
+        Area leader priority: 250 algorithm: 0
+    LEAF1.00-00                 431   2386   750    121 L2  0000.0000.0003.00-00  <>
+      LSP received time: 2026-08-23 15:00:05
+      Remaining lifetime received: 1199 s Modified to: 1200 s
+      NLPID: 0xCC(IPv4)
+      Hostname: LEAF1
+      Area addresses: 49.0001
+      Interface address: 10.1.2.7
+      Interface address: 10.1.2.1
+      Interface address: 10.1.0.3
+      IS Neighbor          : SPINE1.00           Metric: 10
+      IS Neighbor          : SPINE2.00           Metric: 10
+      Reachability         : 10.1.2.6/31 Metric: 10 Type: 1 Up
+      Reachability         : 10.1.2.0/31 Metric: 10 Type: 1 Up
+      Reachability         : 10.1.0.3/32 Metric: 10 Type: 1 Up
+      Router Capabilities: Router Id: 10.1.0.3 Flags: []
+        Area leader priority: 250 algorithm: 0
+    LEAF2.00-00                  25  18079  1004    121 L2  0000.0000.0004.00-00  <>
+      LSP received time: 2026-08-23 15:04:19
+      Remaining lifetime received: 1199 s Modified to: 1200 s
+      NLPID: 0xCC(IPv4)
+      Hostname: LEAF2
+      Area addresses: 49.0001
+      Interface address: 10.1.2.9
+      Interface address: 10.1.2.3
+      Interface address: 10.1.0.4
+      IS Neighbor          : SPINE1.00           Metric: 10
+      IS Neighbor          : SPINE2.00           Metric: 10
+      Reachability         : 10.1.2.8/31 Metric: 10 Type: 1 Up
+      Reachability         : 10.1.2.2/31 Metric: 10 Type: 1 Up
+      Reachability         : 10.1.0.4/32 Metric: 10 Type: 1 Up
+      Router Capabilities: Router Id: 10.1.0.4 Flags: []
+        Area leader priority: 250 algorithm: 0
+    LEAF3.00-00                  28  39738   699    121 L2  0000.0000.0005.00-00  <>
+      LSP received time: 2026-08-23 14:59:15
+      Remaining lifetime received: 1199 s Modified to: 1200 s
+      NLPID: 0xCC(IPv4)
+      Hostname: LEAF3
+      Area addresses: 49.0001
+      Interface address: 10.1.2.5
+      Interface address: 10.1.2.11
+      Interface address: 10.1.0.5
+      IS Neighbor          : SPINE1.00           Metric: 10
+      IS Neighbor          : SPINE2.00           Metric: 10
+      Reachability         : 10.1.2.4/31 Metric: 10 Type: 1 Up
+      Reachability         : 10.1.2.10/31 Metric: 10 Type: 1 Up
+      Reachability         : 10.1.0.5/32 Metric: 10 Type: 1 Up
+      Router Capabilities: Router Id: 10.1.0.5 Flags: []
+        Area leader priority: 250 algorithm: 0
 ```
 </details>
 
 <details>
-<summary>SPINE1 / show ip route ospf</summary>
+<summary> SPINE2 / show isis database detail</summary>
   
 ```eos
-SPINE1#show ip route ospf
+SPINE2#show isis database detail
+Legend:
+H - hostname conflict
+U - node unreachable
+
+IS-IS Instance: UNDERLAY VRF: default
+  IS-IS Level 2 Link State Database
+    LSPID                   Seq Num  Cksum  Life Length IS  Received LSPID        Flags
+    SPINE1.00-00                443  65155   980    146 L2  0000.0000.0001.00-00  <>
+      LSP received time: 2026-08-23 15:05:54
+      Remaining lifetime received: 1199 s Modified to: 1200 s
+      NLPID: 0xCC(IPv4)
+      Hostname: SPINE1
+      Area addresses: 49.0001
+      Interface address: 10.1.2.4
+      Interface address: 10.1.2.2
+      Interface address: 10.1.2.0
+      Interface address: 10.1.0.1
+      IS Neighbor          : LEAF1.00            Metric: 10
+      IS Neighbor          : LEAF3.00            Metric: 10
+      IS Neighbor          : LEAF2.00            Metric: 10
+      Reachability         : 10.1.2.4/31 Metric: 10 Type: 1 Up
+      Reachability         : 10.1.2.2/31 Metric: 10 Type: 1 Up
+      Reachability         : 10.1.2.0/31 Metric: 10 Type: 1 Up
+      Reachability         : 10.1.0.1/32 Metric: 10 Type: 1 Up
+      Router Capabilities: Router Id: 10.1.0.1 Flags: []
+        Area leader priority: 250 algorithm: 0
+    SPINE2.00-00                 31  46401   709    146 L2  0000.0000.0002.00-00  <>
+      LSP generation remaining wait time: 0 ms
+      Time remaining until refresh: 409 s
+      NLPID: 0xCC(IPv4)
+      Hostname: SPINE2
+      Area addresses: 49.0001
+      Interface address: 10.1.2.10
+      Interface address: 10.1.2.6
+      Interface address: 10.1.2.8
+      Interface address: 10.1.0.2
+      IS Neighbor          : LEAF3.00            Metric: 10
+      IS Neighbor          : LEAF1.00            Metric: 10
+      IS Neighbor          : LEAF2.00            Metric: 10
+      Reachability         : 10.1.2.10/31 Metric: 10 Type: 1 Up
+      Reachability         : 10.1.2.6/31 Metric: 10 Type: 1 Up
+      Reachability         : 10.1.2.8/31 Metric: 10 Type: 1 Up
+      Reachability         : 10.1.0.2/32 Metric: 10 Type: 1 Up
+      Router Capabilities: Router Id: 10.1.0.2 Flags: []
+        Area leader priority: 250 algorithm: 0
+    LEAF1.00-00                 431   2386   635    121 L2  0000.0000.0003.00-00  <>
+      LSP received time: 2026-08-23 15:00:10
+      Remaining lifetime received: 1199 s Modified to: 1200 s
+      NLPID: 0xCC(IPv4)
+      Hostname: LEAF1
+      Area addresses: 49.0001
+      Interface address: 10.1.2.7
+      Interface address: 10.1.2.1
+      Interface address: 10.1.0.3
+      IS Neighbor          : SPINE1.00           Metric: 10
+      IS Neighbor          : SPINE2.00           Metric: 10
+      Reachability         : 10.1.2.6/31 Metric: 10 Type: 1 Up
+      Reachability         : 10.1.2.0/31 Metric: 10 Type: 1 Up
+      Reachability         : 10.1.0.3/32 Metric: 10 Type: 1 Up
+      Router Capabilities: Router Id: 10.1.0.3 Flags: []
+        Area leader priority: 250 algorithm: 0
+    LEAF2.00-00                  25  18079   889    121 L2  0000.0000.0004.00-00  <>
+      LSP received time: 2026-08-23 15:04:23
+      Remaining lifetime received: 1199 s Modified to: 1200 s
+      NLPID: 0xCC(IPv4)
+      Hostname: LEAF2
+      Area addresses: 49.0001
+      Interface address: 10.1.2.9
+      Interface address: 10.1.2.3
+      Interface address: 10.1.0.4
+      IS Neighbor          : SPINE1.00           Metric: 10
+      IS Neighbor          : SPINE2.00           Metric: 10
+      Reachability         : 10.1.2.8/31 Metric: 10 Type: 1 Up
+      Reachability         : 10.1.2.2/31 Metric: 10 Type: 1 Up
+      Reachability         : 10.1.0.4/32 Metric: 10 Type: 1 Up
+      Router Capabilities: Router Id: 10.1.0.4 Flags: []
+        Area leader priority: 250 algorithm: 0
+    LEAF3.00-00                  28  39738   584    121 L2  0000.0000.0005.00-00  <>
+      LSP received time: 2026-08-23 14:59:19
+      Remaining lifetime received: 1199 s Modified to: 1200 s
+      NLPID: 0xCC(IPv4)
+      Hostname: LEAF3
+      Area addresses: 49.0001
+      Interface address: 10.1.2.5
+      Interface address: 10.1.2.11
+      Interface address: 10.1.0.5
+      IS Neighbor          : SPINE1.00           Metric: 10
+      IS Neighbor          : SPINE2.00           Metric: 10
+      Reachability         : 10.1.2.4/31 Metric: 10 Type: 1 Up
+      Reachability         : 10.1.2.10/31 Metric: 10 Type: 1 Up
+      Reachability         : 10.1.0.5/32 Metric: 10 Type: 1 Up
+      Router Capabilities: Router Id: 10.1.0.5 Flags: []
+        Area leader priority: 250 algorithm: 0
+```
+</details>
+
+
+<details>
+<summary>SPINE1 / show ip route isis</summary>
+  
+```eos
+SPINE1#  show ip route isis
 
 VRF: default
- O        10.1.0.2/32 [110/210]
+ I L2     10.1.0.2/32 [115/30]            # 115 - административная дистанция IS-IS, Метрика 10+10+10=30
            via 10.1.2.1, Ethernet1
            via 10.1.2.3, Ethernet2
            via 10.1.2.5, Ethernet3
- O        10.1.0.3/32 [110/110]
+ I L2     10.1.0.3/32 [115/20]
            via 10.1.2.1, Ethernet1
- O        10.1.0.4/32 [110/110]
+ I L2     10.1.0.4/32 [115/20]
            via 10.1.2.3, Ethernet2
- O        10.1.0.5/32 [110/110]
+ I L2     10.1.0.5/32 [115/20]
            via 10.1.2.5, Ethernet3
- O        10.1.2.6/31 [110/200]
+ I L2     10.1.2.6/31 [115/20]
            via 10.1.2.1, Ethernet1
- O        10.1.2.8/31 [110/200]
+ I L2     10.1.2.8/31 [115/20]
            via 10.1.2.3, Ethernet2
- O        10.1.2.10/31 [110/200]
+ I L2     10.1.2.10/31 [115/20]
            via 10.1.2.5, Ethernet3
+
 ```
 </details>
 
 <details>
-<summary>SPINE2 / show ip route ospf</summary>
+<summary>SPINE2 / show ip route isis</summary>
   
 ```eos
-SPINE2#show ip route ospf
+SPINE2#show ip route isis 
 
 VRF: default
- O        10.1.0.1/32 [110/210]
+ I L2     10.1.0.1/32 [115/30]
            via 10.1.2.7, Ethernet1
            via 10.1.2.9, Ethernet2
            via 10.1.2.11, Ethernet3
- O        10.1.0.3/32 [110/110]
+ I L2     10.1.0.3/32 [115/20]
            via 10.1.2.7, Ethernet1
- O        10.1.0.4/32 [110/110]
+ I L2     10.1.0.4/32 [115/20]
            via 10.1.2.9, Ethernet2
- O        10.1.0.5/32 [110/110]
+ I L2     10.1.0.5/32 [115/20]
            via 10.1.2.11, Ethernet3
- O        10.1.2.0/31 [110/200]
+ I L2     10.1.2.0/31 [115/20]
            via 10.1.2.7, Ethernet1
- O        10.1.2.2/31 [110/200]
+ I L2     10.1.2.2/31 [115/20]
            via 10.1.2.9, Ethernet2
- O        10.1.2.4/31 [110/200]
-           via 10.1.2.11, Ethernet3
-```
+ I L2     10.1.2.4/31 [115/20]
+           via 10.1.2.11, Ethernet3```
 </details>
 
 <details>
@@ -286,40 +471,40 @@ VRF: default
 ```eos
 SPINE1#ping 10.1.0.2 source loopback 0 repeat 3
 PING 10.1.0.2 (10.1.0.2) from 10.1.0.1 : 72(100) bytes of data.
-80 bytes from 10.1.0.2: icmp_seq=1 ttl=63 time=1.67 ms
-80 bytes from 10.1.0.2: icmp_seq=2 ttl=63 time=0.368 ms
-80 bytes from 10.1.0.2: icmp_seq=3 ttl=63 time=0.343 ms
+80 bytes from 10.1.0.2: icmp_seq=1 ttl=63 time=2.09 ms
+80 bytes from 10.1.0.2: icmp_seq=2 ttl=63 time=0.370 ms
+80 bytes from 10.1.0.2: icmp_seq=3 ttl=63 time=0.337 ms
 
 --- 10.1.0.2 ping statistics ---
 3 packets transmitted, 3 received, 0% packet loss, time 4ms
-rtt min/avg/max/mdev = 0.343/0.794/1.673/0.621 ms, ipg/ewma 2.008/1.364 ms
+rtt min/avg/max/mdev = 0.337/0.933/2.093/0.820 ms, ipg/ewma 2.155/1.685 ms
 SPINE1#ping 10.1.0.3 source loopback 0 repeat 3
 PING 10.1.0.3 (10.1.0.3) from 10.1.0.1 : 72(100) bytes of data.
-80 bytes from 10.1.0.3: icmp_seq=1 ttl=64 time=0.185 ms
-80 bytes from 10.1.0.3: icmp_seq=2 ttl=64 time=0.013 ms
-80 bytes from 10.1.0.3: icmp_seq=3 ttl=64 time=0.010 ms
+80 bytes from 10.1.0.3: icmp_seq=1 ttl=64 time=0.164 ms
+80 bytes from 10.1.0.3: icmp_seq=2 ttl=64 time=0.018 ms
+80 bytes from 10.1.0.3: icmp_seq=3 ttl=64 time=0.011 ms
 
 --- 10.1.0.3 ping statistics ---
 3 packets transmitted, 3 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 0.010/0.069/0.185/0.081 ms, ipg/ewma 0.145/0.144 ms
+rtt min/avg/max/mdev = 0.011/0.064/0.164/0.070 ms, ipg/ewma 0.131/0.129 ms
 SPINE1#ping 10.1.0.4 source loopback 0 repeat 3
 PING 10.1.0.4 (10.1.0.4) from 10.1.0.1 : 72(100) bytes of data.
-80 bytes from 10.1.0.4: icmp_seq=1 ttl=64 time=0.247 ms
-80 bytes from 10.1.0.4: icmp_seq=2 ttl=64 time=0.014 ms
-80 bytes from 10.1.0.4: icmp_seq=3 ttl=64 time=0.010 ms
+80 bytes from 10.1.0.4: icmp_seq=1 ttl=64 time=0.178 ms
+80 bytes from 10.1.0.4: icmp_seq=2 ttl=64 time=0.015 ms
+80 bytes from 10.1.0.4: icmp_seq=3 ttl=64 time=0.011 ms
 
 --- 10.1.0.4 ping statistics ---
 3 packets transmitted, 3 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 0.010/0.090/0.247/0.110 ms, ipg/ewma 0.178/0.192 ms
+rtt min/avg/max/mdev = 0.011/0.068/0.178/0.077 ms, ipg/ewma 0.137/0.139 ms
 SPINE1#ping 10.1.0.5 source loopback 0 repeat 3
 PING 10.1.0.5 (10.1.0.5) from 10.1.0.1 : 72(100) bytes of data.
-80 bytes from 10.1.0.5: icmp_seq=1 ttl=64 time=0.157 ms
+80 bytes from 10.1.0.5: icmp_seq=1 ttl=64 time=0.205 ms
 80 bytes from 10.1.0.5: icmp_seq=2 ttl=64 time=0.017 ms
-80 bytes from 10.1.0.5: icmp_seq=3 ttl=64 time=0.013 ms
+80 bytes from 10.1.0.5: icmp_seq=3 ttl=64 time=0.012 ms
 
 --- 10.1.0.5 ping statistics ---
 3 packets transmitted, 3 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 0.013/0.062/0.157/0.066 ms, ipg/ewma 0.141/0.123 ms
+rtt min/avg/max/mdev = 0.012/0.078/0.205/0.089 ms, ipg/ewma 0.157/0.160 ms
 ```
 </details>
 
@@ -329,39 +514,39 @@ rtt min/avg/max/mdev = 0.013/0.062/0.157/0.066 ms, ipg/ewma 0.141/0.123 ms
 ```eos
 SPINE2#ping 10.1.0.1 source loopback 0 repeat 3
 PING 10.1.0.1 (10.1.0.1) from 10.1.0.2 : 72(100) bytes of data.
-80 bytes from 10.1.0.1: icmp_seq=1 ttl=63 time=0.538 ms
-80 bytes from 10.1.0.1: icmp_seq=2 ttl=63 time=0.290 ms
-80 bytes from 10.1.0.1: icmp_seq=3 ttl=63 time=0.290 ms
+80 bytes from 10.1.0.1: icmp_seq=1 ttl=63 time=0.633 ms
+80 bytes from 10.1.0.1: icmp_seq=2 ttl=63 time=0.356 ms
+80 bytes from 10.1.0.1: icmp_seq=3 ttl=63 time=0.324 ms
 
 --- 10.1.0.1 ping statistics ---
 3 packets transmitted, 3 received, 0% packet loss, time 2ms
-rtt min/avg/max/mdev = 0.290/0.372/0.538/0.116 ms, ipg/ewma 1.001/0.479 ms
+rtt min/avg/max/mdev = 0.324/0.437/0.633/0.138 ms, ipg/ewma 1.001/0.564 ms
 SPINE2#ping 10.1.0.3 source loopback 0 repeat 3
 PING 10.1.0.3 (10.1.0.3) from 10.1.0.2 : 72(100) bytes of data.
-80 bytes from 10.1.0.3: icmp_seq=1 ttl=64 time=0.091 ms
+80 bytes from 10.1.0.3: icmp_seq=1 ttl=64 time=0.175 ms
 80 bytes from 10.1.0.3: icmp_seq=2 ttl=64 time=0.015 ms
-80 bytes from 10.1.0.3: icmp_seq=3 ttl=64 time=0.011 ms
+80 bytes from 10.1.0.3: icmp_seq=3 ttl=64 time=0.009 ms
 
 --- 10.1.0.3 ping statistics ---
 3 packets transmitted, 3 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 0.011/0.039/0.091/0.036 ms, ipg/ewma 0.098/0.072 ms
+rtt min/avg/max/mdev = 0.009/0.066/0.175/0.076 ms, ipg/ewma 0.136/0.136 ms
 SPINE2#ping 10.1.0.4 source loopback 0 repeat 3
 PING 10.1.0.4 (10.1.0.4) from 10.1.0.2 : 72(100) bytes of data.
-80 bytes from 10.1.0.4: icmp_seq=1 ttl=64 time=0.146 ms
-80 bytes from 10.1.0.4: icmp_seq=2 ttl=64 time=0.013 ms
-80 bytes from 10.1.0.4: icmp_seq=3 ttl=64 time=0.008 ms
+80 bytes from 10.1.0.4: icmp_seq=1 ttl=64 time=0.140 ms
+80 bytes from 10.1.0.4: icmp_seq=2 ttl=64 time=0.015 ms
+80 bytes from 10.1.0.4: icmp_seq=3 ttl=64 time=0.011 ms
 
 --- 10.1.0.4 ping statistics ---
 3 packets transmitted, 3 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 0.008/0.055/0.146/0.063 ms, ipg/ewma 0.119/0.114 ms
+rtt min/avg/max/mdev = 0.011/0.055/0.140/0.059 ms, ipg/ewma 0.117/0.110 ms
 SPINE2#ping 10.1.0.5 source loopback 0 repeat 3
 PING 10.1.0.5 (10.1.0.5) from 10.1.0.2 : 72(100) bytes of data.
-80 bytes from 10.1.0.5: icmp_seq=1 ttl=64 time=0.147 ms
-80 bytes from 10.1.0.5: icmp_seq=2 ttl=64 time=0.020 ms
-80 bytes from 10.1.0.5: icmp_seq=3 ttl=64 time=0.016 ms
+80 bytes from 10.1.0.5: icmp_seq=1 ttl=64 time=0.159 ms
+80 bytes from 10.1.0.5: icmp_seq=2 ttl=64 time=0.016 ms
+80 bytes from 10.1.0.5: icmp_seq=3 ttl=64 time=0.012 ms
 
 --- 10.1.0.5 ping statistics ---
 3 packets transmitted, 3 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 0.016/0.061/0.147/0.060 ms, ipg/ewma 0.135/0.116 ms
+rtt min/avg/max/mdev = 0.012/0.062/0.159/0.068 ms, ipg/ewma 0.126/0.125 ms
 ```
 </details>
