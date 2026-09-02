@@ -46,7 +46,7 @@ Loopback0
 
 Пояснения касательно настройки
 <details>
-<summary>Контекст: Процесс BGP SPINE</summary>
+<summary>Контекст: Процесс BGP/SPINE</summary>
 
 ```eos
 route-map RM_REDISTRIBUTE-Lo0 permit 10            # route-map для редистрибьюции
@@ -75,24 +75,27 @@ router bgp 65001                                                               #
 </details>
 
 <details>
-<summary>Контекст: Процесс BGP LEAF</summary>
+<summary>Контекст: Процесс BGP/LEAF</summary>
 
 ```eos
-router bgp 65001                                                               # Процесс BGP в AS 65001
-   router-id 10.1.0.1                                                          # Задаем Router ID
-   maximum-paths 4                                                             # количество маршрутов для ECMP
-   bgp listen range 10.1.2.0/23 peer-group LEAFS peer-filter LEAFS-AS-FILTER   # Принимаем соседей с адресами из 10.1.2.0/23 и нашей AS
-   neighbor LEAFS peer group                                                   # peer-group LEAFS
-   neighbor LEAFS remote-as 65001                                              # AS соседа (iBGP)
-   neighbor LEAFS bfd                                                          # включаем BFD
-   neighbor LEAFS route-reflector-client                                       # сосед будет являться route-reflector клиентом
+route-map RM_REDISTRIBUTE-Lo0 permit 10            # route-map для редистрибьюции
+   match interface Loopback0                       # выбираем только интерфейс Looback 0
+   set origin igp                                  # устанавливаем oridgin в ibgp
+!
+router bgp 65001                                                # Процесс BGP в AS 65001
+   router-id 10.1.0.3                                           # Задаем Router ID
+   maximum-paths 4                                              # Количество маршрутов для ECMP
+   neighbor SPINE peer group                                    # peer-group SPINE
+   neighbor SPINE remote-as 65001                               # AS соседа (iBGP)
+   neighbor SPINE bfd                                           # Dключаем BFD
+   neighbor 10.1.2.0 peer group SPINE                           # Описываем соседей, включая их в peer-group
+   neighbor 10.1.2.6 peer group SPINE
    !
    address-family ipv4
-      neighbor LEAFS activate                                                  # активируем соседство в секции IPv4 unicast
-      redistribute connected route-map RM_REDISTRIBUTE-Lo0                     # редистрибьюцируем в BGP Loopback0
-      network 10.1.2.0/31                                                      # добавляем в BGP транспортные сети
-      network 10.1.2.2/31
-      network 10.1.2.4/31
+      neighbor SPINE activate                                   # активируем соседства в секции IPv4 unicast
+      network 10.1.2.0/31                                       # редистрибьюцируем в BGP Loopback0
+      network 10.1.2.6/31
+      redistribute connected route-map RM_REDISTRIBUTE-Lo0      # добавляем в BGP транспортные сети
 ```
 </details>
 
