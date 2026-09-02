@@ -246,7 +246,6 @@ Neighbor           AS Session State AFI/SAFI                AFI/SAFI State   NLR
 ```
 </details>
 
-
 <details>
 <summary> SPINE1 / show ip bgp</summary>
   
@@ -306,6 +305,7 @@ AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Li
  *        10.1.2.8/31            10.1.2.9              0       -          100     0       i
  * >      10.1.2.10/31           -                     -       -          -       0       i
  *        10.1.2.10/31           10.1.2.11             0       -          100     0       i
+```
 </details>
 
 <details>
