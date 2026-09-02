@@ -52,7 +52,7 @@ Loopback0
 ```eos
 route-map RM_REDISTRIBUTE-Lo0 permit 10            # route-map для редистрибьюции
    match interface Loopback0                       # выбираем только интерфейс Looback 0
-   set origin igp                                  # устанавливаем oridgin в ibgp
+   set origin igp                                  # устанавливаем origin в igp
 !
 peer-filter LEAFS-AS-FILTER                        # peer-filter для фильтрации соседств с LEAF
    10 match as-range 65001 result accept           # принимаем только iBGP-соседей (с нашей AS)
@@ -81,7 +81,7 @@ router bgp 65001                                                               #
 ```eos
 route-map RM_REDISTRIBUTE-Lo0 permit 10            # route-map для редистрибьюции
    match interface Loopback0                       # выбираем только интерфейс Looback 0
-   set origin igp                                  # устанавливаем oridgin в ibgp
+   set origin igp                                  # устанавливаем origin в igp
 !
 router bgp 65001                                                # Процесс BGP в AS 65001
    router-id 10.1.0.3                                           # Задаем Router ID
