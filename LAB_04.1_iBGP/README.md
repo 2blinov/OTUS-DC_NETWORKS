@@ -266,6 +266,15 @@ AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Li
  * >      10.1.0.3/32            10.1.2.1              0       -          100     0       i
  * >      10.1.0.4/32            10.1.2.3              0       -          100     0       i
  * >      10.1.0.5/32            10.1.2.5              0       -          100     0       i
+ * >      10.1.2.0/31            -                     -       -          -       0       i
+ *        10.1.2.0/31            10.1.2.1              0       -          100     0       i
+ * >      10.1.2.2/31            -                     -       -          -       0       i
+ *        10.1.2.2/31            10.1.2.3              0       -          100     0       i
+ * >      10.1.2.4/31            -                     -       -          -       0       i
+ *        10.1.2.4/31            10.1.2.5              0       -          100     0       i
+ * >      10.1.2.6/31            10.1.2.1              0       -          100     0       i
+ * >      10.1.2.8/31            10.1.2.3              0       -          100     0       i
+ * >      10.1.2.10/31           10.1.2.5              0       -          100     0       i
 ```
 </details>
 
@@ -273,7 +282,7 @@ AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Li
 <summary> SPINE2 / show ip bgp</summary>
   
 ```eos
-SPINE2#show ip bgp
+SPINE2#show ip bgp 
 BGP routing table information for VRF default
 Router identifier 10.1.0.2, local AS number 65001
 Route status codes: s - suppressed contributor, * - valid, > - active, E - ECMP head, e - ECMP
@@ -288,13 +297,22 @@ AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Li
  * >      10.1.0.3/32            10.1.2.7              0       -          100     0       i
  * >      10.1.0.4/32            10.1.2.9              0       -          100     0       i
  * >      10.1.0.5/32            10.1.2.11             0       -          100     0       i
+ * >      10.1.2.0/31            10.1.2.7              0       -          100     0       i
+ * >      10.1.2.2/31            10.1.2.9              0       -          100     0       i
+ * >      10.1.2.4/31            10.1.2.11             0       -          100     0       i
+ * >      10.1.2.6/31            -                     -       -          -       0       i
+ *        10.1.2.6/31            10.1.2.7              0       -          100     0       i
+ * >      10.1.2.8/31            -                     -       -          -       0       i
+ *        10.1.2.8/31            10.1.2.9              0       -          100     0       i
+ * >      10.1.2.10/31           -                     -       -          -       0       i
+ *        10.1.2.10/31           10.1.2.11             0       -          100     0       i
 </details>
 
 <details>
 <summary>LEAF1 / show ip bgp</summary>
   
 ```eos
-LEAF1#sh ip bgp
+LEAF1#show ip bgp 
 BGP routing table information for VRF default
 Router identifier 10.1.0.3, local AS number 65001
 Route status codes: s - suppressed contributor, * - valid, > - active, E - ECMP head, e - ECMP
@@ -308,10 +326,22 @@ AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Li
  * >      10.1.0.1/32            10.1.2.0              0       -          100     0       i
  * >      10.1.0.2/32            10.1.2.6              0       -          100     0       i
  * >      10.1.0.3/32            -                     -       -          -       0       i
- * >E     10.1.0.4/32            10.1.2.3              0       -          100     0       i Or-ID: 10.1.0.4 C-LST: 10.1.0.1 
+ * >Ec    10.1.0.4/32            10.1.2.3              0       -          100     0       i Or-ID: 10.1.0.4 C-LST: 10.1.0.1 
  *  ec    10.1.0.4/32            10.1.2.9              0       -          100     0       i Or-ID: 10.1.0.4 C-LST: 10.1.0.2 
  * >Ec    10.1.0.5/32            10.1.2.5              0       -          100     0       i Or-ID: 10.1.0.5 C-LST: 10.1.0.1 
- *  e     10.1.0.5/32            10.1.2.11             0       -          100     0       i Or-ID: 10.1.0.5 C-LST: 10.1.0.2 
+ *  ec    10.1.0.5/32            10.1.2.11             0       -          100     0       i Or-ID: 10.1.0.5 C-LST: 10.1.0.2 
+ * >      10.1.2.0/31            -                     -       -          -       0       i
+ *        10.1.2.0/31            10.1.2.0              0       -          100     0       i
+ * >      10.1.2.2/31            10.1.2.0              0       -          100     0       i
+ *        10.1.2.2/31            10.1.2.9              0       -          100     0       i Or-ID: 10.1.0.4 C-LST: 10.1.0.2 
+ * >      10.1.2.4/31            10.1.2.0              0       -          100     0       i
+ *        10.1.2.4/31            10.1.2.11             0       -          100     0       i Or-ID: 10.1.0.5 C-LST: 10.1.0.2 
+ * >      10.1.2.6/31            -                     -       -          -       0       i
+ *        10.1.2.6/31            10.1.2.6              0       -          100     0       i
+ * >      10.1.2.8/31            10.1.2.6              0       -          100     0       i
+ *        10.1.2.8/31            10.1.2.3              0       -          100     0       i Or-ID: 10.1.0.4 C-LST: 10.1.0.1 
+ * >      10.1.2.10/31           10.1.2.6              0       -          100     0       i
+ *        10.1.2.10/31           10.1.2.5              0       -          100     0       i Or-ID: 10.1.0.5 C-LST: 10.1.0.1 
 ```
 </details>
 
