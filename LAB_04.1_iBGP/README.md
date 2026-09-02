@@ -9,7 +9,7 @@
 
 ## 1. Подготовка стенда
 В качестве платформы для организации стенда был выбран Containerlab, развернутый на WSL, с использованием образа Arista cEOS.
-Получившийся стенд выглядит следующим образом ([Топология для Containetlab](containerlab/lab02.yaml)):
+Получившийся стенд выглядит следующим образом ([Топология для Containetlab](containerlab/lab03_1.yaml)):
 <img width="638" height="488" alt="image" src="https://github.com/user-attachments/assets/bda2c84c-6cab-4758-967a-651d6b85fb95" />
 
 ## 2. Разработка адресного плана
