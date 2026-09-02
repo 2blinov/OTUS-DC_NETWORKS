@@ -3,7 +3,7 @@
 ## Задание:
 1. [Подготовка стенда](#1-подготовка-стенда)
 2. [Разработка адресного плана](#2-разработка-адресного-плана)
-3. [Настройка Underlay на базе iBGP](#3-настройка-underlay-на-базе-ibgp)
+3. [Настройка Underlay на базе eBGP](#3-настройка-underlay-на-базе-ebgp)
 4. [Проверка связности](#4-проверка-связности)
 5. [Особенности](#5-особенности)
 
@@ -53,25 +53,23 @@ Loopback0
 route-map RM_REDISTRIBUTE-Lo0 permit 10            # route-map для редистрибьюции
    match interface Loopback0                       # выбираем только интерфейс Looback 0
    set origin igp                                  # устанавливаем oridgin в ibgp
+   set community 65000:1                           # устанавливаем community
 !
 peer-filter LEAFS-AS-FILTER                        # peer-filter для фильтрации соседств с LEAF
-   10 match as-range 65001 result accept           # принимаем только iBGP-соседей (с нашей AS)
+   10 match as-range 65001-65003 result accept     # принимаем только BGP-соседей из AS 65001-65003
 
-router bgp 65001                                                               # Процесс BGP в AS 65001
+router bgp 65000                                                               # Процесс BGP в AS 65001
    router-id 10.1.0.1                                                          # Задаем Router ID
    maximum-paths 4                                                             # количество маршрутов для ECMP
-   bgp listen range 10.1.2.0/23 peer-group LEAFS peer-filter LEAFS-AS-FILTER   # Принимаем соседей с адресами из 10.1.2.0/23 и нашей AS
+   bgp listen range 10.1.2.0/23 peer-group LEAFS peer-filter LEAFS-AS-FILTER   # Принимаем соседей с адресами из 10.1.2.0/23 и AS 65001-65003
    neighbor LEAFS peer group                                                   # peer-group LEAFS
-   neighbor LEAFS remote-as 65001                                              # AS соседа (iBGP)
-   neighbor LEAFS bfd                                                          # включаем BFD
-   neighbor LEAFS route-reflector-client                                       # сосед будет являться route-reflector клиентом
+   neighbor LEAFS bfd                                                          # Включаем BFD
+   neighbor LEAFS timers 3 9                                                   # Настраиваем таймеры протокола
+   neighbor LEAFS send-community standard extended                             # Настраиваем отправку community
    !
    address-family ipv4
-      neighbor LEAFS activate                                                  # активируем соседство в секции IPv4 unicast
+      neighbor LEAFS activate                                                  # активируем соседства в секции IPv4 unicast
       redistribute connected route-map RM_REDISTRIBUTE-Lo0                     # редистрибьюцируем в BGP Loopback0
-      network 10.1.2.0/31                                                      # добавляем в BGP транспортные сети
-      network 10.1.2.2/31
-      network 10.1.2.4/31
 ```
 </details>
 
@@ -82,21 +80,22 @@ router bgp 65001                                                               #
 route-map RM_REDISTRIBUTE-Lo0 permit 10            # route-map для редистрибьюции
    match interface Loopback0                       # выбираем только интерфейс Looback 0
    set origin igp                                  # устанавливаем oridgin в ibgp
+   set community 65001:1                           # устанавливаем community
 !
 router bgp 65001                                                # Процесс BGP в AS 65001
    router-id 10.1.0.3                                           # Задаем Router ID
    maximum-paths 4                                              # Количество маршрутов для ECMP
    neighbor SPINE peer group                                    # peer-group SPINE
-   neighbor SPINE remote-as 65001                               # AS соседа (iBGP)
-   neighbor SPINE bfd                                           # Dключаем BFD
+   neighbor SPINE remote-as 65000                               # AS соседа (eBGP)
+   neighbor SPINE bfd                                           # Включаем BFD
+   neighbor SPINE timers 3 9                                    # Настраиваем таймеры протокола
+   neighbor SPINE send-community standard extended              # Настраиваем отправку community
    neighbor 10.1.2.0 peer group SPINE                           # Описываем соседей, включая их в peer-group
    neighbor 10.1.2.6 peer group SPINE
    !
    address-family ipv4
       neighbor SPINE activate                                   # активируем соседства в секции IPv4 unicast
-      network 10.1.2.0/31                                       # редистрибьюцируем в BGP Loopback0
-      network 10.1.2.6/31
-      redistribute connected route-map RM_REDISTRIBUTE-Lo0      # добавляем в BGP транспортные сети
+      redistribute connected route-map RM_REDISTRIBUTE-Lo0      # редистрибьюцируем в BGP Loopback0
 ```
 </details>
 
