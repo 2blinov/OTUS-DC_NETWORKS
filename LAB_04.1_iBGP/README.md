@@ -74,6 +74,7 @@ router bgp 65001                                                               #
 ```
 </details>
 
+<details>
 <summary>Контекст: Процесс BGP LEAF</summary>
 
 ```eos
