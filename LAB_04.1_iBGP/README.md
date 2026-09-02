@@ -347,6 +347,62 @@ AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Li
 </details>
 
 <details>
+<summary>LEAF1 / show ip route</summary>
+  
+```eos
+LEAF1#sh ip route 
+
+VRF: default
+Source Codes:
+       C - connected, S - static, K - kernel,
+       O - OSPF, O IA - OSPF inter area, O E1 - OSPF external type 1,
+       O E2 - OSPF external type 2, O N1 - OSPF NSSA external type 1,
+       O N2 - OSPF NSSA external type2, O3 - OSPFv3,
+       O3 IA - OSPFv3 inter area, O3 E1 - OSPFv3 external type 1,
+       O3 E2 - OSPFv3 external type 2,
+       O3 N1 - OSPFv3 NSSA external type 1,
+       O3 N2 - OSPFv3 NSSA external type2, B - Other BGP Routes,
+       B I - iBGP, B E - eBGP, R - RIP, I L1 - IS-IS level 1,
+       I L2 - IS-IS level 2, A B - BGP Aggregate,
+       A O - OSPF Summary, NG - Nexthop Group Static Route,
+       V - VXLAN Control Service, M - Martian,
+       DH - DHCP client installed default route,
+       DP - Dynamic Policy Route, L - VRF Leaked,
+       G  - gRIBI, RC - Route Cache Route,
+       CL - CBF Leaked Route
+
+Gateway of last resort:
+ S        0.0.0.0/0 [1/0]
+           via 172.20.20.1, Management0
+
+ B I      10.1.0.1/32 [200/0]
+           via 10.1.2.0, Ethernet1
+ B I      10.1.0.2/32 [200/0]
+           via 10.1.2.6, Ethernet2
+ C        10.1.0.3/32
+           directly connected, Loopback0
+ B I      10.1.0.4/32 [200/0]
+           via 10.1.2.0, Ethernet1
+           via 10.1.2.6, Ethernet2
+ B I      10.1.0.5/32 [200/0]
+           via 10.1.2.0, Ethernet1
+           via 10.1.2.6, Ethernet2
+ C        10.1.2.0/31
+           directly connected, Ethernet1
+ B I      10.1.2.2/31 [200/0]
+           via 10.1.2.0, Ethernet1
+ B I      10.1.2.4/31 [200/0]
+           via 10.1.2.0, Ethernet1
+ C        10.1.2.6/31
+           directly connected, Ethernet2
+ B I      10.1.2.8/31 [200/0]
+           via 10.1.2.6, Ethernet2
+ B I      10.1.2.10/31 [200/0]
+           via 10.1.2.6, Ethernet2
+```
+</details>
+
+<details>
 <summary>LEAF1 / ping до Lo0 LEAF2,3</summary>
   
 ```eos
