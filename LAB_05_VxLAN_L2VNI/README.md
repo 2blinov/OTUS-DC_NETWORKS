@@ -3,9 +3,10 @@
 ## Задание:
 1. [Подготовка стенда](#1-подготовка-стенда)
 2. [Разработка адресного плана](#2-разработка-адресного-плана)
-3. [Настройка Underlay на базе eBGP](#3-настройка-underlay-на-базе-ebgp)
-4. [Настройка VxLAN L2VNI](#4-настройка-vxlan-l2vni)
-5. [Проверка связности](#5-проверка-связности)
+3. [Настройка eBGP для Underlay и EVPN](#3-настройка-bgp-для-underlay-и-evpn)
+4. [Проверка связности](#4-проверка-связности)
+5. [Настройка VxLAN L2VNI](#4-настройка-vxlan-l2vni)
+6. [Проверка работы L2VNI](#6-проверка-работы-l2vni)
 
 ## 1. Подготовка стенда
 В качестве платформы для организации стенда был выбран Containerlab, развернутый на WSL, с использованием образов Cisco Nexus, Arista cEOS, Fortigate.
@@ -159,142 +160,89 @@ router bgp 65002
 [Конфигурация Leaf3](./configs/border.conf)<br>
 
 ## 4. Проверка связности
-<details>
-<summary>Доступность транспортных адресов соседей SPINE1 -> LEAFX</summary>
+<summary>LEAF1 / show ip bgp summary</summary>
   
 ```eos
-SPINE1#  ping 10.1.2.1 repeat 3
-PING 10.1.2.1 (10.1.2.1) 72(100) bytes of data.
-80 bytes from 10.1.2.1: icmp_seq=1 ttl=64 time=0.321 ms
-80 bytes from 10.1.2.1: icmp_seq=2 ttl=64 time=0.023 ms
-80 bytes from 10.1.2.1: icmp_seq=3 ttl=64 time=0.020 ms
+LEAF1# show ip bgp summary 
+BGP summary information for VRF default, address family IPv4 Unicast
+BGP router identifier 10.1.0.3, local AS number 65001
+BGP table version is 58, IPv4 Unicast config peers 2, capable peers 2
+5 network entries and 7 paths using 1692 bytes of memory
+BGP attribute entries [4/1472], BGP AS path entries [3/26]
+BGP community entries [0/0], BGP clusterlist entries [0/0]
 
---- 10.1.2.1 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 0.020/0.121/0.321/0.141 ms, ipg/ewma 0.199/0.250 ms
-SPINE1#ping 10.1.2.3 repeat 3
-PING 10.1.2.3 (10.1.2.3) 72(100) bytes of data.
-80 bytes from 10.1.2.3: icmp_seq=1 ttl=64 time=0.165 ms
-80 bytes from 10.1.2.3: icmp_seq=2 ttl=64 time=0.016 ms
-80 bytes from 10.1.2.3: icmp_seq=3 ttl=64 time=0.011 ms
+Neighbor        V    AS    MsgRcvd    MsgSent   TblVer  InQ OutQ Up/Down  State/PfxRcd
+10.1.2.0        4 65000      34475      30414       58    0    0    1d01h 3         
+10.1.2.6        4 65000      34564      30491       58    0    0    1d01h 3         
+```
+</details>
 
---- 10.1.2.3 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 0.011/0.064/0.165/0.071 ms, ipg/ewma 0.125/0.129 ms
-SPINE1#ping 10.1.2.5 repeat 3
-PING 10.1.2.5 (10.1.2.5) 72(100) bytes of data.
-80 bytes from 10.1.2.5: icmp_seq=1 ttl=64 time=0.207 ms
-80 bytes from 10.1.2.5: icmp_seq=2 ttl=64 time=0.023 ms
-80 bytes from 10.1.2.5: icmp_seq=3 ttl=64 time=0.016 ms
+<summary>LEAF1 / show bgp l2vpn evpn summary</summary>
+  
+```eos
+LEAF1# show bgp l2vpn evpn summary 
+BGP summary information for VRF default, address family L2VPN EVPN
+BGP router identifier 10.1.0.3, local AS number 65001
+BGP table version is 141, L2VPN EVPN config peers 2, capable peers 2
+20 network entries and 28 paths using 6000 bytes of memory
+BGP attribute entries [20/7360], BGP AS path entries [2/20]
+BGP community entries [0/0], BGP clusterlist entries [0/0]
 
---- 10.1.2.5 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 0.016/0.082/0.207/0.088 ms, ipg/ewma 0.162/0.163 ms
+Neighbor        V    AS    MsgRcvd    MsgSent   TblVer  InQ OutQ Up/Down  State/PfxRcd
+10.1.0.1        4 65000       1761       1539      141    0    0    1d01h 8         
+10.1.0.2        4 65000       1772       1543      141    0    0    1d01h 8         
 
+Neighbor        T    AS Type-1     Type-2     Type-3     Type-4     Type-5     Type-12   
+10.1.0.1        I 65000 0          4          4          0          0          0         
+10.1.0.2        I 65000 0          4          4          0          0          0 ```
 ```
 </details>
 
 <details>
-<summary>Доступность транспортных адресов соседей SPINE2 -> LEAFX</summary>
+<summary>LEAF2 / show bgp summary</summary>
   
 ```eos
-SPINE2#ping 10.1.2.7 repeat 3
-PING 10.1.2.7 (10.1.2.7) 72(100) bytes of data.
-80 bytes from 10.1.2.7: icmp_seq=1 ttl=64 time=0.225 ms
-80 bytes from 10.1.2.7: icmp_seq=2 ttl=64 time=0.029 ms
-80 bytes from 10.1.2.7: icmp_seq=3 ttl=64 time=0.012 ms
-
---- 10.1.2.7 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 0.012/0.088/0.225/0.096 ms, ipg/ewma 0.171/0.177 ms
-SPINE2#ping 10.1.2.9 repeat 3
-PING 10.1.2.9 (10.1.2.9) 72(100) bytes of data.
-80 bytes from 10.1.2.9: icmp_seq=1 ttl=64 time=0.169 ms
-80 bytes from 10.1.2.9: icmp_seq=2 ttl=64 time=0.021 ms
-80 bytes from 10.1.2.9: icmp_seq=3 ttl=64 time=0.020 ms
-
---- 10.1.2.9 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 0.020/0.070/0.169/0.070 ms, ipg/ewma 0.114/0.134 ms
-SPINE2#ping 10.1.2.11 repeat 3
-PING 10.1.2.11 (10.1.2.11) 72(100) bytes of data.
-80 bytes from 10.1.2.11: icmp_seq=1 ttl=64 time=0.179 ms
-80 bytes from 10.1.2.11: icmp_seq=2 ttl=64 time=0.021 ms
-80 bytes from 10.1.2.11: icmp_seq=3 ttl=64 time=0.016 ms
-
---- 10.1.2.11 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 0.016/0.072/0.179/0.075 ms, ipg/ewma 0.117/0.141 ms
-```
-</details>
-
-<details>
-<summary>SPINE1 / show bfd peers</summary>
-  
-```eos
-SPINE1#show bfd peers
-VRF name: default
------------------
-DstAddr               MyDisc         YourDisc       Interface/Transport         Type               LastUp       LastDown            LastDiag    State
--------------- ---------------- ---------------- ------------------------- ------------ -------------------- -------------- ------------------- -----
-10.1.2.1          1283456637       2005565758            Ethernet1(299)       normal       09/02/26 06:01             NA       No Diagnostic       Up
-10.1.2.3          4238161139       3401854897            Ethernet2(296)       normal       09/02/26 06:10             NA       No Diagnostic       Up
-10.1.2.5          1995265440       1486267061            Ethernet3(300)       normal       09/02/26 06:12             NA       No Diagnostic       Up
-```
-</details>
-
-<details>
-<summary>SPINE2 / show bfd peers</summary>
-  
-```eos
-SPINE2#show bfd peers
-VRF name: default
------------------
-DstAddr                MyDisc         YourDisc       Interface/Transport         Type               LastUp       LastDown            LastDiag    State
---------------- ---------------- ---------------- ------------------------- ------------ -------------------- -------------- ------------------- -----
-10.1.2.7            278547670        232690230            Ethernet1(295)       normal       09/02/26 06:16             NA       No Diagnostic       Up
-10.1.2.9           4198592186       1248918497            Ethernet2(302)       normal       09/02/26 06:17             NA       No Diagnostic       Up
-10.1.2.11          1040641304       1259272234            Ethernet3(304)       normal       09/02/26 06:15             NA       No Diagnostic       Up
-```
-</details>
-
-<details>
-<summary>SPINE1 / show bgp summary</summary>
-  
-```eos
-SPINE1#show bgp summary 
+LEAF2#  show bgp summary 
 BGP summary information for VRF default
-Router identifier 10.1.0.1, local AS number 65000
+Router identifier 10.1.0.4, local AS number 65002
 Neighbor          AS Session State AFI/SAFI                AFI/SAFI State   NLRI Rcd   NLRI Acc   NLRI Adv
 -------- ----------- ------------- ----------------------- -------------- ---------- ---------- ----------
-10.1.2.1       65001 Established   IPv4 Unicast            Negotiated              1          1          3
-10.1.2.3       65002 Established   IPv4 Unicast            Negotiated              1          1          3
-10.1.2.5       65003 Established   IPv4 Unicast            Negotiated              1          1          3
+10.1.0.1       65000 Established   L2VPN EVPN              Negotiated              8          8          7
+10.1.0.2       65000 Established   L2VPN EVPN              Negotiated              8          8          9
+10.1.2.2       65000 Established   IPv4 Unicast            Negotiated              3          3          2
+10.1.2.8       65000 Established   IPv4 Unicast            Negotiated              3          3          4
 ```
 </details>
 
 <details>
-<summary>SPINE2 / show bgp summary</summary>
+<summary> LEAF1 / show ip bgp</summary>
   
 ```eos
-SPINE2#show bgp summary 
-BGP summary information for VRF default
-Router identifier 10.1.0.2, local AS number 65000
-Neighbor           AS Session State AFI/SAFI                AFI/SAFI State   NLRI Rcd   NLRI Acc   NLRI Adv
---------- ----------- ------------- ----------------------- -------------- ---------- ---------- ----------
-10.1.2.7        65001 Established   IPv4 Unicast            Negotiated              1          1          3
-10.1.2.9        65002 Established   IPv4 Unicast            Negotiated              1          1          3
-10.1.2.11       65003 Established   IPv4 Unicast            Negotiated              1          1          3
+LEAF1# sh ip bgp 
+BGP routing table information for VRF default, address family IPv4 Unicast
+BGP table version is 58, Local Router ID is 10.1.0.3
+Status: s-suppressed, x-deleted, S-stale, d-dampened, h-history, *-valid, >-best
+Path type: i-internal, e-external, c-confed, l-local, a-aggregate, r-redist, I-injected
+Origin codes: i - IGP, e - EGP, ? - incomplete, | - multipath, & - backup, 2 - best2
+
+   Network            Next Hop            Metric     LocPrf     Weight Path
+*>e10.1.0.1/32        10.1.2.0                                       0 65000 i
+*>e10.1.0.2/32        10.1.2.6                                       0 65000 i
+*>r10.1.0.3/32        0.0.0.0                  0        100      32768 ?
+*|e10.1.0.4/32        10.1.2.0                                       0 65000 65002 i
+*>e                   10.1.2.6                                       0 65000 65002 i
+*>e10.1.0.5/32        10.1.2.0                                       0 65000 65003 i
+*|e                   10.1.2.6                                       0 65000 65003 i
 ```
 </details>
 
 <details>
-<summary> SPINE1 / show ip bgp</summary>
+<summary> LEAF2 / show ip bgp</summary>
   
 ```eos
-SPINE1#show ip bgp
+LEAF2#sh ip bgp 
 BGP routing table information for VRF default
-Router identifier 10.1.0.1, local AS number 65000
+Router identifier 10.1.0.4, local AS number 65002
 Route status codes: s - suppressed contributor, * - valid, > - active, E - ECMP head, e - ECMP
                     S - Stale, c - Contributing to ECMP, b - backup, L - labeled-unicast, q - Pending FIB install
                     % - Pending best path selection
@@ -303,180 +251,89 @@ RPKI Origin Validation codes: V - valid, I - invalid, U - unknown
 AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
 
           Network                Next Hop              Metric  AIGP       LocPref Weight  Path
- * >      10.1.0.1/32            -                     -       -          -       0       i
- * >      10.1.0.3/32            10.1.2.1              0       -          100     0       65001 i
- * >      10.1.0.4/32            10.1.2.3              0       -          100     0       65002 i
- * >      10.1.0.5/32            10.1.2.5              0       -          100     0       65003 i
+ * >      10.1.0.1/32            10.1.2.2              0       -          100     0       65000 i
+ * >      10.1.0.2/32            10.1.2.8              0       -          100     0       65000 i
+ * >Ec    10.1.0.3/32            10.1.2.2              0       -          100     0       65000 65001 ?
+ *  ec    10.1.0.3/32            10.1.2.8              0       -          100     0       65000 65001 ?
+ * >      10.1.0.4/32            -                     -       -          -       0       i
+ * >Ec    10.1.0.5/32            10.1.2.2              0       -          100     0       65000 65003 i
+ *  ec    10.1.0.5/32            10.1.2.8              0       -          100     0       65000 65003 i
 ```
 </details>
 
 <details>
-<summary> SPINE2 / show ip bgp</summary>
+<summary>LEAF1 / ping до Lo0 LEAF2, BORDER</summary>
   
 ```eos
-SPINE2#show ip bgp 
-BGP routing table information for VRF default
-Router identifier 10.1.0.2, local AS number 65000
-Route status codes: s - suppressed contributor, * - valid, > - active, E - ECMP head, e - ECMP
-                    S - Stale, c - Contributing to ECMP, b - backup, L - labeled-unicast, q - Pending FIB install
-                    % - Pending best path selection
-Origin codes: i - IGP, e - EGP, ? - incomplete
-RPKI Origin Validation codes: V - valid, I - invalid, U - unknown
-AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
-
-          Network                Next Hop              Metric  AIGP       LocPref Weight  Path
- * >      10.1.0.2/32            -                     -       -          -       0       i
- * >      10.1.0.3/32            10.1.2.7              0       -          100     0       65001 i
- * >      10.1.0.4/32            10.1.2.9              0       -          100     0       65002 i
- * >      10.1.0.5/32            10.1.2.11             0       -          100     0       65003 i
-```
-</details>
-
-<details>
-<summary>LEAF1 / show ip bgp</summary>
-  
-```eos
-LEAF1# show ip bgp 
-BGP routing table information for VRF default
-Router identifier 10.1.0.3, local AS number 65001
-Route status codes: s - suppressed contributor, * - valid, > - active, E - ECMP head, e - ECMP
-                    S - Stale, c - Contributing to ECMP, b - backup, L - labeled-unicast, q - Pending FIB install
-                    % - Pending best path selection
-Origin codes: i - IGP, e - EGP, ? - incomplete
-RPKI Origin Validation codes: V - valid, I - invalid, U - unknown
-AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
-
-          Network                Next Hop              Metric  AIGP       LocPref Weight  Path
- * >      10.1.0.1/32            10.1.2.0              0       -          100     0       65000 i
- * >      10.1.0.2/32            10.1.2.6              0       -          100     0       65000 i
- * >      10.1.0.3/32            -                     -       -          -       0       i
- * >Ec    10.1.0.4/32            10.1.2.0              0       -          100     0       65000 65002 i
- *  ec    10.1.0.4/32            10.1.2.6              0       -          100     0       65000 65002 i
- * >Ec    10.1.0.5/32            10.1.2.0              0       -          100     0       65000 65003 i
- *  ec    10.1.0.5/32            10.1.2.6              0       -          100     0       65000 65003 i
-```
-</details>
-
-<details>
-<summary>LEAF1 / show ip route</summary>
-  
-```eos
-LEAF1#show ip route 
-
-VRF: default
-Source Codes:
-       C - connected, S - static, K - kernel,
-       O - OSPF, O IA - OSPF inter area, O E1 - OSPF external type 1,
-       O E2 - OSPF external type 2, O N1 - OSPF NSSA external type 1,
-       O N2 - OSPF NSSA external type2, O3 - OSPFv3,
-       O3 IA - OSPFv3 inter area, O3 E1 - OSPFv3 external type 1,
-       O3 E2 - OSPFv3 external type 2,
-       O3 N1 - OSPFv3 NSSA external type 1,
-       O3 N2 - OSPFv3 NSSA external type2, B - Other BGP Routes,
-       B I - iBGP, B E - eBGP, R - RIP, I L1 - IS-IS level 1,
-       I L2 - IS-IS level 2, A B - BGP Aggregate,
-       A O - OSPF Summary, NG - Nexthop Group Static Route,
-       V - VXLAN Control Service, M - Martian,
-       DH - DHCP client installed default route,
-       DP - Dynamic Policy Route, L - VRF Leaked,
-       G  - gRIBI, RC - Route Cache Route,
-       CL - CBF Leaked Route
-
-Gateway of last resort:
- S        0.0.0.0/0 [1/0]
-           via 172.20.20.1, Management0
-
- B E      10.1.0.1/32 [200/0]
-           via 10.1.2.0, Ethernet1
- B E      10.1.0.2/32 [200/0]
-           via 10.1.2.6, Ethernet2
- C        10.1.0.3/32
-           directly connected, Loopback0
- B E      10.1.0.4/32 [200/0]
-           via 10.1.2.0, Ethernet1
-           via 10.1.2.6, Ethernet2
- B E      10.1.0.5/32 [200/0]
-           via 10.1.2.0, Ethernet1
-           via 10.1.2.6, Ethernet2
- C        10.1.2.0/31
-           directly connected, Ethernet1
- C        10.1.2.6/31
-           directly connected, Ethernet2
-```
-</details>
-
-<details>
-<summary>LEAF1 / ping до Lo0 LEAF2,3</summary>
-  
-```eos
-LEAF1#ping 10.1.0.4 source loopback 0 repeat 3
-PING 10.1.0.4 (10.1.0.4) from 10.1.0.3 : 72(100) bytes of data.
-80 bytes from 10.1.0.4: icmp_seq=1 ttl=63 time=1.10 ms
-80 bytes from 10.1.0.4: icmp_seq=2 ttl=63 time=0.343 ms
-80 bytes from 10.1.0.4: icmp_seq=3 ttl=63 time=0.318 ms
+LEAF1# ping 10.1.0.4 source-interface loopback 0 count 3
+PING 10.1.0.4 (10.1.0.4): 56 data bytes
+64 bytes from 10.1.0.4: icmp_seq=0 ttl=62 time=2.074 ms
+64 bytes from 10.1.0.4: icmp_seq=1 ttl=62 time=1.245 ms
+64 bytes from 10.1.0.4: icmp_seq=2 ttl=62 time=1.264 ms
 
 --- 10.1.0.4 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2ms
-rtt min/avg/max/mdev = 0.318/0.587/1.101/0.363 ms, ipg/ewma 1.098/0.920 ms
-LEAF1#ping 10.1.0.5 source loopback 0 repeat 3
-PING 10.1.0.5 (10.1.0.5) from 10.1.0.3 : 72(100) bytes of data.
-80 bytes from 10.1.0.5: icmp_seq=1 ttl=63 time=0.547 ms
-80 bytes from 10.1.0.5: icmp_seq=2 ttl=63 time=0.330 ms
-80 bytes from 10.1.0.5: icmp_seq=3 ttl=63 time=0.319 ms
+3 packets transmitted, 3 packets received, 0.00% packet loss
+round-trip min/avg/max = 1.245/1.527/2.074 ms
+LEAF1# ping 10.1.0.5 source-interface loopback 0 count 3
+PING 10.1.0.5 (10.1.0.5): 56 data bytes
+64 bytes from 10.1.0.5: icmp_seq=0 ttl=62 time=1.67 ms
+64 bytes from 10.1.0.5: icmp_seq=1 ttl=62 time=1.264 ms
+64 bytes from 10.1.0.5: icmp_seq=2 ttl=62 time=1.005 ms
 
 --- 10.1.0.5 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2ms
-rtt min/avg/max/mdev = 0.319/0.398/0.547/0.104 ms, ipg/ewma 1.004/0.494 ms
+3 packets transmitted, 3 packets received, 0.00% packet loss
+round-trip min/avg/max = 1.005/1.313/1.67 ms
 ```
 </details>
 
 <details>
-<summary>LEAF2 / ping до Lo0 LEAF1,3</summary>
+<summary>LEAF2 / ping до Lo0 LEAF1, BORDER</summary>
   
 ```eos
-LEAF2# ping 10.1.0.3 source loopback 0 repeat 3
+LEAF2#ping 10.1.0.3 source loopback 0 repeat 3
 PING 10.1.0.3 (10.1.0.3) from 10.1.0.4 : 72(100) bytes of data.
-80 bytes from 10.1.0.3: icmp_seq=1 ttl=63 time=0.557 ms
-80 bytes from 10.1.0.3: icmp_seq=2 ttl=63 time=0.330 ms
-80 bytes from 10.1.0.3: icmp_seq=3 ttl=63 time=0.315 ms
+80 bytes from 10.1.0.3: icmp_seq=1 ttl=254 time=3.06 ms
+80 bytes from 10.1.0.3: icmp_seq=2 ttl=254 time=0.926 ms
+80 bytes from 10.1.0.3: icmp_seq=3 ttl=254 time=1.08 ms
 
 --- 10.1.0.3 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2ms
-rtt min/avg/max/mdev = 0.315/0.400/0.557/0.110 ms, ipg/ewma 1.001/0.502 ms
+3 packets transmitted, 3 received, 0% packet loss, time 6ms
+rtt min/avg/max/mdev = 0.926/1.686/3.056/0.970 ms, ipg/ewma 3.152/2.575 ms
 LEAF2#ping 10.1.0.5 source loopback 0 repeat 3
 PING 10.1.0.5 (10.1.0.5) from 10.1.0.4 : 72(100) bytes of data.
-80 bytes from 10.1.0.5: icmp_seq=1 ttl=63 time=0.649 ms
-80 bytes from 10.1.0.5: icmp_seq=2 ttl=63 time=0.331 ms
-80 bytes from 10.1.0.5: icmp_seq=3 ttl=63 time=0.324 ms
+80 bytes from 10.1.0.5: icmp_seq=1 ttl=63 time=1.14 ms
+80 bytes from 10.1.0.5: icmp_seq=2 ttl=63 time=0.562 ms
+80 bytes from 10.1.0.5: icmp_seq=3 ttl=63 time=0.333 ms
 
 --- 10.1.0.5 ping statistics ---
 3 packets transmitted, 3 received, 0% packet loss, time 2ms
-rtt min/avg/max/mdev = 0.324/0.434/0.649/0.151 ms, ipg/ewma 1.001/0.573 ms
+rtt min/avg/max/mdev = 0.333/0.679/1.143/0.340 ms, ipg/ewma 1.139/0.978 ms
 ```
 </details>
 
 <details>
-<summary>LEAF3 / ping до Lo0 LEAF1,2</summary>
+<summary>BORDER / ping до Lo0 LEAF1,2</summary>
   
 ```eos
-LEAF3# ping 10.1.0.3 source loopback 0 repeat 3
+BORDER#ping 10.1.0.3 source loopback 0 repeat 3
 PING 10.1.0.3 (10.1.0.3) from 10.1.0.5 : 72(100) bytes of data.
-80 bytes from 10.1.0.3: icmp_seq=1 ttl=63 time=0.479 ms
-80 bytes from 10.1.0.3: icmp_seq=2 ttl=63 time=0.310 ms
-80 bytes from 10.1.0.3: icmp_seq=3 ttl=63 time=0.324 ms
+80 bytes from 10.1.0.3: icmp_seq=1 ttl=254 time=2.28 ms
+80 bytes from 10.1.0.3: icmp_seq=2 ttl=254 time=1.01 ms
+80 bytes from 10.1.0.3: icmp_seq=3 ttl=254 time=0.819 ms
 
 --- 10.1.0.3 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 1ms
-rtt min/avg/max/mdev = 0.310/0.371/0.479/0.076 ms, ipg/ewma 0.470/0.441 ms
-LEAF3#ping 10.1.0.4 source loopback 0 repeat 3
+3 packets transmitted, 3 received, 0% packet loss, time 4ms
+rtt min/avg/max/mdev = 0.819/1.366/2.275/0.646 ms, ipg/ewma 2.243/1.954 ms
+BORDER#ping 10.1.0.4 source loopback 0 repeat 3
 PING 10.1.0.4 (10.1.0.4) from 10.1.0.5 : 72(100) bytes of data.
-80 bytes from 10.1.0.4: icmp_seq=1 ttl=63 time=0.653 ms
-80 bytes from 10.1.0.4: icmp_seq=2 ttl=63 time=0.364 ms
-80 bytes from 10.1.0.4: icmp_seq=3 ttl=63 time=0.328 ms
+80 bytes from 10.1.0.4: icmp_seq=1 ttl=63 time=0.755 ms
+80 bytes from 10.1.0.4: icmp_seq=2 ttl=63 time=0.402 ms
+80 bytes from 10.1.0.4: icmp_seq=3 ttl=63 time=0.342 ms
 
 --- 10.1.0.4 ping statistics ---
 3 packets transmitted, 3 received, 0% packet loss, time 2ms
-rtt min/avg/max/mdev = 0.328/0.448/0.653/0.145 ms, ipg/ewma 1.001/0.580 ms
+rtt min/avg/max/mdev = 0.342/0.499/0.755/0.182 ms, ipg/ewma 1.001/0.664 ms
+
 ```
 </details>
 
