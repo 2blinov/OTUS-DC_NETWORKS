@@ -57,66 +57,106 @@ route-map RM_REDISTRIBUTE-Lo0 permit 10            # route-map для редис
 !
 peer-filter LEAFS-AS-FILTER                        # peer-filter для фильтрации соседств с LEAF
    10 match as-range 65001-65003 result accept     # принимаем только BGP-соседей из AS 65001-65003
-
-router bgp 65000                                                               # Процесс BGP в AS 65001
-   router-id 10.1.0.1                                                          # Задаем Router ID
-   maximum-paths 4                                                             # количество маршрутов для ECMP
-   bgp listen range 10.1.2.0/23 peer-group LEAFS peer-filter LEAFS-AS-FILTER   # Принимаем соседей с адресами из 10.1.2.0/23 и AS 65001-65003
-   neighbor LEAFS peer group                                                   # peer-group LEAFS
-   neighbor LEAFS bfd                                                          # Включаем BFD
-   neighbor LEAFS timers 3 9                                                   # Настраиваем таймеры протокола
-   neighbor LEAFS send-community standard extended                             # Настраиваем отправку community
+   
+router bgp 65000                                                                        # Процесс BGP в AS 65000
+   router-id 10.1.0.1                                                                   # Задаем Router ID
+   maximum-paths 4                                                                      # количество маршрутов для ECMP
+   bgp listen range 10.1.0.0/24 peer-group LEAFS-EVPN peer-filter LEAFS-AS-FILTER       # Принимаем соседей EVPN с адресами из 10.1.0.0/24 и AS 65001-65003
+   bgp listen range 10.1.2.0/23 peer-group LEAFS-UNDERLAY peer-filter LEAFS-AS-FILTER   # Принимаем соседей UNDERLAY с адресами из 10.1.2.0/23 и AS 65001-65003
+   neighbor LEAFS-EVPN peer group                                                       # peer-group LEAFS-EVPN
+   neighbor LEAFS-EVPN next-hop-unchanged                                               # Нам нужно строить туннели Leaf-Leaf, поэтому не меняем next-hop
+   neighbor LEAFS-EVPN update-source Loopback0                                          # Соседство строим с Lo0
+   neighbor LEAFS-EVPN ebgp-multihop 5                                                  # IP TTL для eBGP-сессии
+   neighbor LEAFS-EVPN send-community extended                                          # Включаем передачу расширенных community (передача RT необходима для EVPN)
+   neighbor LEAFS-UNDERLAY peer group                                                   # peer-group LEAFS-UNDERLAY
+   neighbor LEAFS-UNDERLAY bfd                                                          # Включаем BFD
+   neighbor LEAFS-UNDERLAY timers 3 9                                                   # Настраиваем таймеры протокола
+   !
+   address-family evpn
+      neighbor LEAFS-EVPN activate                                                      # активируем соседства в секции evpn
    !
    address-family ipv4
-      neighbor LEAFS activate                                                  # активируем соседства в секции IPv4 unicast
-      redistribute connected route-map RM_REDISTRIBUTE-Lo0                     # редистрибьюцируем в BGP Loopback0
+      no neighbor LEAFS-EVPN activate
+      neighbor LEAFS-UNDERLAY activate                                                  # активируем соседства в секции IPv4 unicast
+      redistribute connected route-map RM_REDISTRIBUTE-Lo0                              # редистрибьюцируем в BGP Loopback0
 ```
 </details>
 
 <details>
-<summary>Контекст: Процесс BGP/LEAF</summary>
+<summary>Контекст: Процесс BGP/LEAF/NX</summary>
 
 ```eos
-route-map RM_REDISTRIBUTE-Lo0 permit 10            # route-map для редистрибьюции
-   match interface Loopback0                       # выбираем только интерфейс Looback 0
-   set origin igp                                  # устанавливаем origin в igp
-   set community 65001:1                           # устанавливаем community
-!
-router bgp 65001                                                # Процесс BGP в AS 65001
-   router-id 10.1.0.3                                           # Задаем Router ID
-   maximum-paths 4                                              # Количество маршрутов для ECMP
-   neighbor SPINE peer group                                    # peer-group SPINE
-   neighbor SPINE remote-as 65000                               # AS соседа (eBGP)
-   neighbor SPINE bfd                                           # Включаем BFD
-   neighbor SPINE timers 3 9                                    # Настраиваем таймеры протокола
-   neighbor SPINE send-community standard extended              # Настраиваем отправку community
-   neighbor 10.1.2.0 peer group SPINE                           # Описываем соседей, включая их в peer-group
-   neighbor 10.1.2.6 peer group SPINE
-   !
-   address-family ipv4
-      neighbor SPINE activate                                   # активируем соседства в секции IPv4 unicast
-      redistribute connected route-map RM_REDISTRIBUTE-Lo0      # редистрибьюцируем в BGP Loopback0
+route-map RM_REDISTRIBUTE-Lo0 permit 10                  # route-map для редистрибьюции
+  match interface loopback0                              # выбираем только интерфейс Looback 0
+
+router bgp 65001                                         # Процесс BGP в AS 65000
+  router-id 10.1.0.3                                     # Задаем Router ID
+  address-family ipv4 unicast
+    redistribute direct route-map RM_REDISTRIBUTE-Lo0    # редистрибьюцируем в BGP Loopback0
+    maximum-paths 4                                      # количество маршрутов для ECMP
+  address-family l2vpn evpn
+    maximum-paths 4                                      # количество маршрутов для ECMP
+  neighbor 10.1.0.1                                      # SPINE1 / EVPN
+    remote-as 65000
+    update-source loopback0
+    ebgp-multihop 5
+    address-family l2vpn evpn
+      send-community
+      send-community extended
+  neighbor 10.1.0.2                                      # SPINE2 / EVPN
+    remote-as 65000
+    update-source loopback0
+    ebgp-multihop 5
+    address-family l2vpn evpn
+      send-community
+      send-community extended
+  neighbor 10.1.2.0                                      # SPINE1 / UNDERLAY
+    bfd
+    remote-as 65000
+    address-family ipv4 unicast
+  neighbor 10.1.2.6                                      # SPINE2 / UNDERLAY
+    bfd
+    remote-as 65000
+    address-family ipv4 unicast
 ```
 </details>
 
 <details>
-<summary>Контекст: Интерфейс</summary>
+<summary>Контекст: Процесс BGP/LEAF/Arista</summary>
 
 ```eos
-interface Ethernet1
-   description P2P-LEAF1
-   mtu 9214                                  # Увеличиваем MTU
-   no switchport
-   ip address 10.1.2.0/31
-   bfd interval 100 min_rx 100 multiplier 3  # Настраиваем таймеры BFD
+router bgp 65002
+   router-id 10.1.0.4
+   maximum-paths 4
+   neighbor SPINE-EVPN peer group
+   neighbor SPINE-EVPN remote-as 65000
+   neighbor SPINE-EVPN next-hop-unchanged
+   neighbor SPINE-EVPN update-source Loopback0
+   neighbor SPINE-EVPN ebgp-multihop 5
+   neighbor SPINE-EVPN send-community extended
+   neighbor SPINE-UNDERLAY peer group
+   neighbor SPINE-UNDERLAY remote-as 65000
+   neighbor SPINE-UNDERLAY bfd
+   neighbor 10.1.0.1 peer group SPINE-EVPN
+   neighbor 10.1.0.2 peer group SPINE-EVPN
+   neighbor 10.1.2.2 peer group SPINE-UNDERLAY
+   neighbor 10.1.2.8 peer group SPINE-UNDERLAY
+   !
+   address-family evpn
+      neighbor SPINE-EVPN activate
+   !
+   address-family ipv4
+      no neighbor SPINE-EVPN activate
+      neighbor SPINE-UNDERLAY activate
+      redistribute connected route-map RM_REDISTRIBUTE-Lo0
 ```
 </details>
 
-[Конфигурация Spine1](./configs/spine01.cfg)<br>
-[Конфигурация Spine2](./configs/spine02.cfg)<br>
-[Конфигурация Leaf1](./configs/leaf01.cfg)<br>
-[Конфигурация Leaf2](./configs/leaf02.cfg)<br>
-[Конфигурация Leaf3](./configs/leaf03.cfg)<br>
+[Конфигурация Spine1](./configs/spine1.conf)<br>
+[Конфигурация Spine2](./configs/spine2.conf)<br>
+[Конфигурация Leaf1](./configs/leaf1.conf)<br>
+[Конфигурация Leaf2](./configs/leaf2.conf)<br>
+[Конфигурация Leaf3](./configs/border.conf)<br>
 
 ## 4. Проверка связности
 <details>
