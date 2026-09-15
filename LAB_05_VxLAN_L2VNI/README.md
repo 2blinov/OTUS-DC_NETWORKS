@@ -160,6 +160,7 @@ router bgp 65002
 [Конфигурация Leaf3](./configs/border.conf)<br>
 
 ## 4. Проверка связности
+<details>
 <summary>LEAF1 / show ip bgp summary</summary>
   
 ```eos
@@ -177,6 +178,7 @@ Neighbor        V    AS    MsgRcvd    MsgSent   TblVer  InQ OutQ Up/Down  State/
 ```
 </details>
 
+<details>
 <summary>LEAF1 / show bgp l2vpn evpn summary</summary>
   
 ```eos
