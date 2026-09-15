@@ -9,7 +9,7 @@
 
 ## 1. Подготовка стенда
 В качестве платформы для организации стенда был выбран Containerlab, развернутый на WSL, с использованием образов Cisco Nexus, Arista cEOS, Fortigate.
-Получившийся стенд выглядит следующим образом ([Топология для Containetlab](containerlab/lab5.yaml)):
+Получившийся стенд выглядит следующим образом ([Топология для Containetlab](containerlab/lab05.yaml)):
 <img width="930" height="391" alt="image" src="https://github.com/user-attachments/assets/3ce90ccd-892c-4b02-a52b-0cee3e8908d6" />
 
 ## 2. Разработка адресного плана
@@ -33,17 +33,17 @@ Loopback0
 | SPINE2 |  10.1.0.2/32 |
 | LEAF1  | 10.1.0.3/32 |
 | LEAF2  | 10.1.0.4/32 |
-| LEAF3  | 10.1.0.5/32 |
+| BORDER | 10.1.0.5/32 |
 
 Транспортные подсети
 | Link           | Network      |
 | -------------- | ------------ |
 | SPINE1 — LEAF1 | 10.1.2.0/31  |
 | SPINE1 — LEAF2 | 10.1.2.2/31  |
-| SPINE1 — LEAF3 | 10.1.2.4/31  |
+| SPINE1 — BORDER | 10.1.2.4/31  |
 | SPINE2 — LEAF1 | 10.1.2.6/31  |
 | SPINE2 — LEAF2 | 10.1.2.8/31  |
-| SPINE2 — LEAF3 | 10.1.2.10/31 |
+| SPINE2 — BORDER | 10.1.2.10/31 |
 
 Пояснения касательно настройки
 <details>
