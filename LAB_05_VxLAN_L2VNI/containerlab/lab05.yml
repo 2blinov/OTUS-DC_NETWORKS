@@ -1,0 +1,81 @@
+name: lab-l2vni
+
+topology:
+  nodes:
+    spine1:
+      kind: arista_ceos
+      image: ceos:4.34.2F
+      ports:
+        - "2201:22"
+
+    spine2:
+      kind: arista_ceos
+      image: ceos:4.34.2F
+      ports:
+        - "2202:22"
+
+    leaf1:
+      kind: cisco_n9kv
+      image: vrnetlab/cisco_n9kv:9300-10.5.2.F
+      env:
+        QEMU_MEMORY: 8192
+        QEMU_SMP: 2
+      ports:
+        - "2203:22"
+
+    leaf2:
+      kind: arista_ceos
+      image: ceos:4.34.2F
+      ports:
+        - "2204:22"
+
+    border:
+      kind: arista_ceos
+      image: ceos:4.34.2F
+      ports:
+        - "2205:22"
+
+    host1:
+      kind: linux
+      image: alpine:latest
+      exec:
+        - ip addr add 10.10.10.11/24 dev eth1
+        - ip route del default
+        - ip route add default via 10.10.10.1 dev eth1
+
+    host2:
+      kind: linux
+      image: alpine:latest
+      exec:
+        - ip addr add 20.20.20.11/24 dev eth1
+        - ip route del default
+        - ip route add default via 20.20.20.1 dev eth1
+
+    frr1:
+      kind: linux
+      image: ubuntu-frr:24.04
+      ports:
+        - "2231:22"
+
+    fgt:
+      kind: fortinet_fortigate
+      image: vrnetlab/vr-fortios:fortios_v6.2.3
+      ports:
+        - "8443:443"
+        - "8080:80"
+        - "8022:22"
+
+  links:
+    - endpoints: ["leaf1:eth1","spine1:eth1"]
+    - endpoints: ["leaf1:eth2","spine2:eth1"]
+
+    - endpoints: ["leaf2:eth1","spine1:eth2"]
+    - endpoints: ["leaf2:eth2","spine2:eth2"]
+
+    - endpoints: ["border:eth1","spine1:eth3"]
+    - endpoints: ["border:eth2","spine2:eth3"]
+
+    - endpoints: ["fgt:eth1","border:eth3"]
+    - endpoints: ["host1:eth1","leaf2:eth3"]
+    - endpoints: ["host2:eth1","leaf2:eth4"]
+    - endpoints: ["frr1:eth1","leaf1:eth3"]
