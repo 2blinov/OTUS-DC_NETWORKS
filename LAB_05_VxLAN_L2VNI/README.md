@@ -695,6 +695,7 @@ Multipath: eBGP
 ```
 </details>
 
+<details>
 <summary>LEAF1 / route-type 3/ sh bgp l2vpn evpn route-type 3</summary>
 
 ```
