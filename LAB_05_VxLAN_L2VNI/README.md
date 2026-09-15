@@ -339,9 +339,65 @@ rtt min/avg/max/mdev = 0.342/0.499/0.755/0.182 ms, ipg/ewma 1.001/0.664 ms
 ```
 </details>
 
-## 5. Особенности
-У данной схемы имеются следующие особенности:
-- SPINE находятся в одной AS для предотвращения path-hunting.
-- Из-за отсутствия связности между SPINE и того, что они находятся в одной AS, они не имеют информации о префиксах друг друга. Но ввиду того, что мы строим Underlay для VxLAN/EVPN-фабрики нас интересует только распространение адресов VTEP (Loopback LEAF).
-- Схема так же "ломается" при двойном отказе.
-<img width="936" height="711" alt="image" src="https://github.com/user-attachments/assets/24a77a39-0796-45a3-8e40-37485dabfb3c" />
+## 3. Настройка VxLAN L2VNI
+Пояснения касательно настройки
+<details>
+<summary>Контекст: LEAF1/NX</summary>
+
+```
+vlan 10               # Для VLAN 10
+  name VLAN10
+  vn-segment 10010    # Настраиваем L2VNI 10010
+vlan 20               # Для VLAN 20
+  name VLAN20
+  vn-segment 10020    # Настраиваем L2VNI 10020
+
+interface nve1                           # Настройки интерфейса NVE
+  no shutdown
+  host-reachability protocol bgp         # Для поиска удалённых MAC/IP-хостов внутри VXLAN использовать BGP EVPN как control-plane.
+  source-interface loopback0             # Туннели строим с Lo0
+  member vni 10010                       
+    ingress-replication protocol bgp     # Для BUM-трафика внутри VNI использовать ingress replication, а список удалённых VTEP получать через BGP EVPN.
+  member vni 10020
+    ingress-replication protocol bgp
+
+evpn                                     # Секция EVPN
+  vni 10010 l2                           # Для каждого L2 VNI
+    rd 10.1.0.3:10010                    # Настраиваем RD (будет отдаваться вместе с маршрутами соседям через расширенные community, для того, чтобы различать EVPN-маршруты)
+    route-target import 10010:10010      # Импортируем в VNI/EVPN инстанс EVPN-маршруты с RT 10010:10010
+    route-target export 10010:10010      # При экспорте EVPN-маршрута для VNI 10010, добавляет к нему RT 10010:10010
+  vni 10020 l2
+    rd 10.1.0.3:10020
+    route-target import 10020:10020
+    route-target export 10020:10020
+```
+</details>
+
+<details>
+<summary>Контекст: LEAF2/Arista</summary>
+
+```
+vlan 10
+   name VLAN10
+!
+vlan 20
+   name VLAN20
+!
+interface Vxlan1                         # Настройки интерфейса NVE
+   vxlan source-interface Loopback0      # Туннели строим с Lo0
+   vxlan udp-port 4789
+   vxlan vlan 10 vni 10010               # Привязка VNI к VLAN ID
+   vxlan vlan 20 vni 10020               # Привязка VNI к VLAN ID
+
+router bgp 65002                         
+   vlan 10                               # Для VLAN
+      rd 10.1.0.4:10010                  # Настраиваем RD
+      route-target both 10010:10010      # Настраиваем RT на импорт/экспорт
+      redistribute learned               # MAC-адреса, которые коммутатор выучил в MAC address table, и распространяем через BGP EVPN.
+   !
+   vlan 20
+      rd 10.1.0.4:10020
+      route-target both 10020:10020
+      redistribute learned
+```
+</details>
