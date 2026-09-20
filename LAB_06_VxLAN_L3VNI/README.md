@@ -416,40 +416,8 @@ rtt min/avg/max/mdev = 4.356/4.767/5.196/0.347 ms, ipg/ewma 5.873/5.042 ms
 ```
 </details>
 
-## 5. Настройка VxLAN L2VNI
+## 5. Настройки для асимметричного IRB
 Пояснения касательно настройки
-<details>
-<summary>Контекст: LEAF1/NX</summary>
-
-```
-vlan 10               # Для VLAN 10
-  name VLAN10
-  vn-segment 10010    # Настраиваем L2VNI 10010
-vlan 20               # Для VLAN 20
-  name VLAN20
-  vn-segment 10020    # Настраиваем L2VNI 10020
-
-interface nve1                           # Настройки интерфейса NVE
-  no shutdown
-  host-reachability protocol bgp         # Для поиска удалённых MAC/IP-хостов внутри VXLAN использовать BGP EVPN как control-plane.
-  source-interface loopback0             # Туннели строим с Lo0
-  member vni 10010                       
-    ingress-replication protocol bgp     # Для BUM-трафика внутри VNI использовать ingress replication, а список удалённых VTEP получать через BGP EVPN.
-  member vni 10020
-    ingress-replication protocol bgp
-
-evpn                                     # Секция EVPN
-  vni 10010 l2                           # Для каждого L2 VNI
-    rd 10.1.0.3:10010                    # Настраиваем RD (будет отдаваться вместе с маршрутами соседям через расширенные community, для того, чтобы различать EVPN-маршруты)
-    route-target import 10010:10010      # Импортируем в VNI/EVPN инстанс EVPN-маршруты с RT 10010:10010
-    route-target export 10010:10010      # При экспорте EVPN-маршрута для VNI 10010, добавляет к нему RT 10010:10010
-  vni 10020 l2
-    rd 10.1.0.3:10020
-    route-target import 10020:10020
-    route-target export 10020:10020
-```
-</details>
-
 <details>
 <summary>Контекст: LEAF2/Arista</summary>
 
@@ -460,87 +428,68 @@ vlan 10
 vlan 20
    name VLAN20
 !
-interface Vxlan1                         # Настройки интерфейса NVE
-   vxlan source-interface Loopback0      # Туннели строим с Lo0
+interface Vlan10
+   description VLAN10
+   ip address virtual 10.10.10.254/24
+!
+interface Vlan20
+   description VLAN20
+   ip address virtual 20.20.20.254/24
+!
+interface Vxlan1
+   vxlan source-interface Loopback0
    vxlan udp-port 4789
-   vxlan vlan 10 vni 10010               # Привязка VNI к VLAN ID
-   vxlan vlan 20 vni 10020               # Привязка VNI к VLAN ID
-
-router bgp 65002                         
-   vlan 10                               # Для VLAN
-      rd 10.1.0.4:10010                  # Настраиваем RD
-      route-target both 10010:10010      # Настраиваем RT на импорт/экспорт
-      redistribute learned               # MAC-адреса, которые коммутатор выучил в MAC address table, и распространяем через BGP EVPN.
+   vxlan vlan 10 vni 10010
+   vxlan vlan 20 vni 10020
+!
+ip virtual-router mac-address 00:00:22:22:33:33
+!
+ip routing
+!
+router bgp 65001
+   vlan 10
+      rd 10.1.0.3:10010
+      route-target both 10010:10010
+      redistribute learned
    !
    vlan 20
-      rd 10.1.0.4:10020
+      rd 10.1.0.3:10020
       route-target both 10020:10020
       redistribute learned
 ```
 </details>
 
-## 6. Проверка работы L2VNI
+## 6. Проверка работы асимметричного IRB
 
 <details>
-<summary>Ping Host1 -> Host2, Host3, FGT в рамках одного VLAN</summary>
+<summary>ping SRV1 -> SRV4, SRV5</summary>
 
 ```
-root@frr1:~# ip vrf exec VRF1 ping 10.10.10.1 -c 3
-PING 10.10.10.1 (10.10.10.1) 56(84) bytes of data.
-64 bytes from 10.10.10.1: icmp_seq=1 ttl=255 time=11.7 ms
-64 bytes from 10.10.10.1: icmp_seq=2 ttl=255 time=4.65 ms
-64 bytes from 10.10.10.1: icmp_seq=3 ttl=255 time=2.48 ms
+SRV1:/# ping -c 3 10.10.10.4
+PING 10.10.10.4 (10.10.10.4): 56 data bytes
+64 bytes from 10.10.10.4: seq=0 ttl=64 time=8.321 ms
+64 bytes from 10.10.10.4: seq=1 ttl=64 time=8.568 ms
+64 bytes from 10.10.10.4: seq=2 ttl=64 time=10.561 ms
 
---- 10.10.10.1 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2003ms
-rtt min/avg/max/mdev = 2.483/6.273/11.682/3.926 ms
-root@frr1:~# ip vrf exec VRF1 ping 10.10.10.11 -c 3
-PING 10.10.10.11 (10.10.10.11) 56(84) bytes of data.
-64 bytes from 10.10.10.11: icmp_seq=1 ttl=64 time=2.62 ms
-64 bytes from 10.10.10.11: icmp_seq=2 ttl=64 time=2.25 ms
-64 bytes from 10.10.10.11: icmp_seq=3 ttl=64 time=5.03 ms
+--- 10.10.10.4 ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max = 8.321/9.150/10.561 ms
+SRV1:/# ping -c 3 20.20.20.5
+PING 20.20.20.5 (20.20.20.5): 56 data bytes
+64 bytes from 20.20.20.5: seq=0 ttl=63 time=17.633 ms
+64 bytes from 20.20.20.5: seq=1 ttl=63 time=9.663 ms
+64 bytes from 20.20.20.5: seq=2 ttl=63 time=11.137 ms
 
---- 10.10.10.11 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2003ms
-rtt min/avg/max/mdev = 2.247/3.297/5.026/1.231 ms
-root@frr1:~# ip vrf exec VRF2 ping 20.20.20.1 -c 3
-PING 20.20.20.1 (20.20.20.1) 56(84) bytes of data.
-64 bytes from 20.20.20.1: icmp_seq=1 ttl=255 time=7.17 ms
-64 bytes from 20.20.20.1: icmp_seq=2 ttl=255 time=3.24 ms
-64 bytes from 20.20.20.1: icmp_seq=3 ttl=255 time=2.88 ms
+--- 20.20.20.5 ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max = 9.663/12.811/17.633 ms
 
---- 20.20.20.1 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2003ms
-rtt min/avg/max/mdev = 2.876/4.428/7.167/1.942 ms
-root@frr1:~# ip vrf exec VRF2 ping 20.20.20.11 -c 3
-PING 20.20.20.11 (20.20.20.11) 56(84) bytes of data.
-64 bytes from 20.20.20.11: icmp_seq=1 ttl=64 time=3.41 ms
-64 bytes from 20.20.20.11: icmp_seq=2 ttl=64 time=2.27 ms
-64 bytes from 20.20.20.11: icmp_seq=3 ttl=64 time=2.79 ms
-
---- 20.20.20.11 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2003ms
-rtt min/avg/max/mdev = 2.272/2.825/3.413/0.466 ms
+В дампе на LEAF4 видим, что маршрутизация происходит на VTEP-источнике, на VTEP-получателе пакет видим уже в целевом VNI.
+<img width="779" height="398" alt="image" src="https://github.com/user-attachments/assets/eca4d5c6-eb81-43e2-9427-615a55b78d87" />
+<img width="753" height="396" alt="image" src="https://github.com/user-attachments/assets/59244a4d-8aaf-43b3-8f86-5cefa2b521e6" />
 ```
 </details>
 
-<details>
-<summary>Host1, отсутствие связности между двумя VLAN</summary>
-
-```
-root@frr1:~# ip vrf exec VRF1 ping 20.20.20.1 -c 3
-PING 20.20.20.1 (20.20.20.1) 56(84) bytes of data.
-
---- 20.20.20.1 ping statistics ---
-3 packets transmitted, 0 received, 100% packet loss, time 2129ms
-
-root@frr1:~# ip vrf exec VRF2 ping 10.10.10.1 -c 3
-PING 10.10.10.1 (10.10.10.1) 56(84) bytes of data.
-
---- 10.10.10.1 ping statistics ---
-3 packets transmitted, 0 received, 100% packet loss, time 2036ms
-```
-</details>
 
 <details>
 <summary>LEAF1 / route-type 3/ sh bgp l2vpn evpn route-type 3</summary>
