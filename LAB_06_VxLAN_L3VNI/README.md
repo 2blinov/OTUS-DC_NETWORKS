@@ -459,36 +459,6 @@ router bgp 65001
 </details>
 
 ## 6. Проверка работы асимметричного IRB
-
-<details>
-<summary>ping SRV1 -> SRV4, SRV5</summary>
-
-```
-SRV1:/# ping -c 3 10.10.10.4
-PING 10.10.10.4 (10.10.10.4): 56 data bytes
-64 bytes from 10.10.10.4: seq=0 ttl=64 time=8.321 ms
-64 bytes from 10.10.10.4: seq=1 ttl=64 time=8.568 ms
-64 bytes from 10.10.10.4: seq=2 ttl=64 time=10.561 ms
-
---- 10.10.10.4 ping statistics ---
-3 packets transmitted, 3 packets received, 0% packet loss
-round-trip min/avg/max = 8.321/9.150/10.561 ms
-SRV1:/# ping -c 3 20.20.20.5
-PING 20.20.20.5 (20.20.20.5): 56 data bytes
-64 bytes from 20.20.20.5: seq=0 ttl=63 time=17.633 ms
-64 bytes from 20.20.20.5: seq=1 ttl=63 time=9.663 ms
-64 bytes from 20.20.20.5: seq=2 ttl=63 time=11.137 ms
-
---- 20.20.20.5 ping statistics ---
-3 packets transmitted, 3 packets received, 0% packet loss
-round-trip min/avg/max = 9.663/12.811/17.633 ms
-```
-</details>
-
-В дампе на LEAF4 видим, что маршрутизация происходит на VTEP-источнике, на VTEP-получателе пакет видим уже в целевом VNI.
-<img width="779" height="398" alt="image" src="https://github.com/user-attachments/assets/eca4d5c6-eb81-43e2-9427-615a55b78d87" />
-<img width="753" height="396" alt="image" src="https://github.com/user-attachments/assets/59244a4d-8aaf-43b3-8f86-5cefa2b521e6" />
-
 <details>
 <summary>LEAF1 / route-type 3 / sh bgp evpn route-type imet</summary>
 
@@ -588,6 +558,36 @@ Vlan    Mac Address       Type        Ports      Moves   Last Move
 Total Mac Addresses for this criterion: 6
 ```
 </details>
+
+
+<details>
+<summary>ping SRV1 -> SRV4, SRV5</summary>
+
+```
+SRV1:/# ping -c 3 10.10.10.4
+PING 10.10.10.4 (10.10.10.4): 56 data bytes
+64 bytes from 10.10.10.4: seq=0 ttl=64 time=8.321 ms
+64 bytes from 10.10.10.4: seq=1 ttl=64 time=8.568 ms
+64 bytes from 10.10.10.4: seq=2 ttl=64 time=10.561 ms
+
+--- 10.10.10.4 ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max = 8.321/9.150/10.561 ms
+SRV1:/# ping -c 3 20.20.20.5
+PING 20.20.20.5 (20.20.20.5): 56 data bytes
+64 bytes from 20.20.20.5: seq=0 ttl=63 time=17.633 ms
+64 bytes from 20.20.20.5: seq=1 ttl=63 time=9.663 ms
+64 bytes from 20.20.20.5: seq=2 ttl=63 time=11.137 ms
+
+--- 20.20.20.5 ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max = 9.663/12.811/17.633 ms
+```
+</details>
+
+В дампе на LEAF4 видим, что маршрутизация происходит на VTEP-источнике, на VTEP-получателе пакет видим уже в целевом VNI.
+<img width="779" height="398" alt="image" src="https://github.com/user-attachments/assets/eca4d5c6-eb81-43e2-9427-615a55b78d87" />
+<img width="753" height="396" alt="image" src="https://github.com/user-attachments/assets/59244a4d-8aaf-43b3-8f86-5cefa2b521e6" />
 
 ## 6. Итоговые конфигурации устройств фабрики
 [Конфигурация Spine1](./configs/spine1.conf)<br>
