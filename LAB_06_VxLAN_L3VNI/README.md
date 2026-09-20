@@ -253,6 +253,8 @@ Neighbor          AS Session State AFI/SAFI                AFI/SAFI State   NLRI
 10.1.2.6       65000 Established   IPv4 Unicast            Negotiated              4          4
 ```
 </details>
+
+<details>
 <summary> LEAF1 / show ip bgp</summary>
   
 ```eos
