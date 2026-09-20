@@ -594,7 +594,7 @@ round-trip min/avg/max = 9.663/12.811/17.633 ms
 <img width="753" height="396" alt="image" src="https://github.com/user-attachments/assets/59244a4d-8aaf-43b3-8f86-5cefa2b521e6" />
 
 
-## 5. Настройки для симметричного IRB
+## 7. Настройки для симметричного IRB
 <details>
 <summary>Контекст: LEAF1</summary>
 
@@ -625,7 +625,7 @@ router bgp 65001
 ```
 </details>
 
-## 6. Проверка работы симметричного IRB
+## 8. Проверка работы симметричного IRB
 
 Отличие - появились route type 5 маршруты.
 
