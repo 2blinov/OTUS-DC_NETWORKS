@@ -417,7 +417,6 @@ rtt min/avg/max/mdev = 4.356/4.767/5.196/0.347 ms, ipg/ewma 5.873/5.042 ms
 </details>
 
 ## 5. Настройки для асимметричного IRB
-Пояснения касательно настройки
 <details>
 <summary>Контекст: LEAF2/Arista</summary>
 
@@ -483,12 +482,12 @@ PING 20.20.20.5 (20.20.20.5): 56 data bytes
 --- 20.20.20.5 ping statistics ---
 3 packets transmitted, 3 packets received, 0% packet loss
 round-trip min/avg/max = 9.663/12.811/17.633 ms
+```
+</details>
 
 В дампе на LEAF4 видим, что маршрутизация происходит на VTEP-источнике, на VTEP-получателе пакет видим уже в целевом VNI.
 <img width="779" height="398" alt="image" src="https://github.com/user-attachments/assets/eca4d5c6-eb81-43e2-9427-615a55b78d87" />
 <img width="753" height="396" alt="image" src="https://github.com/user-attachments/assets/59244a4d-8aaf-43b3-8f86-5cefa2b521e6" />
-```
-</details>
 
 
 <details>
