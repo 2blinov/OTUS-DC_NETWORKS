@@ -127,7 +127,7 @@ router bgp 65001
 </details>
 
 <details>
-<summary>Настройкb SRV1/summary>
+<summary>Настройка SRV1/summary>
 
 ```eos
 SRV1:/# ip a
