@@ -589,6 +589,145 @@ round-trip min/avg/max = 9.663/12.811/17.633 ms
 <img width="779" height="398" alt="image" src="https://github.com/user-attachments/assets/eca4d5c6-eb81-43e2-9427-615a55b78d87" />
 <img width="753" height="396" alt="image" src="https://github.com/user-attachments/assets/59244a4d-8aaf-43b3-8f86-5cefa2b521e6" />
 
+
+## 5. Настройки для симметричного IRB
+<details>
+<summary>Контекст: LEAF1</summary>
+
+```
+vrf instance TENANT1
+!
+interface Vlan10
+   vrf TENANT1
+   ip address 10.10.10.254/24
+!
+interface Vlan20
+   vrf TENANT1
+   ip address 20.20.20.254/24
+!
+interface Vxlan1
+   vxlan vrf TENANT1 vni 50001
+!
+ip virtual-router mac-address 00:00:22:22:33:33
+!
+ip routing vrf TENANT1
+!
+router bgp 65001
+   vrf TENANT1
+      rd 10.1.0.5:50001
+      route-target import evpn 50001:50001
+      route-target export evpn 50001:50001
+      redistribute connected
+```
+</details>
+
+## 6. Проверка работы симметричного IRB
+
+Отличие - появились route type 5 маршруты.
+
+<details>
+<summary>LEAF1 / show bgp evpn</summary>
+
+```
+LEAF1#show bgp evpn
+BGP routing table information for VRF default
+Router identifier 10.1.0.3, local AS number 65001
+Route status codes: * - valid, > - active, S - Stale, E - ECMP head, e - ECMP
+                    c - Contributing to ECMP, % - Pending BGP convergence
+Origin codes: i - IGP, e - EGP, ? - incomplete
+AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
+
+          Network                Next Hop              Metric  LocPref Weight  Path
+ * >      RD: 10.1.0.3:10010 mac-ip 0200.0000.0001
+                                 -                     -       -       0       i
+ * >      RD: 10.1.0.3:10010 mac-ip 0200.0000.0001 10.10.10.1
+                                 -                     -       -       0       i
+ * >Ec    RD: 10.1.0.6:10020 mac-ip 0200.0000.0005
+                                 10.1.0.6              -       100     0       65000 65004 i
+ *  ec    RD: 10.1.0.6:10020 mac-ip 0200.0000.0005
+                                 10.1.0.6              -       100     0       65000 65004 i
+ * >Ec    RD: 10.1.0.6:10020 mac-ip 0200.0000.0005 20.20.20.5
+                                 10.1.0.6              -       100     0       65000 65004 i
+ *  ec    RD: 10.1.0.6:10020 mac-ip 0200.0000.0005 20.20.20.5
+                                 10.1.0.6              -       100     0       65000 65004 i
+ * >      RD: 10.1.0.3:10010 imet 10.1.0.3
+                                 -                     -       -       0       i
+ * >      RD: 10.1.0.3:10020 imet 10.1.0.3
+                                 -                     -       -       0       i
+ * >Ec    RD: 10.1.0.4:10010 imet 10.1.0.4
+                                 10.1.0.4              -       100     0       65000 65002 i
+ *  ec    RD: 10.1.0.4:10010 imet 10.1.0.4
+                                 10.1.0.4              -       100     0       65000 65002 i
+ * >Ec    RD: 10.1.0.4:10020 imet 10.1.0.4
+                                 10.1.0.4              -       100     0       65000 65002 i
+ *  ec    RD: 10.1.0.4:10020 imet 10.1.0.4
+                                 10.1.0.4              -       100     0       65000 65002 i
+ * >Ec    RD: 10.1.0.5:10010 imet 10.1.0.5
+                                 10.1.0.5              -       100     0       65000 65003 i
+ *  ec    RD: 10.1.0.5:10010 imet 10.1.0.5
+                                 10.1.0.5              -       100     0       65000 65003 i
+ * >Ec    RD: 10.1.0.5:10020 imet 10.1.0.5
+                                 10.1.0.5              -       100     0       65000 65003 i
+ *  ec    RD: 10.1.0.5:10020 imet 10.1.0.5
+                                 10.1.0.5              -       100     0       65000 65003 i
+ * >Ec    RD: 10.1.0.6:10010 imet 10.1.0.6
+                                 10.1.0.6              -       100     0       65000 65004 i
+ *  ec    RD: 10.1.0.6:10010 imet 10.1.0.6
+                                 10.1.0.6              -       100     0       65000 65004 i
+ * >Ec    RD: 10.1.0.6:10020 imet 10.1.0.6
+                                 10.1.0.6              -       100     0       65000 65004 i
+ *  ec    RD: 10.1.0.6:10020 imet 10.1.0.6
+                                 10.1.0.6              -       100     0       65000 65004 i
+ * >      RD: 10.1.0.3:50001 ip-prefix 10.10.10.0/24
+                                 -                     -       -       0       i
+ * >Ec    RD: 10.1.0.4:50001 ip-prefix 10.10.10.0/24
+                                 10.1.0.4              -       100     0       65000 65002 i
+ *  ec    RD: 10.1.0.4:50001 ip-prefix 10.10.10.0/24
+                                 10.1.0.4              -       100     0       65000 65002 i
+ * >Ec    RD: 10.1.0.5:50001 ip-prefix 10.10.10.0/24
+                                 10.1.0.5              -       100     0       65000 65003 i
+ *  ec    RD: 10.1.0.5:50001 ip-prefix 10.10.10.0/24
+                                 10.1.0.5              -       100     0       65000 65003 i
+ * >Ec    RD: 10.1.0.6:50001 ip-prefix 10.10.10.0/24
+                                 10.1.0.6              -       100     0       65000 65004 i
+ *  ec    RD: 10.1.0.6:50001 ip-prefix 10.10.10.0/24
+                                 10.1.0.6              -       100     0       65000 65004 i
+ * >      RD: 10.1.0.3:50001 ip-prefix 20.20.20.0/24
+                                 -                     -       -       0       i
+ * >Ec    RD: 10.1.0.4:50001 ip-prefix 20.20.20.0/24
+                                 10.1.0.4              -       100     0       65000 65002 i
+ *  ec    RD: 10.1.0.4:50001 ip-prefix 20.20.20.0/24
+                                 10.1.0.4              -       100     0       65000 65002 i
+ * >Ec    RD: 10.1.0.5:50001 ip-prefix 20.20.20.0/24
+                                 10.1.0.5              -       100     0       65000 65003 i
+ *  ec    RD: 10.1.0.5:50001 ip-prefix 20.20.20.0/24
+                                 10.1.0.5              -       100     0       65000 65003 i
+ * >Ec    RD: 10.1.0.6:50001 ip-prefix 20.20.20.0/24
+                                 10.1.0.6              -       100     0       65000 65004 i
+ *  ec    RD: 10.1.0.6:50001 ip-prefix 20.20.20.0/24
+                                 10.1.0.6              -       100     0       65000 65004 i
+```
+</details>
+
+<details>
+<summary>ping SRV1 -> SRV5</summary>
+
+```
+SRV1:/# ping -c 3 20.20.20.5
+PING 20.20.20.5 (20.20.20.5): 56 data bytes
+64 bytes from 20.20.20.5: seq=0 ttl=62 time=12.825 ms
+64 bytes from 20.20.20.5: seq=1 ttl=62 time=10.855 ms
+64 bytes from 20.20.20.5: seq=2 ttl=62 time=10.713 ms
+
+--- 20.20.20.5 ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max = 10.713/11.464/12.825 ms
+```
+</details>
+
+В дампе на LEAF4 видим, что симметричный IRB работает: трафик между VLAN ходит в рамках L3VNI 50001.
+<img width="1240" height="403" alt="image" src="https://github.com/user-attachments/assets/8a7d51fd-da7a-470d-851f-330bae35f2a3" />
+
 ## 6. Итоговые конфигурации устройств фабрики
 [Конфигурация Spine1](./configs/spine1.conf)<br>
 [Конфигурация Spine2](./configs/spine2.conf)<br>
