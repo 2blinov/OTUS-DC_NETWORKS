@@ -126,6 +126,117 @@ router bgp 65001
 ```
 </details>
 
+<details>
+<summary>Настройкb SRV1/summary>
+
+```eos
+SRV1:/# ip a
+106: eth1@if105: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP qlen 1000
+    link/ether 02:00:00:00:00:01 brd ff:ff:ff:ff:ff:ff
+    inet 10.10.10.1/24 scope global eth1
+       valid_lft forever preferred_lft forever
+SRV1:/# ip route
+default via 10.10.10.254 dev eth1 
+10.10.10.0/24 dev eth1 scope link  src 10.10.10.1 
+```
+</details>
+
+<details>
+<summary>Настройкb SRV2/summary>
+
+```eos
+SRV1:/# ip addr show dev eth1
+106: eth1@if105: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP qlen 1000
+    link/ether 02:00:00:00:00:01 brd ff:ff:ff:ff:ff:ff
+    inet 10.10.10.1/24 scope global eth1
+       valid_lft forever preferred_lft forever
+SRV1:/# ip route
+default via 10.10.10.254 dev eth1
+```
+</details>
+
+<details>
+<summary>Настройкb SRV2/summary>
+
+```eos
+SRV2:/# ip addr show dev eth1
+99: eth1@if98: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP qlen 1000
+    link/ether 02:00:00:00:00:02 brd ff:ff:ff:ff:ff:ff
+    inet 20.20.20.1/24 scope global eth1
+       valid_lft forever preferred_lft forever
+SRV2:/# ip route
+default via 20.20.20.254 dev eth1
+```
+</details>
+
+<details>
+<summary>Настройкb SRV3/summary>
+
+```eos
+SRV3:/# ip a
+5: bond0: <BROADCAST,MULTICAST,UP,LOWER_UP400> mtu 1500 qdisc noqueue state UP qlen 1000
+    link/ether 50:00:00:09:00:01 brd ff:ff:ff:ff:ff:ff
+6: VRF1: <NOARP,UP,LOWER_UP400> mtu 65536 qdisc noqueue state UP qlen 1000
+    link/ether be:29:ea:10:00:c9 brd ff:ff:ff:ff:ff:ff
+7: VRF2: <NOARP,UP,LOWER_UP400> mtu 65536 qdisc noqueue state UP qlen 1000
+    link/ether 1a:31:9b:3a:0e:3e brd ff:ff:ff:ff:ff:ff
+8: bond0.10@bond0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master VRF1 state UP qlen 1000
+    link/ether 50:00:00:09:00:01 brd ff:ff:ff:ff:ff:ff
+    inet 10.10.10.3/24 scope global bond0.10
+       valid_lft forever preferred_lft forever
+9: bond0.20@bond0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master VRF2 state UP qlen 1000
+    link/ether 50:00:00:09:00:01 brd ff:ff:ff:ff:ff:ff
+    inet 20.20.20.3/24 scope global bond0.20
+       valid_lft forever preferred_lft forever
+114: eth1@if113: <BROADCAST,MULTICAST,UP,LOWER_UP800,M-DOWN> mtu 1500 qdisc noqueue master bond0 state UP qlen 1000
+    link/ether 02:00:00:00:01:03 brd ff:ff:ff:ff:ff:ff
+116: eth2@if115: <BROADCAST,MULTICAST,UP,LOWER_UP800,M-DOWN> mtu 1500 qdisc noqueue master bond0 state UP qlen 1000
+    link/ether 02:00:00:00:02:03 brd ff:ff:ff:ff:ff:ff
+SRV3:/# ip route show table 10
+default via 10.10.10.254 dev bond0.10 
+broadcast 10.10.10.0 dev bond0.10 scope link  src 10.10.10.3 
+10.10.10.0/24 dev bond0.10 scope link  src 10.10.10.3 
+local 10.10.10.3 dev bond0.10 scope host  src 10.10.10.3 
+broadcast 10.10.10.255 dev bond0.10 scope link  src 10.10.10.3 
+SRV3:/# ip route show table 20
+default via 20.20.20.254 dev bond0.20 
+broadcast 20.20.20.0 dev bond0.20 scope link  src 20.20.20.3 
+20.20.20.0/24 dev bond0.20 scope link  src 20.20.20.3 
+local 20.20.20.3 dev bond0.20 scope host  src 20.20.20.3 
+broadcast 20.20.20.255 dev bond0.20 scope link  src 20.20.20.3 
+```
+</details>
+
+<details>
+<summary>Настройкb SRV4/summary>
+
+```eos
+SRV4:/# ip addr show dev eth1
+135: eth1@if134: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP qlen 1000
+    link/ether 02:00:00:00:00:04 brd ff:ff:ff:ff:ff:ff
+    inet 10.10.10.4/24 scope global eth1
+       valid_lft forever preferred_lft forever
+SRV4:/# ip route
+default via 10.10.10.254 dev eth1 
+10.10.10.0/24 dev eth1 scope link  src 10.10.10.4 
+```
+</details>
+
+<details>
+<summary>Настройкb SRV5/summary>
+
+```eos
+SRV5:/# ip addr show dev eth1
+141: eth1@if140: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP qlen 1000
+    link/ether 02:00:00:00:00:05 brd ff:ff:ff:ff:ff:ff
+    inet 20.20.20.5/24 scope global eth1
+       valid_lft forever preferred_lft forever
+SRV5:/# ip route
+default via 20.20.20.254 dev eth1 
+20.20.20.0/24 dev eth1 scope link  src 20.20.20.5 
+```
+</details>
+
 ## 4. Проверка связности
 <details>
 <summary>LEAF1 / show bgp summary</summary>
