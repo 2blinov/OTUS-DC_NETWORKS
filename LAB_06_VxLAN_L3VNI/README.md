@@ -813,9 +813,9 @@ EVPN instance: VLAN 20
 ```
 </details>
 
-Маршруты route type 4 от второго устройства ESI-LAG:
-EvpnEsImportRt:00:00:00:00:00:01
-DF Election: Preference 50
+Маршруты route type 4 от второго устройства ESI-LAG:<br>
+EvpnEsImportRt:00:00:00:00:00:01<br>
+DF Election: Preference 50<br>
 
 <details>
 <summary>LEAF2 / route type 4 / sh bgp evpn route-type ethernet-segment detail</summary>
@@ -843,9 +843,9 @@ BGP routing table entry for ethernet-segment 0000:0000:0000:0000:0001 10.1.0.5, 
 ```
 </details>
 
-Маршруты route type 1 от второго устройства ESI-LAG:
-per-EVI Type-1: для VNI 10010 и 10020.
-ESI Type-1: с указанием VNI = 0
+Маршруты route type 1 от второго устройства ESI-LAG:<br>
+per-EVI Type-1: для VNI 10010 и 10020.<br>
+ESI Type-1: с указанием VNI = 0<br>
 <details>
 <summary>LEAF2 / route type 1 / sh bgp evpn route-type auto-discovery detail</summary>
 
@@ -1024,7 +1024,7 @@ AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Li
 
 
 <details>
-<summary>LEAF1 / sh bgp evpn route-type mac-ip </summary>
+<summary>LEAF2 / sh bgp evpn route-type mac-ip </summary>
 
 ```
 LEAF2#sh bgp evpn route-type mac-ip 
