@@ -1,4 +1,4 @@
-# Лабораторная работа №5 "VxLAN L3VNI"
+# Лабораторная работа №5 "VxLAN L3VNI + Multihoming"
 
 ## Задание:
 1. [Подготовка стенда](#1-подготовка-стенда)
@@ -9,6 +9,9 @@
 6. [Проверка работы асимметричного IRB](#6-проверка-работы-асимметричного-irb)
 7. [Настройка для cимметричного IRB](#5-настройка-для-симметричного-irb)
 8. [Проверка работы симметричного IRB](#6-проверка-работы-симметричного-irb)
+9. [Настройка Multihoming](#9-настройка-multihoming)
+10. [Проверка Multihoming](#10-проверка-multihoming)
+11. [Конфигурации устройств фабрики](#11-конфигурации-устройств-фабрики)
 
 ## 1. Подготовка стенда
 В качестве платформы для организации стенда был выбран PNETlab, развернутый на WSL, с использованием образов Arista cEOS и alpine. Интересно было развернуть стенд с помощью альтернативного инструмента, а так же в PNETlab удобнее собирать и анализировать трафик, проходящий через устройства. На стенде дополнительно хотелось реализовать следующие моменты:
@@ -728,7 +731,406 @@ round-trip min/avg/max = 10.713/11.464/12.825 ms
 В дампе на LEAF4 видим, что симметричный IRB работает: трафик между VLAN ходит в рамках L3VNI 50001.
 <img width="1240" height="403" alt="image" src="https://github.com/user-attachments/assets/8a7d51fd-da7a-470d-851f-330bae35f2a3" />
 
-## 6. Итоговые конфигурации устройств фабрики
+## 9. Настройка Multihoming
+Настройка multihoming  на LEAF2/LEAF3 для сервера SRV3
+<details>
+<summary>Настройка LEAF</summary>
+
+```
+link tracking group CORE-TRACKING                                    # Трэкинг-группа для мониторинга апоинков
+   recovery delay 1
+!
+interface Port-Channel3                                              # Агрегированный интерфейс в сторону SRV3
+   description "Trunk to SRV3"
+   switchport trunk allowed vlan 10,20                               # Настроен как транк
+   switchport mode trunk                                             # Поданы VL10, 20
+   !
+   evpn ethernet-segment                                             # Настройки Ethernet-сегмента
+      identifier 0000:0000:0000:0000:0001                            # ESI
+      designated-forwarder election algorithm preference 100         # Приоритет устройства при выборе Designated Forwarder
+      route-target import 00:00:00:00:00:01                          # Импорт EVPN route type 4 маршрутов, относящихся к нашему сегменту.
+   lacp system-id 0000.0000.3333                                     # System ID для LACP
+   spanning-tree portfast
+!
+interface Ethernet1
+   description P2P-SPINE1
+   link tracking group CORE-TRACKING upstream                        # Настройка аплинка для трекинга
+!
+interface Ethernet2
+   description P2P-SPINE2
+   link tracking group CORE-TRACKING upstream                        # Настройка аплинка для трекинга
+!
+interface Ethernet3
+   description "SRV3"
+   switchport trunk allowed vlan 10,20
+   switchport mode trunk
+   channel-group 3 mode active                                       # Включаем порт в агрегированный интерфейс
+   link tracking group CORE-TRACKING downstream                      # Настройка даунлинка для трекинга
+```
+</details>
+
+## 10. Проверка Multihoming
+
+<details>
+<summary>LEAF2 / sh bgp evpn instance</summary>
+
+```
+LEAF2#sh bgp evpn instance 
+EVPN instance: VLAN 10
+  Route distinguisher: 10.1.0.4:10010
+  Route target import: Route-Target-AS:10010:10010
+  Route target export: Route-Target-AS:10010:10010
+  Service interface: VLAN-based
+  Local VXLAN IP address: 10.1.0.4
+  VXLAN: enabled
+  MPLS: disabled
+  Local ethernet segment:
+    ESI: 0000:0000:0000:0000:0001
+      Interface: Port-Channel3
+      Mode: all-active
+      State: up
+      ES-Import RT: 00:00:00:00:00:01
+      DF election algorithm: preference
+      Designated forwarder: 10.1.0.4
+      Non-Designated forwarder: 10.1.0.5
+EVPN instance: VLAN 20
+  Route distinguisher: 10.1.0.4:10020
+  Route target import: Route-Target-AS:10020:10020
+  Route target export: Route-Target-AS:10020:10020
+  Service interface: VLAN-based
+  Local VXLAN IP address: 10.1.0.4
+  VXLAN: enabled
+  MPLS: disabled
+  Local ethernet segment:
+    ESI: 0000:0000:0000:0000:0001
+      Interface: Port-Channel3
+      Mode: all-active
+      State: up
+      ES-Import RT: 00:00:00:00:00:01
+      DF election algorithm: preference
+      Designated forwarder: 10.1.0.4
+      Non-Designated forwarder: 10.1.0.5
+```
+</details>
+
+Маршруты route type 4 от второго устройства ESI-LAG:
+EvpnEsImportRt:00:00:00:00:00:01
+DF Election: Preference 50
+
+<details>
+<summary>LEAF2 / route type 4 / sh bgp evpn route-type ethernet-segment detail</summary>
+
+```
+LEAF2#sh bgp evpn route-type ethernet-segment detail
+BGP routing table information for VRF default
+Router identifier 10.1.0.4, local AS number 65002
+BGP routing table entry for ethernet-segment 0000:0000:0000:0000:0001 10.1.0.4, Route Distinguisher: 10.1.0.4:1
+ Paths: 1 available
+  Local
+    - from - (0.0.0.0)
+      Origin IGP, metric -, localpref -, weight 0, tag 0, valid, local, best
+      Extended Community: TunnelEncap:tunnelTypeVxlan EvpnEsImportRt:00:00:00:00:00:01 DF Election: Preference 100
+BGP routing table entry for ethernet-segment 0000:0000:0000:0000:0001 10.1.0.5, Route Distinguisher: 10.1.0.5:1
+ Paths: 2 available
+  65000 65003
+    10.1.0.5 from 10.1.0.2 (10.1.0.2)
+      Origin IGP, metric -, localpref 100, weight 0, tag 0, valid, external, ECMP head, ECMP, best, ECMP contributor
+      Extended Community: TunnelEncap:tunnelTypeVxlan EvpnEsImportRt:00:00:00:00:00:01 DF Election: Preference 50
+  65000 65003
+    10.1.0.5 from 10.1.0.1 (10.1.0.1)
+      Origin IGP, metric -, localpref 100, weight 0, tag 0, valid, external, ECMP, ECMP contributor
+      Extended Community: TunnelEncap:tunnelTypeVxlan EvpnEsImportRt:00:00:00:00:00:01 DF Election: Preference 50
+```
+</details>
+
+Маршруты route type 1 от второго устройства ESI-LAG:
+per-EVI Type-1: для VNI 10010 и 10020.
+ESI Type-1: с указанием VNI = 0
+<details>
+<summary>LEAF2 / route type 1 / sh bgp evpn route-type auto-discovery detail</summary>
+
+```
+LEAF2#sh bgp evpn route-type auto-discovery detail 
+BGP routing table information for VRF default
+Router identifier 10.1.0.4, local AS number 65002
+BGP routing table entry for auto-discovery 0 0000:0000:0000:0000:0001, Route Distinguisher: 10.1.0.4:10010
+ Paths: 1 available
+  Local
+    - from - (0.0.0.0)
+      Origin IGP, metric -, localpref -, weight 0, tag 0, valid, local, best
+      Extended Community: Route-Target-AS:10010:10010 TunnelEncap:tunnelTypeVxlan
+      VNI: 10010
+BGP routing table entry for auto-discovery 0 0000:0000:0000:0000:0001, Route Distinguisher: 10.1.0.4:10020
+ Paths: 1 available
+  Local
+    - from - (0.0.0.0)
+      Origin IGP, metric -, localpref -, weight 0, tag 0, valid, local, best
+      Extended Community: Route-Target-AS:10020:10020 TunnelEncap:tunnelTypeVxlan
+      VNI: 10020
+BGP routing table entry for auto-discovery 0 0000:0000:0000:0000:0001, Route Distinguisher: 10.1.0.5:10010
+ Paths: 2 available
+  65000 65003
+    10.1.0.5 from 10.1.0.2 (10.1.0.2)
+      Origin IGP, metric -, localpref 100, weight 0, tag 0, valid, external, ECMP head, ECMP, best, ECMP contributor
+      Extended Community: Route-Target-AS:10010:10010 TunnelEncap:tunnelTypeVxlan
+      VNI: 10010
+  65000 65003
+    10.1.0.5 from 10.1.0.1 (10.1.0.1)
+      Origin IGP, metric -, localpref 100, weight 0, tag 0, valid, external, ECMP, ECMP contributor
+      Extended Community: Route-Target-AS:10010:10010 TunnelEncap:tunnelTypeVxlan
+      VNI: 10010
+BGP routing table entry for auto-discovery 0 0000:0000:0000:0000:0001, Route Distinguisher: 10.1.0.5:10020
+ Paths: 2 available
+  65000 65003
+    10.1.0.5 from 10.1.0.2 (10.1.0.2)
+      Origin IGP, metric -, localpref 100, weight 0, tag 0, valid, external, ECMP head, ECMP, best, ECMP contributor
+      Extended Community: Route-Target-AS:10020:10020 TunnelEncap:tunnelTypeVxlan
+      VNI: 10020
+  65000 65003
+    10.1.0.5 from 10.1.0.1 (10.1.0.1)
+      Origin IGP, metric -, localpref 100, weight 0, tag 0, valid, external, ECMP, ECMP contributor
+      Extended Community: Route-Target-AS:10020:10020 TunnelEncap:tunnelTypeVxlan
+      VNI: 10020
+BGP routing table entry for auto-discovery 0000:0000:0000:0000:0001, Route Distinguisher: 10.1.0.4:1
+ Paths: 1 available
+  Local
+    - from - (0.0.0.0)
+      Origin IGP, metric -, localpref -, weight 0, tag 0, valid, local, best
+      Extended Community: Route-Target-AS:10010:10010 Route-Target-AS:10020:10020 TunnelEncap:tunnelTypeVxlan EvpnEsiLabel:0
+BGP routing table entry for auto-discovery 0000:0000:0000:0000:0001, Route Distinguisher: 10.1.0.5:1
+ Paths: 2 available
+  65000 65003
+    10.1.0.5 from 10.1.0.2 (10.1.0.2)
+      Origin IGP, metric -, localpref 100, weight 0, tag 0, valid, external, ECMP head, ECMP, best, ECMP contributor
+      Extended Community: Route-Target-AS:10010:10010 Route-Target-AS:10020:10020 TunnelEncap:tunnelTypeVxlan EvpnEsiLabel:0
+      VNI: 0
+  65000 65003
+    10.1.0.5 from 10.1.0.1 (10.1.0.1)
+      Origin IGP, metric -, localpref 100, weight 0, tag 0, valid, external, ECMP, ECMP contributor
+      Extended Community: Route-Target-AS:10010:10010 Route-Target-AS:10020:10020 TunnelEncap:tunnelTypeVxlan EvpnEsiLabel:0
+      VNI: 0
+```
+</details>
+
+<details>
+<summary>ping SRV1 -> SRV3</summary>
+
+```
+SRV1:/# ping -c 3 10.10.10.3
+PING 10.10.10.3 (10.10.10.3): 56 data bytes
+64 bytes from 10.10.10.3: seq=0 ttl=64 time=14.132 ms
+64 bytes from 10.10.10.3: seq=1 ttl=64 time=11.758 ms
+64 bytes from 10.10.10.3: seq=2 ttl=64 time=8.562 ms
+
+--- 10.10.10.3 ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max = 8.562/11.484/14.132 ms
+SRV1:/# ping -c 3 20.20.20.3
+PING 20.20.20.3 (20.20.20.3): 56 data bytes
+64 bytes from 20.20.20.3: seq=0 ttl=62 time=15.363 ms
+64 bytes from 20.20.20.3: seq=1 ttl=62 time=13.453 ms
+64 bytes from 20.20.20.3: seq=2 ttl=62 time=47.762 ms
+
+--- 20.20.20.3 ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max = 13.453/25.526/47.762 ms
+```
+</details>
+
+<details>
+<summary>ping SRV2 -> SRV3</summary>
+
+```
+SRV2:/#  ping -c 3 10.10.10.3
+PING 10.10.10.3 (10.10.10.3): 56 data bytes
+64 bytes from 10.10.10.3: seq=0 ttl=62 time=31.818 ms
+64 bytes from 10.10.10.3: seq=1 ttl=62 time=17.610 ms
+64 bytes from 10.10.10.3: seq=2 ttl=62 time=19.113 ms
+
+--- 10.10.10.3 ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max = 17.610/22.847/31.818 ms
+SRV2:/#  ping -c 3 20.20.20.3
+PING 20.20.20.3 (20.20.20.3): 56 data bytes
+64 bytes from 20.20.20.3: seq=0 ttl=64 time=10.705 ms
+64 bytes from 20.20.20.3: seq=1 ttl=64 time=8.896 ms
+64 bytes from 20.20.20.3: seq=2 ttl=64 time=8.558 ms
+
+--- 20.20.20.3 ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max = 8.558/9.386/10.705 ms
+```
+</details>
+
+<details>
+<summary>LEAF1 / sh bgp evpn route-type mac-ip </summary>
+
+```
+LEAF1#sh bgp evpn route-type mac-ip 
+BGP routing table information for VRF default
+Router identifier 10.1.0.3, local AS number 65001
+Route status codes: * - valid, > - active, S - Stale, E - ECMP head, e - ECMP
+                    c - Contributing to ECMP, % - Pending BGP convergence
+Origin codes: i - IGP, e - EGP, ? - incomplete
+AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
+
+          Network                Next Hop              Metric  LocPref Weight  Path
+ * >      RD: 10.1.0.3:10020 mac-ip 0200.0000.0002
+                                 -                     -       -       0       i
+ * >      RD: 10.1.0.3:10020 mac-ip 0200.0000.0002 20.20.20.1
+                                 -                     -       -       0       i
+ * >Ec    RD: 10.1.0.4:10010 mac-ip 0200.0000.0103
+                                 10.1.0.4              -       100     0       65000 65002 i
+ *  ec    RD: 10.1.0.4:10010 mac-ip 0200.0000.0103
+                                 10.1.0.4              -       100     0       65000 65002 i
+ * >Ec    RD: 10.1.0.5:10010 mac-ip 0200.0000.0103
+                                 10.1.0.5              -       100     0       65000 65003 i
+ *  ec    RD: 10.1.0.5:10010 mac-ip 0200.0000.0103
+                                 10.1.0.5              -       100     0       65000 65003 i
+ * >Ec    RD: 10.1.0.4:10010 mac-ip 0200.0000.0103 10.10.10.3
+                                 10.1.0.4              -       100     0       65000 65002 i
+ *  ec    RD: 10.1.0.4:10010 mac-ip 0200.0000.0103 10.10.10.3
+                                 10.1.0.4              -       100     0       65000 65002 i
+ * >Ec    RD: 10.1.0.5:10010 mac-ip 0200.0000.0103 10.10.10.3
+                                 10.1.0.5              -       100     0       65000 65003 i
+ *  ec    RD: 10.1.0.5:10010 mac-ip 0200.0000.0103 10.10.10.3
+                                 10.1.0.5              -       100     0       65000 65003 i
+ * >Ec    RD: 10.1.0.4:10020 mac-ip 0200.0000.0203
+                                 10.1.0.4              -       100     0       65000 65002 i
+ *  ec    RD: 10.1.0.4:10020 mac-ip 0200.0000.0203
+                                 10.1.0.4              -       100     0       65000 65002 i
+ * >Ec    RD: 10.1.0.5:10020 mac-ip 0200.0000.0203
+                                 10.1.0.5              -       100     0       65000 65003 i
+ *  ec    RD: 10.1.0.5:10020 mac-ip 0200.0000.0203
+                                 10.1.0.5              -       100     0       65000 65003 i
+ * >Ec    RD: 10.1.0.4:10020 mac-ip 0200.0000.0203 20.20.20.3
+                                 10.1.0.4              -       100     0       65000 65002 i
+ *  ec    RD: 10.1.0.4:10020 mac-ip 0200.0000.0203 20.20.20.3
+                                 10.1.0.4              -       100     0       65000 65002 i
+ * >Ec    RD: 10.1.0.5:10020 mac-ip 0200.0000.0203 20.20.20.3
+                                 10.1.0.5              -       100     0       65000 65003 i
+ *  ec    RD: 10.1.0.5:10020 mac-ip 0200.0000.0203 20.20.20.3
+                                 10.1.0.5              -       100     0       65000 65003 i
+ * >Ec    RD: 10.1.0.6:10020 mac-ip 26ee.25d2.599c
+                                 10.1.0.6              -       100     0       65000 65004 i
+ *  ec    RD: 10.1.0.6:10020 mac-ip 26ee.25d2.599c
+                                 10.1.0.6              -       100     0       65000 65004 i
+ * >      RD: 10.1.0.3:10010 mac-ip 5000.0008.0001
+                                 -                     -       -       0       i
+ * >      RD: 10.1.0.3:10010 mac-ip 5000.0008.0001 10.10.10.1
+                                 -                     -       -       0       i
+```
+</details>
+
+
+<details>
+<summary>LEAF1 / sh bgp evpn route-type mac-ip </summary>
+
+```
+LEAF2#sh bgp evpn route-type mac-ip 
+BGP routing table information for VRF default
+Router identifier 10.1.0.4, local AS number 65002
+Route status codes: * - valid, > - active, S - Stale, E - ECMP head, e - ECMP
+                    c - Contributing to ECMP, % - Pending BGP convergence
+Origin codes: i - IGP, e - EGP, ? - incomplete
+AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
+
+          Network                Next Hop              Metric  LocPref Weight  Path
+ * >Ec    RD: 10.1.0.3:10020 mac-ip 0200.0000.0002
+                                 10.1.0.3              -       100     0       65000 65001 i
+ *  ec    RD: 10.1.0.3:10020 mac-ip 0200.0000.0002
+                                 10.1.0.3              -       100     0       65000 65001 i
+ * >Ec    RD: 10.1.0.3:10020 mac-ip 0200.0000.0002 20.20.20.1
+                                 10.1.0.3              -       100     0       65000 65001 i
+ *  ec    RD: 10.1.0.3:10020 mac-ip 0200.0000.0002 20.20.20.1
+                                 10.1.0.3              -       100     0       65000 65001 i
+ * >      RD: 10.1.0.4:10010 mac-ip 0200.0000.0103
+                                 -                     -       -       0       i
+ * >Ec    RD: 10.1.0.5:10010 mac-ip 0200.0000.0103
+                                 10.1.0.5              -       100     0       65000 65003 i
+ *  ec    RD: 10.1.0.5:10010 mac-ip 0200.0000.0103
+                                 10.1.0.5              -       100     0       65000 65003 i
+ * >      RD: 10.1.0.4:10010 mac-ip 0200.0000.0103 10.10.10.3
+                                 -                     -       -       0       i
+ * >Ec    RD: 10.1.0.5:10010 mac-ip 0200.0000.0103 10.10.10.3
+                                 10.1.0.5              -       100     0       65000 65003 i
+ *  ec    RD: 10.1.0.5:10010 mac-ip 0200.0000.0103 10.10.10.3
+                                 10.1.0.5              -       100     0       65000 65003 i
+ * >      RD: 10.1.0.4:10020 mac-ip 0200.0000.0203
+                                 -                     -       -       0       i
+ * >Ec    RD: 10.1.0.5:10020 mac-ip 0200.0000.0203
+                                 10.1.0.5              -       100     0       65000 65003 i
+ *  ec    RD: 10.1.0.5:10020 mac-ip 0200.0000.0203
+                                 10.1.0.5              -       100     0       65000 65003 i
+ * >      RD: 10.1.0.4:10020 mac-ip 0200.0000.0203 20.20.20.3
+                                 -                     -       -       0       i
+ * >Ec    RD: 10.1.0.5:10020 mac-ip 0200.0000.0203 20.20.20.3
+                                 10.1.0.5              -       100     0       65000 65003 i
+ *  ec    RD: 10.1.0.5:10020 mac-ip 0200.0000.0203 20.20.20.3
+                                 10.1.0.5              -       100     0       65000 65003 i
+ * >Ec    RD: 10.1.0.3:10010 mac-ip 5000.0008.0001
+                                 10.1.0.3              -       100     0       65000 65001 i
+ *  ec    RD: 10.1.0.3:10010 mac-ip 5000.0008.0001
+                                 10.1.0.3              -       100     0       65000 65001 i
+ * >Ec    RD: 10.1.0.3:10010 mac-ip 5000.0008.0001 10.10.10.1
+                                 10.1.0.3              -       100     0       65000 65001 i
+ *  ec    RD: 10.1.0.3:10010 mac-ip 5000.0008.0001 10.10.10.1
+                                 10.1.0.3              -       100     0       65000 65001 i
+```
+</details>
+
+<details>
+<summary>LEAF1 / sh mac address-table </summary>
+
+```
+LEAF1#sh mac address-table 
+          Mac Address Table
+------------------------------------------------------------------
+
+Vlan    Mac Address       Type        Ports      Moves   Last Move
+----    -----------       ----        -----      -----   ---------
+   1    0000.2222.3333    STATIC      Cpu
+  10    0000.2222.3333    STATIC      Cpu
+  10    0200.0000.0103    DYNAMIC     Vx1        2       0:03:35 ago
+  10    5000.0008.0001    DYNAMIC     Et3        1       0:03:14 ago
+  20    0000.2222.3333    STATIC      Cpu
+  20    0200.0000.0002    DYNAMIC     Et4        1       0:02:33 ago
+  20    0200.0000.0203    DYNAMIC     Vx1        1       0:03:35 ago
+  20    26ee.25d2.599c    DYNAMIC     Vx1        1       0:01:23 ago
+4094    0000.2222.3333    STATIC      Cpu
+4094    5010.07b7.82f4    DYNAMIC     Vx1        1       1:18:41 ago
+4094    5037.1a89.95a2    DYNAMIC     Vx1        1       0:03:35 ago
+4094    50a6.2620.e7e9    DYNAMIC     Vx1        1       0:16:53 ago
+Total Mac Addresses for this criterion: 12
+```
+</details>
+
+<details>
+<summary>LEAF2 / sh mac address-table </summary>
+
+```
+LEAF2# sh mac address-table 
+          Mac Address Table
+------------------------------------------------------------------
+
+Vlan    Mac Address       Type        Ports      Moves   Last Move
+----    -----------       ----        -----      -----   ---------
+  10    0000.2222.3333    STATIC      Cpu
+  10    0200.0000.0103    DYNAMIC     Po3        2       0:04:38 ago
+  10    5000.0008.0001    DYNAMIC     Vx1        1       0:04:38 ago
+  20    0000.2222.3333    STATIC      Cpu
+  20    0200.0000.0002    DYNAMIC     Vx1        1       0:03:56 ago
+  20    0200.0000.0203    DYNAMIC     Po3        2       0:04:26 ago
+  20    26ee.25d2.599c    DYNAMIC     Vx1        1       0:02:47 ago
+4093    0000.2222.3333    STATIC      Cpu
+4093    5037.1a89.95a2    DYNAMIC     Vx1        1       0:04:59 ago
+4093    504a.d149.f27a    DYNAMIC     Vx1        1       2:26:23 ago
+4093    50a6.2620.e7e9    DYNAMIC     Vx1        1       0:18:17 ago
+Total Mac Addresses for this criterion: 11
+```
+</details>
+
+## 11. Итоговые конфигурации устройств фабрики
 [Конфигурация Spine1](./configs/spine1.conf)<br>
 [Конфигурация Spine2](./configs/spine2.conf)<br>
 [Конфигурация Leaf1](./configs/leaf1.conf)<br>
