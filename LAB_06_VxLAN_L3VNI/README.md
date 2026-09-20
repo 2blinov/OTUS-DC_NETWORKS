@@ -7,7 +7,7 @@
 4. [Проверка связности](#4-проверка-связности)
 5. [Настройка для асимметричного IRB](#5-настройка-для-асимметричного-irb)
 6. [Проверка работы асимметричного IRB](#6-проверка-работы-асимметричного-irb)
-7. [Настройка для имметричного IRB](#5-настройка-для-симметричного-irb)
+7. [Настройка для cимметричного IRB](#5-настройка-для-симметричного-irb)
 8. [Проверка работы симметричного IRB](#6-проверка-работы-симметричного-irb)
 
 ## 1. Подготовка стенда
@@ -489,488 +489,31 @@ round-trip min/avg/max = 9.663/12.811/17.633 ms
 <img width="779" height="398" alt="image" src="https://github.com/user-attachments/assets/eca4d5c6-eb81-43e2-9427-615a55b78d87" />
 <img width="753" height="396" alt="image" src="https://github.com/user-attachments/assets/59244a4d-8aaf-43b3-8f86-5cefa2b521e6" />
 
-
 <details>
-<summary>LEAF1 / route-type 3/ sh bgp l2vpn evpn route-type 3</summary>
+<summary>LEAF1 / route-type 3 / sh bgp evpn route-type imet</summary>
 
 ```
-LEAF1# sh bgp l2vpn evpn route-type 3
-BGP routing table information for VRF default, address family L2VPN EVPN
-Route Distinguisher: 10.1.0.3:10010    (L2VNI 10010)
-BGP routing table entry for [3]:[0]:[32]:[10.1.0.3]/88, version 115
-Paths: (1 available, best #1)
-Flags: (0x000002) (high32 00000000) on xmit-list, is not in l2rib/evpn
-Multipath: eBGP
-
-  Advertised path-id 1
-  Path type: local, path is valid, is best path, no labeled nexthop, is extd
-  AS-Path: NONE, path locally originated
-    10.1.0.3 (metric 0) from 0.0.0.0 (10.1.0.3)
-      Origin IGP, MED not set, localpref 100, weight 32768
-      Extcommunity: RT:10010:10010 ENCAP:8
-      PMSI Tunnel Attribute:
-        flags: 0x00, Tunnel type: Ingress Replication
-        Label: 10010, Tunnel Id: 10.1.0.3
-
-  Path-id 1 advertised to peers:
-    10.1.0.1           10.1.0.2       
-BGP routing table entry for [3]:[0]:[32]:[10.1.0.4]/88, version 116
-Paths: (1 available, best #1)
-Flags: (0x000012) (high32 00000000) on xmit-list, is in l2rib/evpn, is not in HW
-Multipath: eBGP
-
-  Advertised path-id 1
-  Path type: external, path is valid, is best path, no labeled nexthop
-             Imported from 10.1.0.4:10010:[3]:[0]:[32]:[10.1.0.4]/88 
-  AS-Path: 65000 65002 , path sourced external to AS
-    10.1.0.4 (metric 0) from 10.1.0.1 (10.1.0.1)
-      Origin IGP, MED not set, localpref 100, weight 0
-      Extcommunity: RT:10010:10010 ENCAP:8
-      PMSI Tunnel Attribute:
-        flags: 0x00, Tunnel type: Ingress Replication
-        Label: 10010, Tunnel Id: 10.1.0.4
-
-  Path-id 1 not advertised to any peer
-BGP routing table entry for [3]:[0]:[32]:[10.1.0.5]/88, version 117
-Paths: (1 available, best #1)
-Flags: (0x000012) (high32 00000000) on xmit-list, is in l2rib/evpn, is not in HW
-Multipath: eBGP
-
-  Advertised path-id 1
-  Path type: external, path is valid, is best path, no labeled nexthop
-             Imported from 10.1.0.5:10010:[3]:[0]:[32]:[10.1.0.5]/88 
-  AS-Path: 65000 65003 , path sourced external to AS
-    10.1.0.5 (metric 0) from 10.1.0.1 (10.1.0.1)
-      Origin IGP, MED not set, localpref 100, weight 0
-      Extcommunity: RT:10010:10010 ENCAP:8
-      PMSI Tunnel Attribute:
-        flags: 0x00, Tunnel type: Ingress Replication
-        Label: 10010, Tunnel Id: 10.1.0.5
-
-  Path-id 1 not advertised to any peer
-
-Route Distinguisher: 10.1.0.3:10020    (L2VNI 10020)
-BGP routing table entry for [3]:[0]:[32]:[10.1.0.3]/88, version 119
-Paths: (1 available, best #1)
-Flags: (0x000002) (high32 00000000) on xmit-list, is not in l2rib/evpn
-Multipath: eBGP
-
-  Advertised path-id 1
-  Path type: local, path is valid, is best path, no labeled nexthop, is extd
-  AS-Path: NONE, path locally originated
-    10.1.0.3 (metric 0) from 0.0.0.0 (10.1.0.3)
-      Origin IGP, MED not set, localpref 100, weight 32768
-      Extcommunity: RT:10020:10020 ENCAP:8
-      PMSI Tunnel Attribute:
-        flags: 0x00, Tunnel type: Ingress Replication
-        Label: 10020, Tunnel Id: 10.1.0.3
-
-  Path-id 1 advertised to peers:
-    10.1.0.1           10.1.0.2       
-BGP routing table entry for [3]:[0]:[32]:[10.1.0.4]/88, version 120
-Paths: (1 available, best #1)
-Flags: (0x000012) (high32 00000000) on xmit-list, is in l2rib/evpn, is not in HW
-Multipath: eBGP
-
-  Advertised path-id 1
-  Path type: external, path is valid, is best path, no labeled nexthop
-             Imported from 10.1.0.4:10020:[3]:[0]:[32]:[10.1.0.4]/88 
-  AS-Path: 65000 65002 , path sourced external to AS
-    10.1.0.4 (metric 0) from 10.1.0.1 (10.1.0.1)
-      Origin IGP, MED not set, localpref 100, weight 0
-      Extcommunity: RT:10020:10020 ENCAP:8
-      PMSI Tunnel Attribute:
-        flags: 0x00, Tunnel type: Ingress Replication
-        Label: 10020, Tunnel Id: 10.1.0.4
-
-  Path-id 1 not advertised to any peer
-BGP routing table entry for [3]:[0]:[32]:[10.1.0.5]/88, version 121
-Paths: (1 available, best #1)
-Flags: (0x000012) (high32 00000000) on xmit-list, is in l2rib/evpn, is not in HW
-Multipath: eBGP
-
-  Advertised path-id 1
-  Path type: external, path is valid, is best path, no labeled nexthop
-             Imported from 10.1.0.5:10020:[3]:[0]:[32]:[10.1.0.5]/88 
-  AS-Path: 65000 65003 , path sourced external to AS
-    10.1.0.5 (metric 0) from 10.1.0.1 (10.1.0.1)
-      Origin IGP, MED not set, localpref 100, weight 0
-      Extcommunity: RT:10020:10020 ENCAP:8
-      PMSI Tunnel Attribute:
-        flags: 0x00, Tunnel type: Ingress Replication
-        Label: 10020, Tunnel Id: 10.1.0.5
-
-  Path-id 1 not advertised to any peer
-
-Route Distinguisher: 10.1.0.4:10010
-BGP routing table entry for [3]:[0]:[32]:[10.1.0.4]/88, version 122
-Paths: (2 available, best #2)
-Flags: (0x000002) (high32 00000000) on xmit-list, is not in l2rib/evpn, is not in HW
-Multipath: eBGP
-
-  Path type: external, path is valid, not best reason: newer EBGP path, no labeled nexthop, is extd
-  AS-Path: 65000 65002 , path sourced external to AS
-    10.1.0.4 (metric 0) from 10.1.0.2 (10.1.0.2)
-      Origin IGP, MED not set, localpref 100, weight 0
-      Extcommunity: RT:10010:10010 ENCAP:8
-      PMSI Tunnel Attribute:
-        flags: 0x00, Tunnel type: Ingress Replication
-        Label: 10010, Tunnel Id: 10.1.0.4
-
-  Advertised path-id 1
-  Path type: external, path is valid, is best path, no labeled nexthop, is extd
-             Imported to 1 destination(s)
-             Imported paths list: L2-10010
-  AS-Path: 65000 65002 , path sourced external to AS
-    10.1.0.4 (metric 0) from 10.1.0.1 (10.1.0.1)
-      Origin IGP, MED not set, localpref 100, weight 0
-      Extcommunity: RT:10010:10010 ENCAP:8
-      PMSI Tunnel Attribute:
-        flags: 0x00, Tunnel type: Ingress Replication
-        Label: 10010, Tunnel Id: 10.1.0.4
-
-  Path-id 1 not advertised to any peer
-
-Route Distinguisher: 10.1.0.4:10020
-BGP routing table entry for [3]:[0]:[32]:[10.1.0.4]/88, version 123
-Paths: (2 available, best #2)
-Flags: (0x000002) (high32 00000000) on xmit-list, is not in l2rib/evpn, is not in HW
-Multipath: eBGP
-
-  Path type: external, path is valid, not best reason: newer EBGP path, no labeled nexthop, is extd
-  AS-Path: 65000 65002 , path sourced external to AS
-    10.1.0.4 (metric 0) from 10.1.0.2 (10.1.0.2)
-      Origin IGP, MED not set, localpref 100, weight 0
-      Extcommunity: RT:10020:10020 ENCAP:8
-      PMSI Tunnel Attribute:
-        flags: 0x00, Tunnel type: Ingress Replication
-        Label: 10020, Tunnel Id: 10.1.0.4
-
-  Advertised path-id 1
-  Path type: external, path is valid, is best path, no labeled nexthop, is extd
-             Imported to 1 destination(s)
-             Imported paths list: L2-10020
-  AS-Path: 65000 65002 , path sourced external to AS
-    10.1.0.4 (metric 0) from 10.1.0.1 (10.1.0.1)
-      Origin IGP, MED not set, localpref 100, weight 0
-      Extcommunity: RT:10020:10020 ENCAP:8
-      PMSI Tunnel Attribute:
-        flags: 0x00, Tunnel type: Ingress Replication
-        Label: 10020, Tunnel Id: 10.1.0.4
-
-  Path-id 1 not advertised to any peer
-
-Route Distinguisher: 10.1.0.5:10010
-BGP routing table entry for [3]:[0]:[32]:[10.1.0.5]/88, version 124
-Paths: (2 available, best #2)
-Flags: (0x000002) (high32 00000000) on xmit-list, is not in l2rib/evpn, is not in HW
-Multipath: eBGP
-
-  Path type: external, path is valid, not best reason: newer EBGP path, no labeled nexthop, is extd
-  AS-Path: 65000 65003 , path sourced external to AS
-    10.1.0.5 (metric 0) from 10.1.0.2 (10.1.0.2)
-      Origin IGP, MED not set, localpref 100, weight 0
-      Extcommunity: RT:10010:10010 ENCAP:8
-      PMSI Tunnel Attribute:
-        flags: 0x00, Tunnel type: Ingress Replication
-        Label: 10010, Tunnel Id: 10.1.0.5
-
-  Advertised path-id 1
-  Path type: external, path is valid, is best path, no labeled nexthop, is extd
-             Imported to 1 destination(s)
-             Imported paths list: L2-10010
-  AS-Path: 65000 65003 , path sourced external to AS
-    10.1.0.5 (metric 0) from 10.1.0.1 (10.1.0.1)
-      Origin IGP, MED not set, localpref 100, weight 0
-      Extcommunity: RT:10010:10010 ENCAP:8
-      PMSI Tunnel Attribute:
-        flags: 0x00, Tunnel type: Ingress Replication
-        Label: 10010, Tunnel Id: 10.1.0.5
-
-  Path-id 1 not advertised to any peer
-
-Route Distinguisher: 10.1.0.5:10020
-BGP routing table entry for [3]:[0]:[32]:[10.1.0.5]/88, version 125
-Paths: (2 available, best #2)
-Flags: (0x000002) (high32 00000000) on xmit-list, is not in l2rib/evpn, is not in HW
-Multipath: eBGP
-
-  Path type: external, path is valid, not best reason: newer EBGP path, no labeled nexthop, is extd
-  AS-Path: 65000 65003 , path sourced external to AS
-    10.1.0.5 (metric 0) from 10.1.0.2 (10.1.0.2)
-      Origin IGP, MED not set, localpref 100, weight 0
-      Extcommunity: RT:10020:10020 ENCAP:8
-      PMSI Tunnel Attribute:
-        flags: 0x00, Tunnel type: Ingress Replication
-        Label: 10020, Tunnel Id: 10.1.0.5
-
-  Advertised path-id 1
-  Path type: external, path is valid, is best path, no labeled nexthop, is extd
-             Imported to 1 destination(s)
-             Imported paths list: L2-10020
-  AS-Path: 65000 65003 , path sourced external to AS
-    10.1.0.5 (metric 0) from 10.1.0.1 (10.1.0.1)
-      Origin IGP, MED not set, localpref 100, weight 0
-      Extcommunity: RT:10020:10020 ENCAP:8
-      PMSI Tunnel Attribute:
-        flags: 0x00, Tunnel type: Ingress Replication
-        Label: 10020, Tunnel Id: 10.1.0.5
-
-  Path-id 1 not advertised to any peer
-```
-</details>
-
-<details>
-<summary>LEAF1 / route-type 2 / sh bgp l2vpn evpn route-type 2</summary>
-
-```
-LEAF1# sh bgp l2vpn evpn route-type 2
-BGP routing table information for VRF default, address family L2VPN EVPN
-Route Distinguisher: 10.1.0.3:10010    (L2VNI 10010)
-BGP routing table entry for [2]:[0]:[0]:[48]:[aac1.ab5d.072e]:[0]:[0.0.0.0]/216, version 167
-Paths: (1 available, best #1)
-Flags: (0x000102) (high32 00000000) on xmit-list, is not in l2rib/evpn
-Multipath: eBGP
-
-  Advertised path-id 1
-  Path type: local, path is valid, is best path, no labeled nexthop
-  AS-Path: NONE, path locally originated
-    10.1.0.3 (metric 0) from 0.0.0.0 (10.1.0.3)
-      Origin IGP, MED not set, localpref 100, weight 32768
-      Received label 10010
-      Extcommunity: RT:10010:10010 ENCAP:8
-
-  Path-id 1 advertised to peers:
-    10.1.0.1           10.1.0.2       
-BGP routing table entry for [2]:[0]:[0]:[48]:[aac1.abc9.261e]:[0]:[0.0.0.0]/216, version 182
-Paths: (1 available, best #1)
-Flags: (0x000212) (high32 00000000) on xmit-list, is in l2rib/evpn, is not in HW
-Multipath: eBGP
-
-  Advertised path-id 1
-  Path type: external, path is valid, is best path, no labeled nexthop, in rib
-             Imported from 10.1.0.4:10010:[2]:[0]:[0]:[48]:[aac1.abc9.261e]:[0]:[0.0.0.0]/216 
-  AS-Path: 65000 65002 , path sourced external to AS
-    10.1.0.4 (metric 0) from 10.1.0.1 (10.1.0.1)
-      Origin IGP, MED not set, localpref 100, weight 0
-      Received label 10010
-      Extcommunity: RT:10010:10010 ENCAP:8
-
-  Path-id 1 not advertised to any peer
-BGP routing table entry for [2]:[0]:[0]:[48]:[aac1.abdc.3580]:[0]:[0.0.0.0]/216, version 169
-Paths: (1 available, best #1)
-Flags: (0x000212) (high32 00000000) on xmit-list, is in l2rib/evpn, is not in HW
-Multipath: eBGP
-
-  Advertised path-id 1
-  Path type: external, path is valid, is best path, no labeled nexthop, in rib
-             Imported from 10.1.0.5:10010:[2]:[0]:[0]:[48]:[aac1.abdc.3580]:[0]:[0.0.0.0]/216 
-  AS-Path: 65000 65003 , path sourced external to AS
-    10.1.0.5 (metric 0) from 10.1.0.1 (10.1.0.1)
-      Origin IGP, MED not set, localpref 100, weight 0
-      Received label 10010
-      Extcommunity: RT:10010:10010 ENCAP:8
-
-  Path-id 1 not advertised to any peer
-
-Route Distinguisher: 10.1.0.3:10020    (L2VNI 10020)
-BGP routing table entry for [2]:[0]:[0]:[48]:[aac1.ab5d.072e]:[0]:[0.0.0.0]/216, version 163
-Paths: (1 available, best #1)
-Flags: (0x000102) (high32 00000000) on xmit-list, is not in l2rib/evpn
-Multipath: eBGP
-
-  Advertised path-id 1
-  Path type: local, path is valid, is best path, no labeled nexthop
-  AS-Path: NONE, path locally originated
-    10.1.0.3 (metric 0) from 0.0.0.0 (10.1.0.3)
-      Origin IGP, MED not set, localpref 100, weight 32768
-      Received label 10020
-      Extcommunity: RT:10020:10020 ENCAP:8
-
-  Path-id 1 advertised to peers:
-    10.1.0.1           10.1.0.2       
-BGP routing table entry for [2]:[0]:[0]:[48]:[aac1.abab.2dd7]:[0]:[0.0.0.0]/216, version 186
-Paths: (1 available, best #1)
-Flags: (0x000212) (high32 00000000) on xmit-list, is in l2rib/evpn, is not in HW
-Multipath: eBGP
-
-  Advertised path-id 1
-  Path type: external, path is valid, is best path, no labeled nexthop, in rib
-             Imported from 10.1.0.4:10020:[2]:[0]:[0]:[48]:[aac1.abab.2dd7]:[0]:[0.0.0.0]/216 
-  AS-Path: 65000 65002 , path sourced external to AS
-    10.1.0.4 (metric 0) from 10.1.0.1 (10.1.0.1)
-      Origin IGP, MED not set, localpref 100, weight 0
-      Received label 10020
-      Extcommunity: RT:10020:10020 ENCAP:8
-
-  Path-id 1 not advertised to any peer
-BGP routing table entry for [2]:[0]:[0]:[48]:[aac1.abdc.3580]:[0]:[0.0.0.0]/216, version 184
-Paths: (1 available, best #1)
-Flags: (0x000212) (high32 00000000) on xmit-list, is in l2rib/evpn, is not in HW
-Multipath: eBGP
-
-  Advertised path-id 1
-  Path type: external, path is valid, is best path, no labeled nexthop, in rib
-             Imported from 10.1.0.5:10020:[2]:[0]:[0]:[48]:[aac1.abdc.3580]:[0]:[0.0.0.0]/216 
-  AS-Path: 65000 65003 , path sourced external to AS
-    10.1.0.5 (metric 0) from 10.1.0.1 (10.1.0.1)
-      Origin IGP, MED not set, localpref 100, weight 0
-      Received label 10020
-      Extcommunity: RT:10020:10020 ENCAP:8
-
-  Path-id 1 not advertised to any peer
-
-Route Distinguisher: 10.1.0.4:10010
-BGP routing table entry for [2]:[0]:[0]:[48]:[aac1.abc9.261e]:[0]:[0.0.0.0]/216, version 181
-Paths: (2 available, best #2)
-Flags: (0x000202) (high32 00000000) on xmit-list, is not in l2rib/evpn, is not in HW
-Multipath: eBGP
-
-  Path type: external, path is valid, not best reason: Router Id, no labeled nexthop
-  AS-Path: 65000 65002 , path sourced external to AS
-    10.1.0.4 (metric 0) from 10.1.0.2 (10.1.0.2)
-      Origin IGP, MED not set, localpref 100, weight 0
-      Received label 10010
-      Extcommunity: RT:10010:10010 ENCAP:8
-
-  Advertised path-id 1
-  Path type: external, path is valid, is best path, no labeled nexthop
-             Imported to 1 destination(s)
-             Imported paths list: L2-10010
-  AS-Path: 65000 65002 , path sourced external to AS
-    10.1.0.4 (metric 0) from 10.1.0.1 (10.1.0.1)
-      Origin IGP, MED not set, localpref 100, weight 0
-      Received label 10010
-      Extcommunity: RT:10010:10010 ENCAP:8
-
-  Path-id 1 not advertised to any peer
-
-Route Distinguisher: 10.1.0.4:10020
-BGP routing table entry for [2]:[0]:[0]:[48]:[aac1.abab.2dd7]:[0]:[0.0.0.0]/216, version 185
-Paths: (2 available, best #2)
-Flags: (0x000202) (high32 00000000) on xmit-list, is not in l2rib/evpn, is not in HW
-Multipath: eBGP
-
-  Path type: external, path is valid, not best reason: Router Id, no labeled nexthop
-  AS-Path: 65000 65002 , path sourced external to AS
-    10.1.0.4 (metric 0) from 10.1.0.2 (10.1.0.2)
-      Origin IGP, MED not set, localpref 100, weight 0
-      Received label 10020
-      Extcommunity: RT:10020:10020 ENCAP:8
-
-  Advertised path-id 1
-  Path type: external, path is valid, is best path, no labeled nexthop
-             Imported to 1 destination(s)
-             Imported paths list: L2-10020
-  AS-Path: 65000 65002 , path sourced external to AS
-    10.1.0.4 (metric 0) from 10.1.0.1 (10.1.0.1)
-      Origin IGP, MED not set, localpref 100, weight 0
-      Received label 10020
-      Extcommunity: RT:10020:10020 ENCAP:8
-
-  Path-id 1 not advertised to any peer
-
-Route Distinguisher: 10.1.0.5:10010
-BGP routing table entry for [2]:[0]:[0]:[48]:[aac1.abdc.3580]:[0]:[0.0.0.0]/216, version 168
-Paths: (2 available, best #2)
-Flags: (0x000202) (high32 00000000) on xmit-list, is not in l2rib/evpn, is not in HW
-Multipath: eBGP
-
-  Path type: external, path is valid, not best reason: Router Id, no labeled nexthop
-  AS-Path: 65000 65003 , path sourced external to AS
-    10.1.0.5 (metric 0) from 10.1.0.2 (10.1.0.2)
-      Origin IGP, MED not set, localpref 100, weight 0
-      Received label 10010
-      Extcommunity: RT:10010:10010 ENCAP:8
-
-  Advertised path-id 1
-  Path type: external, path is valid, is best path, no labeled nexthop
-             Imported to 1 destination(s)
-             Imported paths list: L2-10010
-  AS-Path: 65000 65003 , path sourced external to AS
-    10.1.0.5 (metric 0) from 10.1.0.1 (10.1.0.1)
-      Origin IGP, MED not set, localpref 100, weight 0
-      Received label 10010
-      Extcommunity: RT:10010:10010 ENCAP:8
-
-  Path-id 1 not advertised to any peer
-
-Route Distinguisher: 10.1.0.5:10020
-BGP routing table entry for [2]:[0]:[0]:[48]:[aac1.abdc.3580]:[0]:[0.0.0.0]/216, version 183
-Paths: (2 available, best #2)
-Flags: (0x000202) (high32 00000000) on xmit-list, is not in l2rib/evpn, is not in HW
-Multipath: eBGP
-
-  Path type: external, path is valid, not best reason: Router Id, no labeled nexthop
-  AS-Path: 65000 65003 , path sourced external to AS
-    10.1.0.5 (metric 0) from 10.1.0.2 (10.1.0.2)
-      Origin IGP, MED not set, localpref 100, weight 0
-      Received label 10020
-      Extcommunity: RT:10020:10020 ENCAP:8
-
-  Advertised path-id 1
-  Path type: external, path is valid, is best path, no labeled nexthop
-             Imported to 1 destination(s)
-             Imported paths list: L2-10020
-  AS-Path: 65000 65003 , path sourced external to AS
-    10.1.0.5 (metric 0) from 10.1.0.1 (10.1.0.1)
-      Origin IGP, MED not set, localpref 100, weight 0
-      Received label 10020
-      Extcommunity: RT:10020:10020 ENCAP:8
-
-  Path-id 1 not advertised to any peer
-```
-</details>
-
-<details>
-<summary>LEAF1 / show mac address-table</summary>
-
-```
-LEAF1# show mac address-table 
-Legend: 
-        * - primary entry, G - Gateway MAC, (R) - Routed MAC, O - Overlay MAC
-        age - seconds since last seen,+ - primary entry using vPC Peer-Link,
-        (T) - True, (F) - False, C - ControlPlane MAC, ~ - vsan,
-        (NA)- Not Applicable A - ESI Active Path, S - ESI Standby Path
-        TL - True Learned, PS - Peer Sync, RO - Re-originate 
-   VLAN     MAC Address      Type      age     Secure NTFY Ports
----------+-----------------+--------+---------+------+----+------------------
-*   10     aac1.ab5d.072e   dynamic  NA         F      F    Eth1/3
-C   10     aac1.abc9.261e   dynamic  NA         F      F    nve1(10.1.0.4)
-C   10     aac1.abdc.3580   dynamic  NA         F      F    nve1(10.1.0.5)
-*   20     aac1.ab5d.072e   dynamic  NA         F      F    Eth1/3
-C   20     aac1.abab.2dd7   dynamic  NA         F      F    nve1(10.1.0.4)
-C   20     aac1.abdc.3580   dynamic  NA         F      F    nve1(10.1.0.5)
-G    -     0cfc.8000.1b08   static   -         F      F    sup-eth1(R)
-```
-</details>
-
-
-<details>
-<summary>LEAF2 / route-type 3 / sh bgp evpn route-type imet</summary>
-
-```
-LEAF2#sh bgp evpn route-type imet 
+LEAF1#show bgp evpn route-type imet 
 BGP routing table information for VRF default
-Router identifier 10.1.0.4, local AS number 65002
+Router identifier 10.1.0.3, local AS number 65001
 Route status codes: * - valid, > - active, S - Stale, E - ECMP head, e - ECMP
-                    c - Contributing to ECMP, % - Pending best path selection
+                    c - Contributing to ECMP, % - Pending BGP convergence
 Origin codes: i - IGP, e - EGP, ? - incomplete
 AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
 
           Network                Next Hop              Metric  LocPref Weight  Path
- * >Ec    RD: 10.1.0.3:10010 imet 10.1.0.3
-                                 10.1.0.3              -       100     0       65000 65001 i
- *  ec    RD: 10.1.0.3:10010 imet 10.1.0.3
-                                 10.1.0.3              -       100     0       65000 65001 i
- * >Ec    RD: 10.1.0.3:10020 imet 10.1.0.3
-                                 10.1.0.3              -       100     0       65000 65001 i
- *  ec    RD: 10.1.0.3:10020 imet 10.1.0.3
-                                 10.1.0.3              -       100     0       65000 65001 i
- * >      RD: 10.1.0.4:10010 imet 10.1.0.4
+ * >      RD: 10.1.0.3:10010 imet 10.1.0.3
                                  -                     -       -       0       i
- * >      RD: 10.1.0.4:10020 imet 10.1.0.4
+ * >      RD: 10.1.0.3:10020 imet 10.1.0.3
                                  -                     -       -       0       i
+ * >Ec    RD: 10.1.0.4:10010 imet 10.1.0.4
+                                 10.1.0.4              -       100     0       65000 65002 i
+ *  ec    RD: 10.1.0.4:10010 imet 10.1.0.4
+                                 10.1.0.4              -       100     0       65000 65002 i
+ * >Ec    RD: 10.1.0.4:10020 imet 10.1.0.4
+                                 10.1.0.4              -       100     0       65000 65002 i
+ *  ec    RD: 10.1.0.4:10020 imet 10.1.0.4
+                                 10.1.0.4              -       100     0       65000 65002 i
  * >Ec    RD: 10.1.0.5:10010 imet 10.1.0.5
                                  10.1.0.5              -       100     0       65000 65003 i
  *  ec    RD: 10.1.0.5:10010 imet 10.1.0.5
@@ -979,63 +522,70 @@ AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Li
                                  10.1.0.5              -       100     0       65000 65003 i
  *  ec    RD: 10.1.0.5:10020 imet 10.1.0.5
                                  10.1.0.5              -       100     0       65000 65003 i
+ * >Ec    RD: 10.1.0.6:10010 imet 10.1.0.6
+                                 10.1.0.6              -       100     0       65000 65004 i
+ *  ec    RD: 10.1.0.6:10010 imet 10.1.0.6
+                                 10.1.0.6              -       100     0       65000 65004 i
+ * >Ec    RD: 10.1.0.6:10020 imet 10.1.0.6
+                                 10.1.0.6              -       100     0       65000 65004 i
+ *  ec    RD: 10.1.0.6:10020 imet 10.1.0.6
+                                 10.1.0.6              -       100     0       65000 65004 i
 ```
 </details>
 
 <details>
-<summary>LEAF2 / route-type 2 / sh bgp evpn route-type mac-ip</summary>
+<summary>LEAF1 / route-type 2 / sh bgp evpn route-type mac-ip</summary>
 
 ```
-LEAF2#sh bgp evpn route-type mac-ip 
+LEAF1#show bgp evpn route-type mac-ip 
 BGP routing table information for VRF default
-Router identifier 10.1.0.4, local AS number 65002
+Router identifier 10.1.0.3, local AS number 65001
 Route status codes: * - valid, > - active, S - Stale, E - ECMP head, e - ECMP
-                    c - Contributing to ECMP, % - Pending best path selection
+                    c - Contributing to ECMP, % - Pending BGP convergence
 Origin codes: i - IGP, e - EGP, ? - incomplete
 AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
 
           Network                Next Hop              Metric  LocPref Weight  Path
- * >Ec    RD: 10.1.0.3:10010 mac-ip aac1.ab5d.072e
-                                 10.1.0.3              -       100     0       65000 65001 i
- *  ec    RD: 10.1.0.3:10010 mac-ip aac1.ab5d.072e
-                                 10.1.0.3              -       100     0       65000 65001 i
- * >Ec    RD: 10.1.0.3:10020 mac-ip aac1.ab5d.072e
-                                 10.1.0.3              -       100     0       65000 65001 i
- *  ec    RD: 10.1.0.3:10020 mac-ip aac1.ab5d.072e
-                                 10.1.0.3              -       100     0       65000 65001 i
- * >      RD: 10.1.0.4:10020 mac-ip aac1.abab.2dd7
+ * >      RD: 10.1.0.3:10010 mac-ip 0200.0000.0001
                                  -                     -       -       0       i
- * >      RD: 10.1.0.4:10010 mac-ip aac1.abc9.261e
+ * >      RD: 10.1.0.3:10010 mac-ip 0200.0000.0001 10.10.10.1
                                  -                     -       -       0       i
- * >Ec    RD: 10.1.0.5:10010 mac-ip aac1.abdc.3580
-                                 10.1.0.5              -       100     0       65000 65003 i
- *  ec    RD: 10.1.0.5:10010 mac-ip aac1.abdc.3580
-                                 10.1.0.5              -       100     0       65000 65003 i
- * >Ec    RD: 10.1.0.5:10020 mac-ip aac1.abdc.3580
-                                 10.1.0.5              -       100     0       65000 65003 i
- *  ec    RD: 10.1.0.5:10020 mac-ip aac1.abdc.3580
-                                 10.1.0.5              -       100     0       65000 65003 i
+ * >Ec    RD: 10.1.0.6:10010 mac-ip 0200.0000.0004
+                                 10.1.0.6              -       100     0       65000 65004 i
+ *  ec    RD: 10.1.0.6:10010 mac-ip 0200.0000.0004
+                                 10.1.0.6              -       100     0       65000 65004 i
+ * >Ec    RD: 10.1.0.6:10010 mac-ip 0200.0000.0004 10.10.10.4
+                                 10.1.0.6              -       100     0       65000 65004 i
+ *  ec    RD: 10.1.0.6:10010 mac-ip 0200.0000.0004 10.10.10.4
+                                 10.1.0.6              -       100     0       65000 65004 i
+ * >Ec    RD: 10.1.0.6:10020 mac-ip 0200.0000.0005
+                                 10.1.0.6              -       100     0       65000 65004 i
+ *  ec    RD: 10.1.0.6:10020 mac-ip 0200.0000.0005
+                                 10.1.0.6              -       100     0       65000 65004 i
+ * >Ec    RD: 10.1.0.6:10020 mac-ip 0200.0000.0005 20.20.20.5
+                                 10.1.0.6              -       100     0       65000 65004 i
+ *  ec    RD: 10.1.0.6:10020 mac-ip 0200.0000.0005 20.20.20.5
+                                 10.1.0.6              -       100     0       65000 65004 i
 ```
 </details>
 
 <details>
-<summary>LEAF2 / show mac address-table</summary>
+<summary>LEAF1 / show mac address-table</summary>
 
 ```
-LEAF2#show mac address-table 
+LEAF1#show mac address-table
           Mac Address Table
 ------------------------------------------------------------------
 
 Vlan    Mac Address       Type        Ports      Moves   Last Move
 ----    -----------       ----        -----      -----   ---------
-  10    aac1.ab5d.072e    DYNAMIC     Vx1        1       0:16:09 ago
-  10    aac1.abc9.261e    DYNAMIC     Et3        1       0:05:02 ago
-  10    aac1.abdc.3580    DYNAMIC     Vx1        1       0:15:20 ago
-  20    aac1.ab5d.072e    DYNAMIC     Vx1        1       0:20:36 ago
-  20    aac1.abab.2dd7    DYNAMIC     Et4        1       0:04:57 ago
-  20    aac1.abdc.3580    DYNAMIC     Vx1        1       0:04:59 ago
+   1    0000.2222.3333    STATIC      Cpu
+  10    0000.2222.3333    STATIC      Cpu
+  10    0200.0000.0001    DYNAMIC     Et3        1       0:03:55 ago
+  10    0200.0000.0004    DYNAMIC     Vx1        1       0:03:55 ago
+  20    0000.2222.3333    STATIC      Cpu
+  20    0200.0000.0005    DYNAMIC     Vx1        1       0:03:50 ago
 Total Mac Addresses for this criterion: 6
-
 ```
 </details>
 
