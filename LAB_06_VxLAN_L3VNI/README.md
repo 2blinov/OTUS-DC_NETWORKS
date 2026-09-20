@@ -11,7 +11,8 @@
 8. [Проверка работы симметричного IRB](#6-проверка-работы-симметричного-irb)
 9. [Настройка Multihoming](#9-настройка-multihoming)
 10. [Проверка Multihoming](#10-проверка-multihoming)
-11. [Конфигурации устройств фабрики](#11-конфигурации-устройств-фабрики)
+11. [Отказоустойчивость Multihoming](#11-отказоустойчивость-multihoming)
+12. [Конфигурации устройств фабрики](#12-конфигурации-устройств-фабрики)
 
 ## 1. Подготовка стенда
 В качестве платформы для организации стенда был выбран PNETlab, развернутый на WSL, с использованием образов Arista cEOS и alpine. Интересно было развернуть стенд с помощью альтернативного инструмента, а так же в PNETlab удобнее собирать и анализировать трафик, проходящий через устройства. На стенде дополнительно хотелось реализовать следующие моменты:
@@ -1130,9 +1131,221 @@ Total Mac Addresses for this criterion: 11
 ```
 </details>
 
-## 11. Итоговые конфигурации устройств фабрики
-[Конфигурация Spine1](./configs/spine1.conf)<br>
-[Конфигурация Spine2](./configs/spine2.conf)<br>
-[Конфигурация Leaf1](./configs/leaf1.conf)<br>
-[Конфигурация Leaf2](./configs/leaf2.conf)<br>
-[Конфигурация Leaf3](./configs/border.conf)<br>
+## 12. Отказоустойчивость Multihoming
+
+Ставим бесконечный ping SRV1 (10.10.10.1) -> SRV3 (20.20.20.3)
+
+<details>
+<summary>LEAF1  / sh bgp evpn route-type mac-ip 20.20.20.3</summary>
+
+```
+LEAF1#sh bgp evpn route-type mac-ip 20.20.20.3
+BGP routing table information for VRF default
+Router identifier 10.1.0.3, local AS number 65001
+Route status codes: * - valid, > - active, S - Stale, E - ECMP head, e - ECMP
+                    c - Contributing to ECMP, % - Pending BGP convergence
+Origin codes: i - IGP, e - EGP, ? - incomplete
+AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
+
+          Network                Next Hop              Metric  LocPref Weight  Path
+ * >Ec    RD: 10.1.0.4:10020 mac-ip 0200.0000.0203 20.20.20.3
+                                 10.1.0.4              -       100     0       65000 65002 i
+ *  ec    RD: 10.1.0.4:10020 mac-ip 0200.0000.0203 20.20.20.3
+                                 10.1.0.4              -       100     0       65000 65002 i
+ * >Ec    RD: 10.1.0.5:10020 mac-ip 0200.0000.0203 20.20.20.3
+                                 10.1.0.5              -       100     0       65000 65003 i
+ *  ec    RD: 10.1.0.5:10020 mac-ip 0200.0000.0203 20.20.20.3
+                                 10.1.0.5              -       100     0       65000 65003 i
+```
+</details>
+
+1. Отказ даунлинка LEAF2 Eth3
+- Отключаем на LEAF2 интерфейс Eth3
+```
+LEAF2(config)#int e3
+LEAF2(config-if-Et3)#shutdown 
+```
+- Проверяем статус агрегированного интерфейса:
+```
+LEAF2#sh int po3
+Port-Channel3 is down, line protocol is lowerlayerdown (notconnect)
+  Hardware is Port-Channel, address is 5010.0700.0403
+  Description: "Trunk to SRV3"
+  Ethernet MTU 9214 bytes
+  Full-duplex, Unconfigured 
+  Active members in this channel: 0
+  Fallback mode is: off
+  Down 1 minute, 3 seconds
+  40 link status changes since last clear
+  Last clearing of "show interface" counters never
+  5 minutes input rate 0 bps (- with framing overhead), 0 packets/sec
+  5 minutes output rate 0 bps (- with framing overhead), 0 packets/sec
+     88 packets input, 10908 bytes
+     Received 4 broadcasts, 53 multicast
+     0 input errors, 0 input discards
+     1702 packets output, 201089 bytes
+     Sent 103 broadcasts, 1232 multicast
+     0 output errors, 0 output discards
+```
+- Фиксируем отсутствие mac-ip маршрута для 20.20.20.3 от LEAF2
+```
+LEAF1#sh bgp evpn route-type mac-ip 20.20.20.3
+BGP routing table information for VRF default
+Router identifier 10.1.0.3, local AS number 65001
+Route status codes: * - valid, > - active, S - Stale, E - ECMP head, e - ECMP
+                    c - Contributing to ECMP, % - Pending BGP convergence
+Origin codes: i - IGP, e - EGP, ? - incomplete
+AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
+
+          Network                Next Hop              Metric  LocPref Weight  Path
+ * >Ec    RD: 10.1.0.5:10020 mac-ip 0200.0000.0203 20.20.20.3
+                                 10.1.0.5              -       100     0       65000 65003 i
+ *  ec    RD: 10.1.0.5:10020 mac-ip 0200.0000.0203 20.20.20.3
+                                 10.1.0.5              -       100     0       65000 65003 i
+```
+- Фиксируем отсутствие потерянных паектов
+```
+SRV1:/# ping -c 10000 20.20.20.3
+PING 20.20.20.3 (20.20.20.3): 56 data bytes
+64 bytes from 20.20.20.3: seq=0 ttl=62 time=11.750 ms
+...
+64 bytes from 20.20.20.3: seq=105 ttl=62 time=11.135 ms
+^C
+--- 20.20.20.3 ping statistics ---
+106 packets transmitted, 106 packets received, 0% packet loss
+round-trip min/avg/max = 9.932/11.976/39.116 ms
+```
+2. Отказ одного аплинка LEAF2 -> SPINE1
+- Отключаем линк LEAF2 -> SPINE1
+```
+LEAF2#conf t
+LEAF2(config)#int e1
+LEAF2(config-if-Et1)#shutdown 
+```
+- Фиксируем отсутствие маршрута через SPINE1
+```
+LEAF1#sh bgp evpn route-type mac-ip 20.20.20.3
+BGP routing table information for VRF default
+Router identifier 10.1.0.3, local AS number 65001
+Route status codes: * - valid, > - active, S - Stale, E - ECMP head, e - ECMP
+                    c - Contributing to ECMP, % - Pending BGP convergence
+Origin codes: i - IGP, e - EGP, ? - incomplete
+AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
+
+          Network                Next Hop              Metric  LocPref Weight  Path
+ * >      RD: 10.1.0.4:10020 mac-ip 0200.0000.0203 20.20.20.3
+                                 10.1.0.4              -       100     0       65000 65002 i
+ * >Ec    RD: 10.1.0.5:10020 mac-ip 0200.0000.0203 20.20.20.3
+                                 10.1.0.5              -       100     0       65000 65003 i
+ *  ec    RD: 10.1.0.5:10020 mac-ip 0200.0000.0203 20.20.20.3
+                                 10.1.0.5              -       100     0       65000 65003 i
+```
+- На доступность адреса 20.20.20.3 влияния не оказывает.
+
+3. Отказ всех аплинков на LEAF2
+- Отключаем аплинки на LEAF2
+```
+LEAF2#conf t
+LEAF2(config)#int e1-2
+LEAF2(config-if-Et1-2)#shutdown 
+```
+- Фиксируем отсутствие маршрутов от LEAF2
+```
+LEAF1#sh bgp evpn route-type mac-ip 20.20.20.3
+BGP routing table information for VRF default
+Router identifier 10.1.0.3, local AS number 65001
+Route status codes: * - valid, > - active, S - Stale, E - ECMP head, e - ECMP
+                    c - Contributing to ECMP, % - Pending BGP convergence
+Origin codes: i - IGP, e - EGP, ? - incomplete
+AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
+
+          Network                Next Hop              Metric  LocPref Weight  Path
+ * >Ec    RD: 10.1.0.5:10020 mac-ip 0200.0000.0203 20.20.20.3
+                                 10.1.0.5              -       100     0       65000 65003 i
+ *  ec    RD: 10.1.0.5:10020 mac-ip 0200.0000.0203 20.20.20.3
+                                 10.1.0.5              -       100     0       65000 65003 i
+```
+- Проверяем статус link tracking
+```
+LEAF2#show link tracking group detail
+Link State Group: CORE-TRACKING Status: down
+Upstream Interfaces : Ethernet2 Ethernet1
+Downstream Interfaces : Ethernet3
+Number of times disabled : 13
+Last disabled 0:02:21 ago
+```
+- фиксируем, что link tracking отправил downstream интерфейс в errdisabled
+```
+LEAF2#sh int e3
+Ethernet3 is down, line protocol is down (errdisabled)
+  Hardware is Ethernet, address is 5010.0700.0403 (bia 5010.0700.0403)
+  Description: "SRV3"
+  Member of Port-Channel3
+  Ethernet MTU 9214 bytes, BW 1000000 kbit
+  Full-duplex, 1Gb/s, auto negotiation: off, uni-link: n/a
+  Down 3 minutes, 52 seconds
+  Loopback Mode : None
+  33 link status changes since last clear
+  Last clearing of "show interface" counters never
+  5 minutes input rate 0 bps (0.0% with framing overhead), 0 packets/sec
+  5 minutes output rate 0 bps (0.0% with framing overhead), 0 packets/sec
+     155 packets input, 20342 bytes
+     Received 4 broadcasts, 120 multicast
+     0 runts, 0 giants
+     0 input errors, 0 CRC, 0 alignment, 0 symbol, 0 input discards
+     0 PAUSE input
+     2136 packets output, 255330 bytes
+     Sent 111 broadcasts, 1604 multicast
+     0 output errors, 0 collisions
+     0 late collision, 0 deferred, 0 output discards
+     0 PAUSE output
+```
+- соответствуенн, Po3 на LEAF2 уходит в DOWN
+```
+LEAF2#sh int po3
+Port-Channel3 is down, line protocol is lowerlayerdown (notconnect)
+  Hardware is Port-Channel, address is 5010.0700.0403
+  Description: "Trunk to SRV3"
+  Ethernet MTU 9214 bytes
+  Full-duplex, Unconfigured 
+  Active members in this channel: 0
+  Fallback mode is: off
+  Down 3 minutes, 54 seconds
+  49 link status changes since last clear
+  Last clearing of "show interface" counters never
+  5 minutes input rate 0 bps (- with framing overhead), 0 packets/sec
+  5 minutes output rate 0 bps (- with framing overhead), 0 packets/sec
+     129 packets input, 16975 bytes
+     Received 4 broadcasts, 94 multicast
+     0 input errors, 0 input discards
+     2071 packets output, 246388 bytes
+     Sent 111 broadcasts, 1545 multicast
+     0 output errors, 0 output discards
+```
+- Потери тестовых пакетов не зафиксировано
+```
+SRV1:/# ping -c 10000 20.20.20.3
+PING 20.20.20.3 (20.20.20.3): 56 data bytes
+64 bytes from 20.20.20.3: seq=0 ttl=63 time=19.274 ms
+...
+64 bytes from 20.20.20.3: seq=407 ttl=63 time=10.506 ms
+^C
+...
+--- 20.20.20.3 ping statistics ---
+408 packets transmitted, 408 packets received, 0% packet loss
+round-trip min/avg/max = 10.260/13.219/46.997 ms
+```
+
+Проведенные эксперименты показывают корректную работу отказоустойчивости при следующих сценариях:
+- отказ даунлинка на одном из LEAF
+- потери одного из аплинков на одном из LEAF
+- потери всех аплинков на одном из LEAF
+- выход из строя одного из LEAF
+
+## 12. Итоговые конфигурации устройств фабрики
+[Конфигурация SPINE1](./configs/spine1.conf)<br>
+[Конфигурация SPINE2](./configs/spine2.conf)<br>
+[Конфигурация LEAF1](./configs/leaf1.conf)<br>
+[Конфигурация LEAF2](./configs/leaf2.conf)<br>
+[Конфигурация LEAF3](./configs/leaf3.conf)<br>
+[Конфигурация LEAF4](./configs/leaf4.conf)<br>
