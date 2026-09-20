@@ -91,7 +91,7 @@ router bgp 65000                                                                
 </details>
 
 <details>
-<summary>Контекст: Процесс BGP LEAF/summary>
+<summary>Контекст: Процесс BGP LEAF</summary>
 
 ```eos
 route-map RM_REDISTRIBUTE-Lo0 permit 10
