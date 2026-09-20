@@ -142,7 +142,7 @@ default via 10.10.10.254 dev eth1
 </details>
 
 <details>
-<summary>Настройкb SRV2/summary>
+<summary>Настройкb SRV2</summary>
 
 ```eos
 SRV1:/# ip addr show dev eth1
@@ -156,7 +156,7 @@ default via 10.10.10.254 dev eth1
 </details>
 
 <details>
-<summary>Настройкb SRV2/summary>
+<summary>Настройкb SRV2</summary>
 
 ```eos
 SRV2:/# ip addr show dev eth1
@@ -170,7 +170,7 @@ default via 20.20.20.254 dev eth1
 </details>
 
 <details>
-<summary>Настройкb SRV3/summary>
+<summary>Настройкb SRV3</summary>
 
 ```eos
 SRV3:/# ip a
@@ -208,7 +208,7 @@ broadcast 20.20.20.255 dev bond0.20 scope link  src 20.20.20.3
 </details>
 
 <details>
-<summary>Настройкb SRV4/summary>
+<summary>Настройкb SRV4</summary>
 
 ```eos
 SRV4:/# ip addr show dev eth1
@@ -223,7 +223,7 @@ default via 10.10.10.254 dev eth1
 </details>
 
 <details>
-<summary>Настройкb SRV5/summary>
+<summary>Настройкb SRV5</summary>
 
 ```eos
 SRV5:/# ip addr show dev eth1
