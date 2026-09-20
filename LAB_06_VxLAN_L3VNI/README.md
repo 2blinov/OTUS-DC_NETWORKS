@@ -1300,7 +1300,7 @@ Ethernet3 is down, line protocol is down (errdisabled)
      0 late collision, 0 deferred, 0 output discards
      0 PAUSE output
 ```
-- соответствуенн, Po3 на LEAF2 уходит в DOWN
+- соответствуено, Po3 на LEAF2 уходит в DOWN
 ```
 LEAF2#sh int po3
 Port-Channel3 is down, line protocol is lowerlayerdown (notconnect)
