@@ -640,6 +640,7 @@ AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Li
 
 <details>
 <summary>LEAF1 / route-type 2 / show bgp evpn route-type mac-ip</summary>
+   
 ```
 LEAF1#show bgp evpn route-type mac-ip 
 BGP routing table information for VRF default
