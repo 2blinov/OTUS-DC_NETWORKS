@@ -5,9 +5,8 @@
 2. [Разработка адресного плана](#2-разработка-адресного-плана)
 3. [Настройка eBGP для Underlay и EVPN](#3-настройка-bgp-для-underlay-и-evpn)
 4. [Проверка связности](#4-проверка-связности)
-5. [Настройки для cимметричного IRB](#7-настройки-для-симметричного-irb)
-6. [Проверка работы симметричного IRB](#8-проверка-работы-симметричного-irb)
-7. [Конфигурации устройств фабрики](#12-конфигурации-устройств-фабрики)
+5. [Проверка работы ](#5-проверка-работы-фабрики)
+6. [Конфигурации устройств фабрики](#6-конфигурации-устройств-фабрики)
 
 ## 1. Подготовка стенда
 В качестве платформы для организации стенда был выбран PNETlab, развернутый на WSL, с использованием образов Arista cEOS и alpine.
@@ -232,51 +231,72 @@ Gateway of last resort:
 <summary>Настройкb LEAF4</summary>
 
 ```eos
-vlan 110                                                      # Транспортный VLAN для стыка c FW в vrf TENANT1
+!
+vlan 110                                    # Транспортный VLAN vrf TENANT1 -> FW
    name TR-FW-TENANT1
 !
-vlan 120                                                      # Транспортный VLAN для стыка c FW в vrf TENANT1
+vlan 120                                    # Транспортный VLAN vrf TENANT2 -> FW
    name TR-FW-TENANT2
 !
 vrf instance TENANT1
 !
 vrf instance TENANT2
 !
-interface Ethernet3                                           # Транковый интерфейс до FW
+interface Ethernet1
+   description P2P-SPINE1
+   mtu 9214
+   no switchport
+   ip address 10.1.2.13/31
+!
+interface Ethernet2
+   description P2P-SPINE2
+   mtu 9214
+   no switchport
+   ip address 10.1.2.15/31
+!
+interface Ethernet3                         # Транковый интерфейс LEAF4 -> FW
    description TRUNK-2-FW
    switchport trunk allowed vlan 110,120
    switchport mode trunk
 !
-interface Vlan110                                             # SVI для Vlan110 в vrf TENANT1
+interface Loopback0
+   description ROUTER-ID
+   ip address 10.1.0.6/32
+!
+interface Vlan110                           # SVI для транспорта в vrf TENANT1
    description TR-FW-TENANT1
    vrf TENANT1
    ip address 10.1.2.16/31
 !
-interface Vlan120                                             # SVI для Vlan120 в vrf TENANT2
+interface Vlan120                           # SVI для транспорта в vrf TENANT2
    description TR-FW-TENANT2
    vrf TENANT2
    ip address 10.1.2.18/31
 !
-interface Vxlan1                                              # L3VNI для vrf TENANT1/TENANT2
+interface Vxlan1
    vxlan source-interface Loopback0
    vxlan udp-port 4789
-   vxlan vrf TENANT1 vni 50001
-   vxlan vrf TENANT2 vni 50002
+   vxlan vrf TENANT1 vni 50001              # L3VNI для vrf TENANT1
+   vxlan vrf TENANT2 vni 50002              # L3VNI для vrf TENANT2
 !
+ip routing
 ip routing vrf TENANT1
 ip routing vrf TENANT2
 !
-ip prefix-list PL_DEFAULT                                     # Префикс-лист для фильтрации маршрутов от FW в сторону фабрики
+ip prefix-list PL_DEFAULT                   # Префикс-лист, разрешающий только маршрут по умолчанию
    seq 10 permit 0.0.0.0/0
 !
-ip prefix-list PL_TENANT1                                     # Префикс-лист для фильтрации маршрутов в сторону FW из vrf TENANT1
+ip prefix-list PL_TENANT1                   # Префикс-лист для сетей TENANT1
    seq 10 permit 10.10.10.0/24
 !
-ip prefix-list PL_TENANT2                                     # Префикс-лист для фильтрации маршрутов в сторону FW из vrf TENANT2
+ip prefix-list PL_TENANT2                   # Префикс-лист для сетей TENANT2
    seq 10 permit 20.20.20.0/24
 !
-ip route vrf TENANT1 10.10.10.0/24 Null0                      # Статические маршруты для дальнейшего анонса сетей VRF в сторону FW
-ip route vrf TENANT2 20.20.20.0/24 Null0
+ip route vrf TENANT1 10.10.10.0/24 Null0    # Статика для постоянного анонса маршрута в сторону FW (TENANT1)
+ip route vrf TENANT2 20.20.20.0/24 Null0    # Статика для постоянного анонса маршрута в сторону FW (TENANT2)
+!
+route-map RM_EXPORT_EVPN permit 10          # Роут-мап для маршрутов, отдаваемых с BORDER LEAF в EVPN-фабрику (хотим отдавать только дефолт, полученный от FW)
+   match ip address prefix-list PL_DEFAULT
 !
 route-map RM_REDISTRIBUTE-Lo0 permit 10
    match interface Loopback0
@@ -322,26 +342,30 @@ router bgp 65004
       rd 10.1.0.6:50001
       route-target import evpn 50001:50001
       route-target export evpn 50001:50001
+      route-target export evpn route-map RM_EXPORT_EVPN         # Отдаем с BORDER LEAF в EVPN-фабрику только дефолт, полученный от FW
       maximum-paths 4 ecmp 4
-      neighbor 10.1.2.17 remote-as 65500                           # eBGP-соседство до FW в vrf TENANT1
+      neighbor 10.1.2.17 remote-as 65500                        # Соседство с FW в vrf TENANT1
       !
       address-family ipv4
+         no neighbor 10.0.1.17 activate
          neighbor 10.1.2.17 activate
-         neighbor 10.1.2.17 prefix-list PL_TENANT1 out
-         neighbor 10.1.2.17 prefix-list PL_DEFAULT in
+         neighbor 10.1.2.17 prefix-list PL_DEFAULT in           # Принимаем только дефолт
+         neighbor 10.1.2.17 prefix-list PL_TENANT1 out          # Отдаем только 10.10.10.0/24
          network 10.10.10.0/24
    !
    vrf TENANT2
       rd 10.1.0.6:50002
       route-target import evpn 50002:50002
       route-target export evpn 50002:50002
+      route-target export evpn route-map RM_EXPORT_EVPN         # Отдаем с BORDER LEAF в EVPN-фабрику только дефолт, полученный от FW
       maximum-paths 4 ecmp 4
-      neighbor 10.1.2.19 remote-as 65500
+      neighbor 10.1.2.19 remote-as 65500                        # Соседство с FW в vrf TENANT1
       !
       address-family ipv4
+         no neighbor 10.0.1.19 activate
          neighbor 10.1.2.19 activate
-         neighbor 10.1.2.19 prefix-list PL_TENANT2 out
-         neighbor 10.1.2.19 prefix-list PL_DEFAULT in
+         neighbor 10.1.2.19 prefix-list PL_DEFAULT in           # Принимаем только дефолт
+         neighbor 10.1.2.19 prefix-list PL_TENANT2 out          # Отдаем только 10.10.10.0/24
          network 20.20.20.0/24
 ```
 </details>
