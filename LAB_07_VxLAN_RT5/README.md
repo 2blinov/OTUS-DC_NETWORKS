@@ -93,9 +93,32 @@ router bgp 65000                                                                
 </details>
 
 <details>
-<summary>Контекст: Процесс BGP LEAF</summary>
+<summary>Контекст: Настройки LEAF</summary>
 
 ```eos
+!
+vrf instance TENANT1                                       # VRF TENANT1 для VLAN10
+!
+vrf instance TENANT2                                       # VRF TENANT1 для VLAN20
+!
+interface Vlan10                                           
+   description VLAN10
+   vrf TENANT1                                             # Помещаем SVI VLAN10 в TENANT1
+   ip address 10.10.10.254/24
+!
+interface Vlan20
+   description VLAN20
+   vrf TENANT2                                             # Помещаем SVI VLAN20 в TENANЕ2
+   ip address 20.20.20.254/24
+!
+interface Vxlan1
+   vxlan source-interface Loopback0
+   vxlan udp-port 4789
+   vxlan vlan 10 vni 10010
+   vxlan vlan 20 vni 10020
+   vxlan vrf TENANT1 vni 50001                             # L3VNI для TENANT1
+   vxlan vrf TENANT2 vni 50002                             # L3VNI для TENANT2
+
 route-map RM_REDISTRIBUTE-Lo0 permit 10
    match interface Loopback0
    set community 65001:1
@@ -145,18 +168,21 @@ router bgp 65001
    vrf TENANT2
       rd 10.1.0.3:50002
       route-target import evpn 50002:50002
-      route-target export evpn 50002:50002```
+      route-target export evpn 50002:50002
+```
 </details>
 
 <details>
 <summary>Настройка SRV1</summary>
 
 ```eos
-SRV1:/# ip a
-106: eth1@if105: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP qlen 1000
+SRV1:/# ip addr show dev eth1
+79: eth1@if78: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP qlen 1000
     link/ether 02:00:00:00:00:01 brd ff:ff:ff:ff:ff:ff
     inet 10.10.10.1/24 scope global eth1
        valid_lft forever preferred_lft forever
+SRV1:/# 
+SRV1:/# 
 SRV1:/# ip route
 default via 10.10.10.254 dev eth1 
 10.10.10.0/24 dev eth1 scope link  src 10.10.10.1 
@@ -167,27 +193,14 @@ default via 10.10.10.254 dev eth1
 <summary>Настройкb SRV2</summary>
 
 ```eos
-SRV1:/# ip addr show dev eth1
-106: eth1@if105: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP qlen 1000
-    link/ether 02:00:00:00:00:01 brd ff:ff:ff:ff:ff:ff
-    inet 10.10.10.1/24 scope global eth1
-       valid_lft forever preferred_lft forever
-SRV1:/# ip route
-default via 10.10.10.254 dev eth1
-```
-</details>
-
-<details>
-<summary>Настройкb SRV2</summary>
-
-```eos
 SRV2:/# ip addr show dev eth1
-99: eth1@if98: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP qlen 1000
+85: eth1@if84: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP qlen 1000
     link/ether 02:00:00:00:00:02 brd ff:ff:ff:ff:ff:ff
     inet 20.20.20.1/24 scope global eth1
        valid_lft forever preferred_lft forever
 SRV2:/# ip route
-default via 20.20.20.254 dev eth1
+default via 20.20.20.254 dev eth1 
+20.20.20.0/24 dev eth1 scope link  src 20.20.20.1 
 ```
 </details>
 
@@ -195,67 +208,192 @@ default via 20.20.20.254 dev eth1
 <summary>Настройкb SRV3</summary>
 
 ```eos
-SRV3:/# ip a
-5: bond0: <BROADCAST,MULTICAST,UP,LOWER_UP400> mtu 1500 qdisc noqueue state UP qlen 1000
-    link/ether 50:00:00:09:00:01 brd ff:ff:ff:ff:ff:ff
-6: VRF1: <NOARP,UP,LOWER_UP400> mtu 65536 qdisc noqueue state UP qlen 1000
-    link/ether be:29:ea:10:00:c9 brd ff:ff:ff:ff:ff:ff
-7: VRF2: <NOARP,UP,LOWER_UP400> mtu 65536 qdisc noqueue state UP qlen 1000
-    link/ether 1a:31:9b:3a:0e:3e brd ff:ff:ff:ff:ff:ff
-8: bond0.10@bond0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master VRF1 state UP qlen 1000
-    link/ether 50:00:00:09:00:01 brd ff:ff:ff:ff:ff:ff
-    inet 10.10.10.3/24 scope global bond0.10
-       valid_lft forever preferred_lft forever
-9: bond0.20@bond0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master VRF2 state UP qlen 1000
-    link/ether 50:00:00:09:00:01 brd ff:ff:ff:ff:ff:ff
-    inet 20.20.20.3/24 scope global bond0.20
-       valid_lft forever preferred_lft forever
-114: eth1@if113: <BROADCAST,MULTICAST,UP,LOWER_UP800,M-DOWN> mtu 1500 qdisc noqueue master bond0 state UP qlen 1000
-    link/ether 02:00:00:00:01:03 brd ff:ff:ff:ff:ff:ff
-116: eth2@if115: <BROADCAST,MULTICAST,UP,LOWER_UP800,M-DOWN> mtu 1500 qdisc noqueue master bond0 state UP qlen 1000
-    link/ether 02:00:00:00:02:03 brd ff:ff:ff:ff:ff:ff
-SRV3:/# ip route show table 10
-default via 10.10.10.254 dev bond0.10 
-broadcast 10.10.10.0 dev bond0.10 scope link  src 10.10.10.3 
-10.10.10.0/24 dev bond0.10 scope link  src 10.10.10.3 
-local 10.10.10.3 dev bond0.10 scope host  src 10.10.10.3 
-broadcast 10.10.10.255 dev bond0.10 scope link  src 10.10.10.3 
-SRV3:/# ip route show table 20
-default via 20.20.20.254 dev bond0.20 
-broadcast 20.20.20.0 dev bond0.20 scope link  src 20.20.20.3 
-20.20.20.0/24 dev bond0.20 scope link  src 20.20.20.3 
-local 20.20.20.3 dev bond0.20 scope host  src 20.20.20.3 
-broadcast 20.20.20.255 dev bond0.20 scope link  src 20.20.20.3 
+SRV3#sh ip int brief
+Interface            IP Address        Status     Protocol        MTU  
+-------------------- ----------------- ---------- ------------ --------
+Management1          unassigned        down       down           1500          
+Port-Channel1        unassigned        up         up             1500          
+Port-Channel1.10     10.10.10.3/24     up         up             1500          
+Port-Channel1.20     20.20.20.3/24     up         up             1500          
+
+SRV3#sh ip route vrf all
+VRF: VRF1
+Gateway of last resort:
+ S        0.0.0.0/0 [1/0] via 10.10.10.254, Port-Channel1.10
+ C        10.10.10.0/24 is directly connected, Port-Channel1.10
+VRF: VRF2
+Gateway of last resort:
+ S        0.0.0.0/0 [1/0] via 20.20.20.254, Port-Channel1.20
+ C        20.20.20.0/24 is directly connected, Port-Channel1.20
 ```
 </details>
 
 <details>
-<summary>Настройкb SRV4</summary>
+<summary>Настройкb LEAF4</summary>
 
 ```eos
-SRV4:/# ip addr show dev eth1
-135: eth1@if134: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP qlen 1000
-    link/ether 02:00:00:00:00:04 brd ff:ff:ff:ff:ff:ff
-    inet 10.10.10.4/24 scope global eth1
-       valid_lft forever preferred_lft forever
-SRV4:/# ip route
-default via 10.10.10.254 dev eth1 
-10.10.10.0/24 dev eth1 scope link  src 10.10.10.4 
+vlan 110                                                      # Транспортный VLAN для стыка c FW в vrf TENANT1
+   name TR-FW-TENANT1
+!
+vlan 120                                                      # Транспортный VLAN для стыка c FW в vrf TENANT1
+   name TR-FW-TENANT2
+!
+vrf instance TENANT1
+!
+vrf instance TENANT2
+!
+interface Ethernet3                                           # Транковый интерфейс до FW
+   description TRUNK-2-FW
+   switchport trunk allowed vlan 110,120
+   switchport mode trunk
+!
+interface Vlan110                                             # SVI для Vlan110 в vrf TENANT1
+   description TR-FW-TENANT1
+   vrf TENANT1
+   ip address 10.1.2.16/31
+!
+interface Vlan120                                             # SVI для Vlan120 в vrf TENANT2
+   description TR-FW-TENANT2
+   vrf TENANT2
+   ip address 10.1.2.18/31
+!
+interface Vxlan1                                              # L3VNI для vrf TENANT1/TENANT2
+   vxlan source-interface Loopback0
+   vxlan udp-port 4789
+   vxlan vrf TENANT1 vni 50001
+   vxlan vrf TENANT2 vni 50002
+!
+ip routing vrf TENANT1
+ip routing vrf TENANT2
+!
+ip prefix-list PL_DEFAULT                                     # Префикс-лист для фильтрации маршрутов от FW в сторону фабрики
+   seq 10 permit 0.0.0.0/0
+!
+ip prefix-list PL_TENANT1                                     # Префикс-лист для фильтрации маршрутов в сторону FW из vrf TENANT1
+   seq 10 permit 10.10.10.0/24
+!
+ip prefix-list PL_TENANT2                                     # Префикс-лист для фильтрации маршрутов в сторону FW из vrf TENANT2
+   seq 10 permit 20.20.20.0/24
+!
+ip route vrf TENANT1 10.10.10.0/24 Null0                      # Статические маршруты для дальнейшего анонса сетей VRF в сторону FW
+ip route vrf TENANT2 20.20.20.0/24 Null0
+!
+route-map RM_REDISTRIBUTE-Lo0 permit 10
+   match interface Loopback0
+   set origin igp
+!
+router bgp 65004
+   router-id 10.1.0.6
+   maximum-paths 4
+   neighbor SPINE-EVPN peer group
+   neighbor SPINE-EVPN remote-as 65000
+   neighbor SPINE-EVPN next-hop-unchanged
+   neighbor SPINE-EVPN update-source Loopback0
+   neighbor SPINE-EVPN bfd
+   neighbor SPINE-EVPN ebgp-multihop 5
+   neighbor SPINE-EVPN send-community extended
+   neighbor SPINE-UNDERLAY peer group
+   neighbor SPINE-UNDERLAY remote-as 65000
+   neighbor SPINE-UNDERLAY bfd
+   neighbor 10.1.0.1 peer group SPINE-EVPN
+   neighbor 10.1.0.2 peer group SPINE-EVPN
+   neighbor 10.1.2.12 peer group SPINE-UNDERLAY
+   neighbor 10.1.2.14 peer group SPINE-UNDERLAY
+   !
+   vlan 110
+      rd 10.1.0.6:10110
+      route-target both 10110:10110
+      redistribute learned
+   !
+   vlan 120
+      rd 10.1.0.6:10120
+      route-target both 10120:10120
+      redistribute learned
+   !
+   address-family evpn
+      neighbor SPINE-EVPN activate
+   !
+   address-family ipv4
+      no neighbor SPINE-EVPN activate
+      neighbor SPINE-UNDERLAY activate
+      redistribute connected route-map RM_REDISTRIBUTE-Lo0
+   !
+   vrf TENANT1
+      rd 10.1.0.6:50001
+      route-target import evpn 50001:50001
+      route-target export evpn 50001:50001
+      maximum-paths 4 ecmp 4
+      neighbor 10.1.2.17 remote-as 65500                           # eBGP-соседство до FW в vrf TENANT1
+      !
+      address-family ipv4
+         neighbor 10.1.2.17 activate
+         neighbor 10.1.2.17 prefix-list PL_TENANT1 out
+         neighbor 10.1.2.17 prefix-list PL_DEFAULT in
+         network 10.10.10.0/24
+   !
+   vrf TENANT2
+      rd 10.1.0.6:50002
+      route-target import evpn 50002:50002
+      route-target export evpn 50002:50002
+      maximum-paths 4 ecmp 4
+      neighbor 10.1.2.19 remote-as 65500
+      !
+      address-family ipv4
+         neighbor 10.1.2.19 activate
+         neighbor 10.1.2.19 prefix-list PL_TENANT2 out
+         neighbor 10.1.2.19 prefix-list PL_DEFAULT in
+         network 20.20.20.0/24
 ```
 </details>
 
 <details>
-<summary>Настройкb SRV5</summary>
+<summary>Настройкb FW</summary>
 
 ```eos
-SRV5:/# ip addr show dev eth1
-141: eth1@if140: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP qlen 1000
-    link/ether 02:00:00:00:00:05 brd ff:ff:ff:ff:ff:ff
-    inet 20.20.20.5/24 scope global eth1
-       valid_lft forever preferred_lft forever
-SRV5:/# ip route
-default via 20.20.20.254 dev eth1 
-20.20.20.0/24 dev eth1 scope link  src 20.20.20.5 
+!
+hostname FW
+!
+vlan 110
+   name TR-FW-TENANT1
+!
+vlan 120
+   name TR-FW-TENANT2
+!
+interface Ethernet1
+   description TRUNK-2-BLEAF
+   switchport trunk allowed vlan 110,120
+   switchport mode trunk
+!
+interface Loopback0
+   description ROUTER-ID
+   ip address 10.1.0.7/32
+!
+interface Loopback1
+   description 8.8.8.8
+   ip address 8.8.8.8/32
+!
+interface Vlan110
+   description TR-FW-TENANT1
+   ip address 10.1.2.17/31
+!
+interface Vlan120
+   description TR-FW-TENANT2
+   ip address 10.1.2.19/31
+!
+ip routing
+!
+router bgp 65500
+   router-id 10.1.0.7
+   maximum-paths 4 ecmp 4
+   neighbor BORDER peer group
+   neighbor BORDER remote-as 65004
+   neighbor BORDER bfd
+   neighbor 10.1.2.16 peer group BORDER
+   neighbor 10.1.2.18 peer group BORDER
+   !
+   address-family ipv4
+      neighbor BORDER activate
+      neighbor BORDER default-originate always
 ```
 </details>
 
