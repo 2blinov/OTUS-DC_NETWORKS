@@ -604,7 +604,6 @@ rtt min/avg/max/mdev = 3.874/4.728/5.593/0.701 ms, ipg/ewma 6.155/5.295 ms
 ## 5. Проверка работы фабрики
 <details>
 <summary>LEAF1 / route-type 3 / sh bgp evpn route-type imet</summary>
-
 ```
 LEAF1#show bgp evpn route-type imet
 BGP routing table information for VRF default
