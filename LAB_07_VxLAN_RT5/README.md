@@ -13,6 +13,10 @@
 В качестве платформы для организации стенда был выбран PNETlab, развернутый на WSL, с использованием образов Arista cEOS и alpine.
 Получившийся стенд выглядит следующим образом:
 <img width="1269" height="422" alt="image" src="https://github.com/user-attachments/assets/ec7e7142-2bcc-4c30-9108-aa14fcf956d2" />
+Отличие от предыдущей работы:
+* VLAN10 и VLAN20 находятся в разных VRF (TENANT1, TENANT2).
+* LEAF4 является пограничным, который соседствует с внешним (для фабрики) миром через GW.
+* GW также эмулирует МСЭ - связь между VRF фабрики осуществляется через него. Связность VRF с внешним миром осуществляется посредством анонса с GW 0.0.0.0/0.
 
 ## 2. Разработка адресного плана
 Для адресного плана предлагаем использовать приватную сеть 10.0.0.0/8. При этом второй октет мы будем использовать как индекс ЦОД, для которого предназначена адресация. Для Lo0 предлагаем зарезервировать подсеть /24 (сможем адресовать 256 устройств). Для транспортных подсетей /31 предлагаю зарезервировать подсеть /23 (запас вплоть до фабрики 8 Spine / 32 Leaf). Для адресации сервисов зарезервируем подсеть /21. Итого, общая адресация каждого ЦОД будет суммироваться до /20 (с учетом зарезервированных адресов для возможного расширения).
@@ -104,6 +108,7 @@ router bgp 65001
    neighbor SPINE-EVPN remote-as 65000
    neighbor SPINE-EVPN next-hop-unchanged
    neighbor SPINE-EVPN update-source Loopback0
+   neighbor SPINE-EVPN bfd
    neighbor SPINE-EVPN ebgp-multihop 5
    neighbor SPINE-EVPN send-community extended
    neighbor SPINE-UNDERLAY peer group
@@ -114,6 +119,16 @@ router bgp 65001
    neighbor 10.1.2.0 peer group SPINE-UNDERLAY
    neighbor 10.1.2.6 peer group SPINE-UNDERLAY
    !
+   vlan 10
+      rd 10.1.0.3:10010
+      route-target both 10010:10010
+      redistribute learned
+   !
+   vlan 20
+      rd 10.1.0.3:10020
+      route-target both 10020:10020
+      redistribute learned
+   !
    address-family evpn
       neighbor SPINE-EVPN activate
    !
@@ -121,7 +136,16 @@ router bgp 65001
       no neighbor SPINE-EVPN activate
       neighbor SPINE-UNDERLAY activate
       redistribute connected route-map RM_REDISTRIBUTE-Lo0
-```
+   !
+   vrf TENANT1
+      rd 10.1.0.3:50001
+      route-target import evpn 50001:50001
+      route-target export evpn 50001:50001
+   !
+   vrf TENANT2
+      rd 10.1.0.3:50002
+      route-target import evpn 50002:50002
+      route-target export evpn 50002:50002```
 </details>
 
 <details>
