@@ -604,6 +604,7 @@ rtt min/avg/max/mdev = 3.874/4.728/5.593/0.701 ms, ipg/ewma 6.155/5.295 ms
 ## 5. Проверка работы фабрики
 <details>
 <summary>LEAF1 / route-type 3 / sh bgp evpn route-type imet</summary>
+   
 ```
 LEAF1#show bgp evpn route-type imet
 BGP routing table information for VRF default
@@ -686,6 +687,7 @@ AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Li
 
 <details>
 <summary>LEAF1 / route-type 5 / show bgp evpn route-type ip-prefix 0.0.0.0/0</summary>
+
 ```
 LEAF1#show bgp evpn | i prefix
  * >Ec    RD: 10.1.0.6:50001 ip-prefix 0.0.0.0/0
@@ -753,6 +755,7 @@ Vlan    Mac Address       Type        Ports      Moves   Last Move
 
 <details>
 <summary>LEAF4 / show ip route vrf all</summary>
+
 ```
 LEAF4#show ip route vrf all
 
@@ -796,6 +799,7 @@ Gateway of last resort:
 
 <details>
 <summary>FW / show ip route</summary>
+
 ```
 FW#show ip route
 
@@ -808,12 +812,12 @@ Gateway of last resort is not set
  C        10.1.2.18/31 is directly connected, Vlan120
  B E      10.10.10.0/24 [200/0] via 10.1.2.16, Vlan110
  B E      20.20.20.0/24 [200/0] via 10.1.2.18, Vlan120
-
 ```
 </details>
 
 <details>
 <summary>ping SRV1 -> SRV3, 8.8.8.8</summary>
+
 ```
 SRV1:/# ping -c 3 20.20.20.3
 PING 20.20.20.3 (20.20.20.3): 56 data bytes
@@ -845,6 +849,7 @@ round-trip min/avg/max = 12.160/12.934/13.797 ms
 
 <details>
 <summary>ping SRV2 -> SRV3, 8.8.8.8</summary>
+
 ```
 SRV2:/# ping 10.10.10.3 -c 3
 PING 10.10.10.3 (10.10.10.3): 56 data bytes
@@ -866,6 +871,7 @@ PING 8.8.8.8 (8.8.8.8): 56 data bytes
 round-trip min/avg/max = 11.118/11.842/12.251 ms
 ```
 </details>
+Проверки с SRV2 также проходят без потерь.
 
 ## 6. Конфигурации устройств фабрики
 [Конфигурация SPINE1](./configs/spine1.conf)<br>
