@@ -12,7 +12,7 @@
 ## 1. Подготовка стенда
 В качестве платформы для организации стенда был выбран PNETlab, развернутый на WSL, с использованием образов Arista cEOS и alpine.
 Получившийся стенд выглядит следующим образом:
-<img width="1269" height="422" alt="image" src="https://github.com/user-attachments/assets/ec7e7142-2bcc-4c30-9108-aa14fcf956d2" />
+<img width="1269" height="422" alt="image" src="https://github.com/user-attachments/assets/683afcb7-88f3-4536-9d2d-35d1507c1761" />
 Отличие от предыдущей работы:
 * VLAN10 и VLAN20 находятся в разных VRF (TENANT1, TENANT2).
 * LEAF4 является пограничным, который соседствует с внешним (для фабрики) миром через GW.
