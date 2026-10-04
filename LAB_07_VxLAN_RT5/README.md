@@ -402,13 +402,13 @@ router bgp 65500
 <summary>LEAF1 / show bgp summary</summary>
   
 ```eos
-LEAF1# show bgp summary 
+LEAF1#show bgp summary
 BGP summary information for VRF default
 Router identifier 10.1.0.3, local AS number 65001
 Neighbor          AS Session State AFI/SAFI                AFI/SAFI State   NLRI Rcd   NLRI Acc
 -------- ----------- ------------- ----------------------- -------------- ---------- ----------
-10.1.0.1       65000 Established   L2VPN EVPN              Negotiated              7          7
-10.1.0.2       65000 Established   L2VPN EVPN              Negotiated              7          7
+10.1.0.1       65000 Established   L2VPN EVPN              Negotiated             22         22
+10.1.0.2       65000 Established   L2VPN EVPN              Negotiated             22         22
 10.1.2.0       65000 Established   IPv4 Unicast            Negotiated              4          4
 10.1.2.6       65000 Established   IPv4 Unicast            Negotiated              4          4
 ```
@@ -432,12 +432,12 @@ AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Li
  * >      10.1.0.1/32            10.1.2.0              0       -          100     0       65000 i
  * >      10.1.0.2/32            10.1.2.6              0       -          100     0       65000 i
  * >      10.1.0.3/32            -                     -       -          -       0       i
- * >Ec    10.1.0.4/32            10.1.2.6              0       -          100     0       65000 65002 i
- *  ec    10.1.0.4/32            10.1.2.0              0       -          100     0       65000 65002 i
- * >Ec    10.1.0.5/32            10.1.2.6              0       -          100     0       65000 65003 i
- *  ec    10.1.0.5/32            10.1.2.0              0       -          100     0       65000 65003 i
- * >Ec    10.1.0.6/32            10.1.2.6              0       -          100     0       65000 65004 i
- *  ec    10.1.0.6/32            10.1.2.0              0       -          100     0       65000 65004 i
+ * >Ec    10.1.0.4/32            10.1.2.0              0       -          100     0       65000 65002 i
+ *  ec    10.1.0.4/32            10.1.2.6              0       -          100     0       65000 65002 i
+ * >Ec    10.1.0.5/32            10.1.2.0              0       -          100     0       65000 65003 i
+ *  ec    10.1.0.5/32            10.1.2.6              0       -          100     0       65000 65003 i
+ * >Ec    10.1.0.6/32            10.1.2.0              0       -          100     0       65000 65004 i
+ *  ec    10.1.0.6/32            10.1.2.6              0       -          100     0       65000 65004 i
 ```
 </details>
 
@@ -447,31 +447,32 @@ AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Li
 ```eos
 LEAF1#ping 10.1.0.4 source loopback 0 repeat 3
 PING 10.1.0.4 (10.1.0.4) from 10.1.0.3 : 72(100) bytes of data.
-80 bytes from 10.1.0.4: icmp_seq=1 ttl=63 time=6.42 ms
-80 bytes from 10.1.0.4: icmp_seq=2 ttl=63 time=3.89 ms
-80 bytes from 10.1.0.4: icmp_seq=3 ttl=63 time=4.30 ms
+80 bytes from 10.1.0.4: icmp_seq=1 ttl=63 time=5.10 ms
+80 bytes from 10.1.0.4: icmp_seq=2 ttl=63 time=4.14 ms
+80 bytes from 10.1.0.4: icmp_seq=3 ttl=63 time=3.76 ms
 
 --- 10.1.0.4 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 13ms
-rtt min/avg/max/mdev = 3.897/4.875/6.426/1.109 ms, ipg/ewma 6.752/5.884 ms
+3 packets transmitted, 3 received, 0% packet loss, time 11ms
+rtt min/avg/max/mdev = 3.763/4.338/5.104/0.568 ms, ipg/ewma 5.593/4.832 ms
 LEAF1#ping 10.1.0.5 source loopback 0 repeat 3
 PING 10.1.0.5 (10.1.0.5) from 10.1.0.3 : 72(100) bytes of data.
-80 bytes from 10.1.0.5: icmp_seq=1 ttl=63 time=4.51 ms
-80 bytes from 10.1.0.5: icmp_seq=2 ttl=63 time=4.50 ms
-80 bytes from 10.1.0.5: icmp_seq=3 ttl=63 time=3.84 ms
+80 bytes from 10.1.0.5: icmp_seq=1 ttl=63 time=4.96 ms
+80 bytes from 10.1.0.5: icmp_seq=2 ttl=63 time=7.78 ms
+80 bytes from 10.1.0.5: icmp_seq=3 ttl=63 time=4.27 ms
 
 --- 10.1.0.5 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 11ms
-rtt min/avg/max/mdev = 3.849/4.287/4.513/0.314 ms, ipg/ewma 5.755/4.428 ms
+3 packets transmitted, 3 received, 0% packet loss, time 15ms
+rtt min/avg/max/mdev = 4.276/5.676/7.788/1.521 ms, ipg/ewma 7.666/5.188 ms
 LEAF1#ping 10.1.0.6 source loopback 0 repeat 3
 PING 10.1.0.6 (10.1.0.6) from 10.1.0.3 : 72(100) bytes of data.
-80 bytes from 10.1.0.6: icmp_seq=1 ttl=63 time=5.63 ms
-80 bytes from 10.1.0.6: icmp_seq=2 ttl=63 time=5.78 ms
-80 bytes from 10.1.0.6: icmp_seq=3 ttl=63 time=4.33 ms
+80 bytes from 10.1.0.6: icmp_seq=1 ttl=63 time=5.06 ms
+80 bytes from 10.1.0.6: icmp_seq=2 ttl=63 time=3.78 ms
+80 bytes from 10.1.0.6: icmp_seq=3 ttl=63 time=4.30 ms
 
 --- 10.1.0.6 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 13ms
-rtt min/avg/max/mdev = 4.332/5.251/5.783/0.652 ms, ipg/ewma 6.906/5.490 ms```
+3 packets transmitted, 3 received, 0% packet loss, time 10ms
+rtt min/avg/max/mdev = 3.787/4.387/5.067/0.525 ms, ipg/ewma 5.495/4.832 ms
+```
 </details>
 
 <details>
@@ -480,31 +481,31 @@ rtt min/avg/max/mdev = 4.332/5.251/5.783/0.652 ms, ipg/ewma 6.906/5.490 ms```
 ```eos
 LEAF2#ping 10.1.0.3 source loopback 0 repeat 3
 PING 10.1.0.3 (10.1.0.3) from 10.1.0.4 : 72(100) bytes of data.
-80 bytes from 10.1.0.3: icmp_seq=1 ttl=63 time=6.43 ms
-80 bytes from 10.1.0.3: icmp_seq=2 ttl=63 time=4.14 ms
-80 bytes from 10.1.0.3: icmp_seq=3 ttl=63 time=4.64 ms
+80 bytes from 10.1.0.3: icmp_seq=1 ttl=63 time=4.87 ms
+80 bytes from 10.1.0.3: icmp_seq=2 ttl=63 time=5.60 ms
+80 bytes from 10.1.0.3: icmp_seq=3 ttl=63 time=4.14 ms
 
 --- 10.1.0.3 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 13ms
-rtt min/avg/max/mdev = 4.148/5.077/6.439/0.987 ms, ipg/ewma 6.730/5.964 ms
+3 packets transmitted, 3 received, 0% packet loss, time 12ms
+rtt min/avg/max/mdev = 4.142/4.874/5.606/0.603 ms, ipg/ewma 6.300/4.864 ms
 LEAF2#ping 10.1.0.5 source loopback 0 repeat 3
 PING 10.1.0.5 (10.1.0.5) from 10.1.0.4 : 72(100) bytes of data.
-80 bytes from 10.1.0.5: icmp_seq=1 ttl=63 time=5.31 ms
-80 bytes from 10.1.0.5: icmp_seq=2 ttl=63 time=3.87 ms
-80 bytes from 10.1.0.5: icmp_seq=3 ttl=63 time=4.41 ms
+80 bytes from 10.1.0.5: icmp_seq=1 ttl=63 time=4.17 ms
+80 bytes from 10.1.0.5: icmp_seq=2 ttl=63 time=3.95 ms
+80 bytes from 10.1.0.5: icmp_seq=3 ttl=63 time=3.98 ms
 
 --- 10.1.0.5 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 11ms
-rtt min/avg/max/mdev = 3.878/4.532/5.310/0.596 ms, ipg/ewma 5.794/5.040 ms
+3 packets transmitted, 3 received, 0% packet loss, time 10ms
+rtt min/avg/max/mdev = 3.955/4.038/4.177/0.111 ms, ipg/ewma 5.305/4.128 ms
 LEAF2#ping 10.1.0.6 source loopback 0 repeat 3
 PING 10.1.0.6 (10.1.0.6) from 10.1.0.4 : 72(100) bytes of data.
-80 bytes from 10.1.0.6: icmp_seq=1 ttl=63 time=7.14 ms
-80 bytes from 10.1.0.6: icmp_seq=2 ttl=63 time=4.29 ms
-80 bytes from 10.1.0.6: icmp_seq=3 ttl=63 time=4.30 ms
+80 bytes from 10.1.0.6: icmp_seq=1 ttl=63 time=4.45 ms
+80 bytes from 10.1.0.6: icmp_seq=2 ttl=63 time=4.38 ms
+80 bytes from 10.1.0.6: icmp_seq=3 ttl=63 time=3.94 ms
 
 --- 10.1.0.6 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 15ms
-rtt min/avg/max/mdev = 4.298/5.251/7.149/1.342 ms, ipg/ewma 7.636/6.481 ms
+3 packets transmitted, 3 received, 0% packet loss, time 10ms
+rtt min/avg/max/mdev = 3.947/4.262/4.457/0.237 ms, ipg/ewma 5.484/4.385 ms
 ```
 </details>
 
@@ -514,31 +515,31 @@ rtt min/avg/max/mdev = 4.298/5.251/7.149/1.342 ms, ipg/ewma 7.636/6.481 ms
 ```eos
 LEAF3#ping 10.1.0.3 source loopback 0 repeat 3
 PING 10.1.0.3 (10.1.0.3) from 10.1.0.5 : 72(100) bytes of data.
-80 bytes from 10.1.0.3: icmp_seq=1 ttl=63 time=5.02 ms
-80 bytes from 10.1.0.3: icmp_seq=2 ttl=63 time=3.87 ms
-80 bytes from 10.1.0.3: icmp_seq=3 ttl=63 time=7.17 ms
+80 bytes from 10.1.0.3: icmp_seq=1 ttl=63 time=5.18 ms
+80 bytes from 10.1.0.3: icmp_seq=2 ttl=63 time=5.38 ms
+80 bytes from 10.1.0.3: icmp_seq=3 ttl=63 time=5.37 ms
 
 --- 10.1.0.3 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 11ms
-rtt min/avg/max/mdev = 3.879/5.360/7.174/1.365 ms, ipg/ewma 5.532/5.169 ms
+3 packets transmitted, 3 received, 0% packet loss, time 13ms
+rtt min/avg/max/mdev = 5.184/5.314/5.385/0.109 ms, ipg/ewma 6.880/5.229 ms
 LEAF3#ping 10.1.0.4 source loopback 0 repeat 3
 PING 10.1.0.4 (10.1.0.4) from 10.1.0.5 : 72(100) bytes of data.
-80 bytes from 10.1.0.4: icmp_seq=1 ttl=63 time=6.00 ms
-80 bytes from 10.1.0.4: icmp_seq=2 ttl=63 time=6.14 ms
-80 bytes from 10.1.0.4: icmp_seq=3 ttl=63 time=4.42 ms
+80 bytes from 10.1.0.4: icmp_seq=1 ttl=63 time=5.04 ms
+80 bytes from 10.1.0.4: icmp_seq=2 ttl=63 time=4.44 ms
+80 bytes from 10.1.0.4: icmp_seq=3 ttl=63 time=4.17 ms
 
 --- 10.1.0.4 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 14ms
-rtt min/avg/max/mdev = 4.420/5.522/6.144/0.781 ms, ipg/ewma 7.215/5.819 ms
+3 packets transmitted, 3 received, 0% packet loss, time 11ms
+rtt min/avg/max/mdev = 4.175/4.553/5.043/0.367 ms, ipg/ewma 5.683/4.868 ms
 LEAF3#ping 10.1.0.6 source loopback 0 repeat 3
 PING 10.1.0.6 (10.1.0.6) from 10.1.0.5 : 72(100) bytes of data.
-80 bytes from 10.1.0.6: icmp_seq=1 ttl=63 time=4.99 ms
-80 bytes from 10.1.0.6: icmp_seq=2 ttl=63 time=4.54 ms
-80 bytes from 10.1.0.6: icmp_seq=3 ttl=63 time=5.19 ms
+80 bytes from 10.1.0.6: icmp_seq=1 ttl=63 time=4.77 ms
+80 bytes from 10.1.0.6: icmp_seq=2 ttl=63 time=3.96 ms
+80 bytes from 10.1.0.6: icmp_seq=3 ttl=63 time=4.27 ms
 
 --- 10.1.0.6 ping statistics ---
 3 packets transmitted, 3 received, 0% packet loss, time 11ms
-rtt min/avg/max/mdev = 4.543/4.910/5.197/0.272 ms, ipg/ewma 5.736/4.967 ms
+rtt min/avg/max/mdev = 3.961/4.337/4.772/0.337 ms, ipg/ewma 5.590/4.621 ms
 ```
 </details>
 
@@ -546,33 +547,33 @@ rtt min/avg/max/mdev = 4.543/4.910/5.197/0.272 ms, ipg/ewma 5.736/4.967 ms
 <summary>LEAF4 / ping до Lo0 LEAF1-3</summary>
   
 ```eos
-LEAF4#ping 10.1.0.3 source loopback 0 repeat 3
+LEAF4# ping 10.1.0.3 source loopback 0 repeat 3
 PING 10.1.0.3 (10.1.0.3) from 10.1.0.6 : 72(100) bytes of data.
-80 bytes from 10.1.0.3: icmp_seq=1 ttl=63 time=6.21 ms
-80 bytes from 10.1.0.3: icmp_seq=2 ttl=63 time=4.43 ms
-80 bytes from 10.1.0.3: icmp_seq=3 ttl=63 time=4.32 ms
+80 bytes from 10.1.0.3: icmp_seq=1 ttl=63 time=4.57 ms
+80 bytes from 10.1.0.3: icmp_seq=2 ttl=63 time=4.05 ms
+80 bytes from 10.1.0.3: icmp_seq=3 ttl=63 time=3.76 ms
 
 --- 10.1.0.3 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 13ms
-rtt min/avg/max/mdev = 4.329/4.992/6.215/0.867 ms, ipg/ewma 6.944/5.784 ms
+3 packets transmitted, 3 received, 0% packet loss, time 10ms
+rtt min/avg/max/mdev = 3.767/4.131/4.574/0.342 ms, ipg/ewma 5.289/4.416 ms
 LEAF4#ping 10.1.0.4 source loopback 0 repeat 3
 PING 10.1.0.4 (10.1.0.4) from 10.1.0.6 : 72(100) bytes of data.
-80 bytes from 10.1.0.4: icmp_seq=1 ttl=63 time=7.80 ms
-80 bytes from 10.1.0.4: icmp_seq=2 ttl=63 time=5.32 ms
-80 bytes from 10.1.0.4: icmp_seq=3 ttl=63 time=4.94 ms
+80 bytes from 10.1.0.4: icmp_seq=1 ttl=63 time=4.86 ms
+80 bytes from 10.1.0.4: icmp_seq=2 ttl=63 time=3.85 ms
+80 bytes from 10.1.0.4: icmp_seq=3 ttl=63 time=4.24 ms
 
 --- 10.1.0.4 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 15ms
-rtt min/avg/max/mdev = 4.945/6.025/7.805/1.269 ms, ipg/ewma 7.879/7.176 ms
+3 packets transmitted, 3 received, 0% packet loss, time 10ms
+rtt min/avg/max/mdev = 3.857/4.323/4.864/0.414 ms, ipg/ewma 5.415/4.676 ms
 LEAF4#ping 10.1.0.5 source loopback 0 repeat 3
 PING 10.1.0.5 (10.1.0.5) from 10.1.0.6 : 72(100) bytes of data.
-80 bytes from 10.1.0.5: icmp_seq=1 ttl=63 time=5.19 ms
-80 bytes from 10.1.0.5: icmp_seq=2 ttl=63 time=4.75 ms
-80 bytes from 10.1.0.5: icmp_seq=3 ttl=63 time=4.35 ms
+80 bytes from 10.1.0.5: icmp_seq=1 ttl=63 time=5.59 ms
+80 bytes from 10.1.0.5: icmp_seq=2 ttl=63 time=3.87 ms
+80 bytes from 10.1.0.5: icmp_seq=3 ttl=63 time=4.71 ms
 
 --- 10.1.0.5 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 11ms
-rtt min/avg/max/mdev = 4.356/4.767/5.196/0.347 ms, ipg/ewma 5.873/5.042 ms
+3 packets transmitted, 3 received, 0% packet loss, time 12ms
+rtt min/avg/max/mdev = 3.874/4.728/5.593/0.701 ms, ipg/ewma 6.155/5.295 ms
 ```
 </details>
 
