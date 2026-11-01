@@ -104,34 +104,33 @@ Intra -- Транспортные подсети
 <summary>Контекст: Процесс BGP SPINE</summary>
 
 ```eos
-route-map RM_REDISTRIBUTE-Lo0 permit 10            # route-map для редистрибьюции
-   match interface Loopback0                       # выбираем только интерфейс Looback 0
-   set origin igp                                  # устанавливаем origin в igp
-!
-peer-filter LEAFS-AS-FILTER                        # peer-filter для фильтрации соседств с LEAF
-   10 match as-range 65001-65004 result accept     # принимаем только BGP-соседей из AS 65001-65004
-   
-router bgp 65000                                                                        # Процесс BGP в AS 65000
-   router-id 10.1.0.1                                                                   # Задаем Router ID
-   maximum-paths 4                                                                      # количество маршрутов для ECMP
-   bgp listen range 10.1.0.0/24 peer-group LEAFS-EVPN peer-filter LEAFS-AS-FILTER       # Принимаем соседей EVPN с адресами из 10.1.0.0/24 и AS 65001-65004
-   bgp listen range 10.1.2.0/23 peer-group LEAFS-UNDERLAY peer-filter LEAFS-AS-FILTER   # Принимаем соседей UNDERLAY с адресами из 10.1.2.0/23 и AS 65001-65004
-   neighbor LEAFS-EVPN peer group                                                       # peer-group LEAFS-EVPN
-   neighbor LEAFS-EVPN next-hop-unchanged                                               # Нам нужно строить туннели Leaf-Leaf, поэтому не меняем next-hop
-   neighbor LEAFS-EVPN update-source Loopback0                                          # Соседство строим с Lo0
-   neighbor LEAFS-EVPN ebgp-multihop 5                                                  # IP TTL для eBGP-сессии
-   neighbor LEAFS-EVPN send-community extended                                          # Включаем передачу расширенных community (передача RT необходима для EVPN)
-   neighbor LEAFS-UNDERLAY peer group                                                   # peer-group LEAFS-UNDERLAY
-   neighbor LEAFS-UNDERLAY bfd                                                          # Включаем BFD
-   neighbor LEAFS-UNDERLAY timers 3 9                                                   # Настраиваем таймеры протокола
+router bgp 65001
+   router-id 10.1.0.1
+   maximum-paths 4 ecmp 4
+   bgp listen range 10.1.0.0/24 peer-group LEAFS-EVPN peer-filter LEAFS-AS-FILTER
+   bgp listen range 10.1.2.0/23 peer-group LEAFS-UNDERLAY peer-filter LEAFS-AS-FILTER
+   neighbor LEAFS-EVPN peer group
+   neighbor LEAFS-EVPN next-hop-unchanged
+   neighbor LEAFS-EVPN update-source Loopback0
+   neighbor LEAFS-EVPN bfd
+   neighbor LEAFS-EVPN ebgp-multihop 5
+   neighbor LEAFS-EVPN route-reflector-client
+   neighbor LEAFS-EVPN send-community extended
+   neighbor LEAFS-UNDERLAY peer group
+   neighbor LEAFS-UNDERLAY remote-as 65001
+   neighbor LEAFS-UNDERLAY bfd
+   neighbor LEAFS-UNDERLAY route-reflector-client
    !
    address-family evpn
-      neighbor LEAFS-EVPN activate                                                      # активируем соседства в секции evpn
+      neighbor LEAFS-EVPN activate
    !
    address-family ipv4
       no neighbor LEAFS-EVPN activate
-      neighbor LEAFS-UNDERLAY activate                                                  # активируем соседства в секции IPv4 unicast
-      redistribute connected route-map RM_REDISTRIBUTE-Lo0                              # редистрибьюцируем в BGP Loopback0
+      neighbor LEAFS-UNDERLAY activate
+      network 10.1.0.1/32
+      network 10.1.2.0/31
+      network 10.1.2.4/31
+      network 10.1.2.6/31
 ```
 </details>
 
@@ -139,60 +138,58 @@ router bgp 65000                                                                
 <summary>Контекст: Настройки LEAF</summary>
 
 ```eos
+vrf instance TENANT1
 !
-vrf instance TENANT1                                       # VRF TENANT1 для VLAN10
+vrf instance TENANT2
 !
-vrf instance TENANT2                                       # VRF TENANT1 для VLAN20
-!
-interface Vlan10                                           
+interface Vlan10
    description VLAN10
-   vrf TENANT1                                             # Помещаем SVI VLAN10 в TENANT1
+   vrf TENANT1
    ip address 10.10.10.254/24
 !
 interface Vlan20
    description VLAN20
-   vrf TENANT2                                             # Помещаем SVI VLAN20 в TENANЕ2
-   ip address 20.20.20.254/24
+   vrf TENANT2
+   ip address 10.10.20.254/24
 !
 interface Vxlan1
    vxlan source-interface Loopback0
    vxlan udp-port 4789
    vxlan vlan 10 vni 10010
    vxlan vlan 20 vni 10020
-   vxlan vrf TENANT1 vni 50001                             # L3VNI для TENANT1
-   vxlan vrf TENANT2 vni 50002                             # L3VNI для TENANT2
-
-route-map RM_REDISTRIBUTE-Lo0 permit 10
-   match interface Loopback0
-   set community 65001:1
-   set origin igp
-
+   vxlan vrf TENANT1 vni 50001
+   vxlan vrf TENANT2 vni 50002
+!
+ip routing
+ip routing vrf TENANT1
+ip routing vrf TENANT2
+!
 router bgp 65001
    router-id 10.1.0.3
-   maximum-paths 4
+   maximum-paths 4 ecmp 4
    neighbor SPINE-EVPN peer group
-   neighbor SPINE-EVPN remote-as 65000
+   neighbor SPINE-EVPN remote-as 65001
    neighbor SPINE-EVPN next-hop-unchanged
    neighbor SPINE-EVPN update-source Loopback0
    neighbor SPINE-EVPN bfd
    neighbor SPINE-EVPN ebgp-multihop 5
    neighbor SPINE-EVPN send-community extended
    neighbor SPINE-UNDERLAY peer group
-   neighbor SPINE-UNDERLAY remote-as 65000
+   neighbor SPINE-UNDERLAY remote-as 65001
    neighbor SPINE-UNDERLAY bfd
    neighbor 10.1.0.1 peer group SPINE-EVPN
    neighbor 10.1.0.2 peer group SPINE-EVPN
-   neighbor 10.1.2.0 peer group SPINE-UNDERLAY
-   neighbor 10.1.2.6 peer group SPINE-UNDERLAY
+   neighbor 10.1.2.4 peer group SPINE-UNDERLAY
+   neighbor 10.1.2.8 peer group SPINE-UNDERLAY
    !
    vlan 10
-      rd 10.1.0.3:10010
-      route-target both 10010:10010
+      rd auto
+      route-target both 10:10010
       redistribute learned
    !
    vlan 20
-      rd 10.1.0.3:10020
-      route-target both 10020:10020
+      rd auto
+      route-target both 20:10020
       redistribute learned
    !
    address-family evpn
@@ -201,17 +198,19 @@ router bgp 65001
    address-family ipv4
       no neighbor SPINE-EVPN activate
       neighbor SPINE-UNDERLAY activate
-      redistribute connected route-map RM_REDISTRIBUTE-Lo0
+      network 10.1.0.3/32
+      network 10.1.2.4/31
+      network 10.1.2.8/31
    !
    vrf TENANT1
-      rd 10.1.0.3:50001
-      route-target import evpn 50001:50001
-      route-target export evpn 50001:50001
+      rd 10.1.0.3:1
+      route-target import evpn 1:50001
+      route-target export evpn 1:50001
    !
    vrf TENANT2
-      rd 10.1.0.3:50002
-      route-target import evpn 50002:50002
-      route-target export evpn 50002:50002
+      rd 10.1.0.3:2
+      route-target import evpn 1:50002
+      route-target export evpn 1:50002
 ```
 </details>
 
