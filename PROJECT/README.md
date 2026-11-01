@@ -844,280 +844,614 @@ rtt min/avg/max/mdev = 0.303/0.457/0.718/0.185 ms, ipg/ewma 1.001/0.626 ms
 
 ## 5. Проверка работы фабрики
 <details>
-<summary>LEAF1 / route-type 3 / sh bgp evpn route-type imet</summary>
+<summary>LEAF11 / route-type 2 / show bgp evpn route-type mac-ip</summary>
    
 ```
-LEAF1#show bgp evpn route-type imet
+LEAF11#show bgp evpn route-type mac-ip 
 BGP routing table information for VRF default
 Router identifier 10.1.0.3, local AS number 65001
 Route status codes: * - valid, > - active, S - Stale, E - ECMP head, e - ECMP
-                    c - Contributing to ECMP, % - Pending BGP convergence
+                    c - Contributing to ECMP, % - Pending best path selection
 Origin codes: i - IGP, e - EGP, ? - incomplete
 AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
 
           Network                Next Hop              Metric  LocPref Weight  Path
- * >      RD: 10.1.0.3:10010 imet 10.1.0.3
+ * >      RD: 10.1.0.3:20 mac-ip aac1.ab2d.c08f
                                  -                     -       -       0       i
- * >      RD: 10.1.0.3:10020 imet 10.1.0.3
+ * >      RD: 10.1.0.3:20 mac-ip aac1.ab2d.c08f 10.10.20.1
                                  -                     -       -       0       i
- * >Ec    RD: 10.1.0.4:10010 imet 10.1.0.4
-                                 10.1.0.4              -       100     0       65000 65002 i
- *  ec    RD: 10.1.0.4:10010 imet 10.1.0.4
-                                 10.1.0.4              -       100     0       65000 65002 i
- * >Ec    RD: 10.1.0.4:10020 imet 10.1.0.4
-                                 10.1.0.4              -       100     0       65000 65002 i
- *  ec    RD: 10.1.0.4:10020 imet 10.1.0.4
-                                 10.1.0.4              -       100     0       65000 65002 i
- * >Ec    RD: 10.1.0.5:10010 imet 10.1.0.5
-                                 10.1.0.5              -       100     0       65000 65003 i
- *  ec    RD: 10.1.0.5:10010 imet 10.1.0.5
-                                 10.1.0.5              -       100     0       65000 65003 i
- * >Ec    RD: 10.1.0.5:10020 imet 10.1.0.5
-                                 10.1.0.5              -       100     0       65000 65003 i
- *  ec    RD: 10.1.0.5:10020 imet 10.1.0.5
-                                 10.1.0.5              -       100     0       65000 65003 i
+ * >Ec    RD: 10.1.0.0:10 mac-ip aac1.ab46.07d3
+                                 10.0.0.0              -       100     0       65002 i Or-ID: 10.1.0.0 C-LST: 10.1.0.1 
+ *  ec    RD: 10.1.0.0:10 mac-ip aac1.ab46.07d3
+                                 10.0.0.0              -       100     0       65002 i Or-ID: 10.1.0.0 C-LST: 10.1.0.1 
+ * >Ec    RD: 10.1.0.0:10 mac-ip aac1.ab46.07d3 10.10.10.2
+                                 10.0.0.0              -       100     0       65002 i Or-ID: 10.1.0.0 C-LST: 10.1.0.1 
+ *  ec    RD: 10.1.0.0:10 mac-ip aac1.ab46.07d3 10.10.10.2
+                                 10.0.0.0              -       100     0       65002 i Or-ID: 10.1.0.0 C-LST: 10.1.0.1 
+ * >      RD: 10.1.0.3:10 mac-ip aac1.ab6c.483a
+                                 -                     -       -       0       i
+ * >      RD: 10.1.0.3:10 mac-ip aac1.ab6c.483a 10.10.10.1
+                                 -                     -       -       0       i
+ * >Ec    RD: 10.1.0.0:20 mac-ip aac1.abc6.faf7
+                                 10.0.0.0              -       100     0       65002 i Or-ID: 10.1.0.0 C-LST: 10.1.0.1 
+ *  ec    RD: 10.1.0.0:20 mac-ip aac1.abc6.faf7
+                                 10.0.0.0              -       100     0       65002 i Or-ID: 10.1.0.0 C-LST: 10.1.0.1 
+ * >Ec    RD: 10.1.0.0:20 mac-ip aac1.abc6.faf7 10.10.20.2
+                                 10.0.0.0              -       100     0       65002 i Or-ID: 10.1.0.0 C-LST: 10.1.0.1 
+ *  ec    RD: 10.1.0.0:20 mac-ip aac1.abc6.faf7 10.10.20.2
+                                 10.0.0.0              -       100     0       65002 i Or-ID: 10.1.0.0 C-LST: 10.1.0.1 
 ```
 </details>
 
 <details>
-<summary>LEAF1 / route-type 2 / show bgp evpn route-type mac-ip</summary>
-   
+<summary>LEAF11 / route-type 5 / show bgp evpn route-type ip-prefix</summary>
+
 ```
-LEAF1#show bgp evpn route-type mac-ip 
+LEAF11#show bgp evpn route-type ip-prefix
 BGP routing table information for VRF default
 Router identifier 10.1.0.3, local AS number 65001
 Route status codes: * - valid, > - active, S - Stale, E - ECMP head, e - ECMP
-                    c - Contributing to ECMP, % - Pending BGP convergence
+                    c - Contributing to ECMP, % - Pending best path selection
 Origin codes: i - IGP, e - EGP, ? - incomplete
 AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
 
           Network                Next Hop              Metric  LocPref Weight  Path
- * >      RD: 10.1.0.3:10010 mac-ip 0200.0000.0001
-                                 -                     -       -       0       i
- * >      RD: 10.1.0.3:10010 mac-ip 0200.0000.0001 10.10.10.1
-                                 -                     -       -       0       i
- * >      RD: 10.1.0.3:10020 mac-ip 0200.0000.0002
-                                 -                     -       -       0       i
- * >      RD: 10.1.0.3:10020 mac-ip 0200.0000.0002 20.20.20.1
-                                 -                     -       -       0       i
- * >Ec    RD: 10.1.0.5:10010 mac-ip 0200.0001.0003
-                                 10.1.0.5              -       100     0       65000 65003 i
- *  ec    RD: 10.1.0.5:10010 mac-ip 0200.0001.0003
-                                 10.1.0.5              -       100     0       65000 65003 i
- * >Ec    RD: 10.1.0.4:10010 mac-ip 0200.0001.0003 10.10.10.3
-                                 10.1.0.4              -       100     0       65000 65002 i
- *  ec    RD: 10.1.0.4:10010 mac-ip 0200.0001.0003 10.10.10.3
-                                 10.1.0.4              -       100     0       65000 65002 i
- * >Ec    RD: 10.1.0.5:10010 mac-ip 0200.0001.0003 10.10.10.3
-                                 10.1.0.5              -       100     0       65000 65003 i
- *  ec    RD: 10.1.0.5:10010 mac-ip 0200.0001.0003 10.10.10.3
-                                 10.1.0.5              -       100     0       65000 65003 i
- * >Ec    RD: 10.1.0.5:10020 mac-ip 0200.0002.0003
-                                 10.1.0.5              -       100     0       65000 65003 i
- *  ec    RD: 10.1.0.5:10020 mac-ip 0200.0002.0003
-                                 10.1.0.5              -       100     0       65000 65003 i
- * >Ec    RD: 10.1.0.4:10020 mac-ip 0200.0002.0003 20.20.20.3
-                                 10.1.0.4              -       100     0       65000 65002 i
- *  ec    RD: 10.1.0.4:10020 mac-ip 0200.0002.0003 20.20.20.3
-                                 10.1.0.4              -       100     0       65000 65002 i
- * >Ec    RD: 10.1.0.5:10020 mac-ip 0200.0002.0003 20.20.20.3
-                                 10.1.0.5              -       100     0       65000 65003 i
- *  ec    RD: 10.1.0.5:10020 mac-ip 0200.0002.0003 20.20.20.3
-                                 10.1.0.5              -       100     0       65000 65003 i
+ * >Ec    RD: 10.1.0.4:50001 ip-prefix 0.0.0.0/0
+                                 10.1.0.4              -       100     0       65101 65100 i Or-ID: 10.1.0.4 C-LST: 10.1.0.1 
+ *  ec    RD: 10.1.0.4:50001 ip-prefix 0.0.0.0/0
+                                 10.1.0.4              -       100     0       65101 65100 i Or-ID: 10.1.0.4 C-LST: 10.1.0.1 
+ * >Ec    RD: 10.1.0.4:50002 ip-prefix 0.0.0.0/0
+                                 10.1.0.4              -       100     0       65101 65100 i Or-ID: 10.1.0.4 C-LST: 10.1.0.1 
+ *  ec    RD: 10.1.0.4:50002 ip-prefix 0.0.0.0/0
+                                 10.1.0.4              -       100     0       65101 65100 i Or-ID: 10.1.0.4 C-LST: 10.1.0.1 
+ * >Ec    RD: 10.2.0.3:1 ip-prefix 0.0.0.0/0
+                                 10.0.0.0              -       100     0       65002 65102 65100 i Or-ID: 10.1.0.0 C-LST: 10.1.0.1 
+ *  ec    RD: 10.2.0.3:1 ip-prefix 0.0.0.0/0
+                                 10.0.0.0              -       100     0       65002 65102 65100 i Or-ID: 10.1.0.0 C-LST: 10.1.0.1 
+ * >Ec    RD: 10.2.0.3:2 ip-prefix 0.0.0.0/0
+                                 10.0.0.0              -       100     0       65002 65102 65100 i Or-ID: 10.1.0.0 C-LST: 10.1.0.1 
+ *  ec    RD: 10.2.0.3:2 ip-prefix 0.0.0.0/0
+                                 10.0.0.0              -       100     0       65002 65102 65100 i Or-ID: 10.1.0.0 C-LST: 10.1.0.1 
+ * >Ec    RD: 65001:102 ip-prefix 10.10.20.0/24
+                                 10.0.0.0              -       100     0       i Or-ID: 10.1.0.0 C-LST: 10.1.0.1 
+ *  ec    RD: 65001:102 ip-prefix 10.10.20.0/24
+                                 10.0.0.0              -       100     0       i Or-ID: 10.1.0.0 C-LST: 10.1.0.1 
+ * >Ec    RD: 65002:102 ip-prefix 10.10.20.0/24
+                                 10.0.0.0              -       100     0       65002 i Or-ID: 10.1.0.0 C-LST: 10.1.0.1 
+ *  ec    RD: 65002:102 ip-prefix 10.10.20.0/24
+                                 10.0.0.0              -       100     0       65002 i Or-ID: 10.1.0.0 C-LST: 10.1.0.1 
 ```
 </details>
 
 <details>
-<summary>LEAF1 / route-type 5 / show bgp evpn route-type ip-prefix 0.0.0.0/0</summary>
+<summary>LEAF11 / show mac address-table</summary>
 
 ```
-LEAF1#show bgp evpn | i prefix
- * >Ec    RD: 10.1.0.6:50001 ip-prefix 0.0.0.0/0
- *  ec    RD: 10.1.0.6:50001 ip-prefix 0.0.0.0/0
- * >Ec    RD: 10.1.0.6:50002 ip-prefix 0.0.0.0/0
- *  ec    RD: 10.1.0.6:50002 ip-prefix 0.0.0.0/0
-
-LEAF1#show bgp evpn route-type ip-prefix 0.0.0.0/0
-BGP routing table information for VRF default
-Router identifier 10.1.0.3, local AS number 65001
-BGP routing table entry for ip-prefix 0.0.0.0/0, Route Distinguisher: 10.1.0.6:50001
- Paths: 2 available
-  65000 65004 65500
-    10.1.0.6 from 10.1.0.2 (10.1.0.2)
-      Origin INCOMPLETE, metric -, localpref 100, weight 0, tag 0, valid, external, ECMP head, ECMP, best, ECMP contributor
-      Extended Community: Route-Target-AS:50001:50001 TunnelEncap:tunnelTypeVxlan EvpnRouterMac:50:a4:00:11:d2:94
-      VNI: 50001
-  65000 65004 65500
-    10.1.0.6 from 10.1.0.1 (10.1.0.1)
-      Origin INCOMPLETE, metric -, localpref 100, weight 0, tag 0, valid, external, ECMP, ECMP contributor
-      Extended Community: Route-Target-AS:50001:50001 TunnelEncap:tunnelTypeVxlan EvpnRouterMac:50:a4:00:11:d2:94
-      VNI: 50001
-BGP routing table entry for ip-prefix 0.0.0.0/0, Route Distinguisher: 10.1.0.6:50002
- Paths: 2 available
-  65000 65004 65500
-    10.1.0.6 from 10.1.0.1 (10.1.0.1)
-      Origin INCOMPLETE, metric -, localpref 100, weight 0, tag 0, valid, external, ECMP head, ECMP, best, ECMP contributor
-      Extended Community: Route-Target-AS:50002:50002 TunnelEncap:tunnelTypeVxlan EvpnRouterMac:50:a4:00:11:d2:94
-      VNI: 50002
-  65000 65004 65500
-    10.1.0.6 from 10.1.0.2 (10.1.0.2)
-      Origin INCOMPLETE, metric -, localpref 100, weight 0, tag 0, valid, external, ECMP, ECMP contributor
-      Extended Community: Route-Target-AS:50002:50002 TunnelEncap:tunnelTypeVxlan EvpnRouterMac:50:a4:00:11:d2:94
-      VNI: 50002
-```
-</details>
-
-<details>
-<summary>LEAF1 / show mac address-table</summary>
-
-```
-LEAF1#show mac address-table
+LEAF11#show mac address-table 
           Mac Address Table
 ------------------------------------------------------------------
 
 Vlan    Mac Address       Type        Ports      Moves   Last Move
 ----    -----------       ----        -----      -----   ---------
-   1    0000.2222.3333    STATIC      Cpu
-  10    0000.2222.3333    STATIC      Cpu
-  10    0200.0000.0001    DYNAMIC     Et3        1       0:02:28 ago
-  10    0200.0001.0003    DYNAMIC     Vx1        1       0:06:45 ago
-  20    0000.2222.3333    STATIC      Cpu
-  20    0200.0000.0002    DYNAMIC     Et4        1       0:01:58 ago
-  20    0200.0002.0003    DYNAMIC     Vx1        1       0:06:45 ago
-4093    0000.2222.3333    STATIC      Cpu
-4093    5079.f2b7.ebe3    DYNAMIC     Vx1        1       0:06:45 ago
-4093    50a4.0011.d294    DYNAMIC     Vx1        1       0:06:49 ago
-4093    50a4.2945.b244    DYNAMIC     Vx1        1       0:06:45 ago
-4094    0000.2222.3333    STATIC      Cpu
-4094    5079.f2b7.ebe3    DYNAMIC     Vx1        1       0:06:45 ago
-4094    50a4.0011.d294    DYNAMIC     Vx1        1       0:06:47 ago
-4094    50a4.2945.b244    DYNAMIC     Vx1        1       0:06:45 ago
+  10    aac1.ab46.07d3    DYNAMIC     Vx1        1       8:18:12 ago
+  10    aac1.ab6c.483a    DYNAMIC     Et3        1       8:18:12 ago
+  20    aac1.ab2d.c08f    DYNAMIC     Et4        1       8:19:57 ago
+  20    aac1.abc6.faf7    DYNAMIC     Vx1        1       8:18:53 ago
+Total Mac Addresses for this criterion: 4
 ```
 </details>
 
 <details>
-<summary>LEAF4 / show ip route vrf all</summary>
+<summary>LEAF11 / show ip route vrf all</summary>
 
 ```
-LEAF4#show ip route vrf all
+LEAF11#show ip route vrf all
 
 VRF: default
 Gateway of last resort is not set
 
- B E      10.1.0.1/32 [200/0] via 10.1.2.12, Ethernet1
- B E      10.1.0.2/32 [200/0] via 10.1.2.14, Ethernet2
- B E      10.1.0.3/32 [200/0] via 10.1.2.12, Ethernet1
-                              via 10.1.2.14, Ethernet2
- B E      10.1.0.4/32 [200/0] via 10.1.2.12, Ethernet1
-                              via 10.1.2.14, Ethernet2
- B E      10.1.0.5/32 [200/0] via 10.1.2.12, Ethernet1
-                              via 10.1.2.14, Ethernet2
- C        10.1.0.6/32 is directly connected, Loopback0
- C        10.1.2.12/31 is directly connected, Ethernet1
- C        10.1.2.14/31 is directly connected, Ethernet2
-
+ B I      10.0.0.0/32 [200/0]
+           via 10.1.2.4, Ethernet1
+           via 10.1.2.8, Ethernet2
+ B I      10.0.0.1/32 [200/0]
+           via 10.1.2.4, Ethernet1
+           via 10.1.2.8, Ethernet2
+ B I      10.0.0.2/31 [200/0]
+           via 10.1.2.4, Ethernet1
+           via 10.1.2.8, Ethernet2
+ B I      10.1.0.0/32 [200/0]
+           via 10.1.2.4, Ethernet1
+           via 10.1.2.8, Ethernet2
+ B I      10.1.0.1/32 [200/0]
+           via 10.1.2.4, Ethernet1
+ B I      10.1.0.2/32 [200/0]
+           via 10.1.2.8, Ethernet2
+ C        10.1.0.3/32
+           directly connected, Loopback0
+ B I      10.1.0.4/32 [200/0]
+           via 10.1.2.4, Ethernet1
+           via 10.1.2.8, Ethernet2
+ B I      10.1.2.0/31 [200/0]
+           via 10.1.2.4, Ethernet1
+ B I      10.1.2.2/31 [200/0]
+           via 10.1.2.8, Ethernet2
+ C        10.1.2.4/31
+           directly connected, Ethernet1
+ B I      10.1.2.6/31 [200/0]
+           via 10.1.2.4, Ethernet1
+ C        10.1.2.8/31
+           directly connected, Ethernet2
+ B I      10.1.2.10/31 [200/0]
+           via 10.1.2.8, Ethernet2
+ B I      10.2.0.0/32 [200/0]
+           via 10.1.2.4, Ethernet1
+           via 10.1.2.8, Ethernet2
+ B I      10.2.0.1/32 [200/0]
+           via 10.1.2.4, Ethernet1
+           via 10.1.2.8, Ethernet2
+ B I      10.2.0.2/32 [200/0]
+           via 10.1.2.4, Ethernet1
+           via 10.1.2.8, Ethernet2
+ B I      10.2.0.3/32 [200/0]
+           via 10.1.2.4, Ethernet1
+           via 10.1.2.8, Ethernet2
+ B I      10.2.0.4/32 [200/0]
+           via 10.1.2.4, Ethernet1
+           via 10.1.2.8, Ethernet2
+ B I      10.2.2.0/31 [200/0]
+           via 10.1.2.4, Ethernet1
+           via 10.1.2.8, Ethernet2
+ B I      10.2.2.2/31 [200/0]
+           via 10.1.2.4, Ethernet1
+           via 10.1.2.8, Ethernet2
+ B I      10.2.2.4/31 [200/0]
+           via 10.1.2.4, Ethernet1
+           via 10.1.2.8, Ethernet2
+ B I      10.2.2.6/31 [200/0]
+           via 10.1.2.4, Ethernet1
+           via 10.1.2.8, Ethernet2
+ B I      10.2.2.8/31 [200/0]
+           via 10.1.2.4, Ethernet1
+           via 10.1.2.8, Ethernet2
+ B I      10.2.2.10/31 [200/0]
+           via 10.1.2.4, Ethernet1
+           via 10.1.2.8, Ethernet2
 
 VRF: TENANT1
 Gateway of last resort:
- B E      0.0.0.0/0 [200/0] via 10.1.2.17, Vlan110
+ B I      0.0.0.0/0 [200/0]
+           via VTEP 10.1.0.4 VNI 50001 router-mac 00:1c:73:87:df:c6 local-interface Vxlan1
 
- C        10.1.2.16/31 is directly connected, Vlan110
- B E      10.10.10.1/32 [200/0] via VTEP 10.1.0.3 VNI 50001 router-mac 50:2a:2f:4a:0c:3a local-interface Vxlan1
- B E      10.10.10.3/32 [200/0] via VTEP 10.1.0.5 VNI 50001 router-mac 50:a4:29:45:b2:44 local-interface Vxlan1
-                                via VTEP 10.1.0.4 VNI 50001 router-mac 50:79:f2:b7:eb:e3 local-interface Vxlan1
- S        10.10.10.0/24 is directly connected, Null0
+ B I      10.10.10.2/32 [200/0]
+           via VTEP 10.0.0.0 VNI 50001 router-mac 00:00:00:00:01:01 local-interface Vxlan1
+ C        10.10.10.0/24
+           directly connected, Vlan10
+
 
 VRF: TENANT2
 Gateway of last resort:
- B E      0.0.0.0/0 [200/0] via 10.1.2.19, Vlan120
+ B I      0.0.0.0/0 [200/0]
+           via VTEP 10.1.0.4 VNI 50002 router-mac 00:1c:73:87:df:c6 local-interface Vxlan1
 
- C        10.1.2.18/31 is directly connected, Vlan120
- B E      20.20.20.1/32 [200/0] via VTEP 10.1.0.3 VNI 50002 router-mac 50:2a:2f:4a:0c:3a local-interface Vxlan1
- B E      20.20.20.3/32 [200/0] via VTEP 10.1.0.5 VNI 50002 router-mac 50:a4:29:45:b2:44 local-interface Vxlan1
-                                via VTEP 10.1.0.4 VNI 50002 router-mac 50:79:f2:b7:eb:e3 local-interface Vxlan1
- S        20.20.20.0/24 is directly connected, Null0
+ B I      10.10.20.2/32 [200/0]
+           via VTEP 10.0.0.0 VNI 50002 router-mac 00:00:00:00:01:01 local-interface Vxlan1
+ C        10.10.20.0/24
+           directly connected, Vlan20
 ```
 </details>
 
 <details>
-<summary>FW / show ip route</summary>
+<summary>LEAF21 / route-type 2 / show bgp evpn route-type mac-ip</summary>
+   
+```
+LEAF21#show bgp evpn route-type mac-ip
+BGP routing table information for VRF default
+Router identifier 10.2.0.3, local AS number 65002
+Route status codes: * - valid, > - active, S - Stale, E - ECMP head, e - ECMP
+                    c - Contributing to ECMP, % - Pending best path selection
+Origin codes: i - IGP, e - EGP, ? - incomplete
+AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
+
+          Network                Next Hop              Metric  LocPref Weight  Path
+ * >Ec    RD: 10.2.0.0:20 mac-ip aac1.ab2d.c08f
+                                 10.0.0.1              -       100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ *  ec    RD: 10.2.0.0:20 mac-ip aac1.ab2d.c08f
+                                 10.0.0.1              -       100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ * >Ec    RD: 10.2.0.0:20 mac-ip aac1.ab2d.c08f 10.10.20.1
+                                 10.0.0.1              -       100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ *  ec    RD: 10.2.0.0:20 mac-ip aac1.ab2d.c08f 10.10.20.1
+                                 10.0.0.1              -       100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ * >      RD: 10.2.0.3:10 mac-ip aac1.ab46.07d3
+                                 -                     -       -       0       i
+ * >      RD: 10.2.0.3:10 mac-ip aac1.ab46.07d3 10.10.10.2
+                                 -                     -       -       0       i
+ * >Ec    RD: 10.2.0.0:10 mac-ip aac1.ab6c.483a
+                                 10.0.0.1              -       100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ *  ec    RD: 10.2.0.0:10 mac-ip aac1.ab6c.483a
+                                 10.0.0.1              -       100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ * >Ec    RD: 10.2.0.0:10 mac-ip aac1.ab6c.483a 10.10.10.1
+                                 10.0.0.1              -       100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ *  ec    RD: 10.2.0.0:10 mac-ip aac1.ab6c.483a 10.10.10.1
+                                 10.0.0.1              -       100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ * >      RD: 10.2.0.3:20 mac-ip aac1.abc6.faf7
+                                 -                     -       -       0       i
+ * >      RD: 10.2.0.3:20 mac-ip aac1.abc6.faf7 10.10.20.2
+                                 -                     -       -       0       i
+```
+</details>
+
+<details>
+<summary>LEAF11 / route-type 5 / show bgp evpn route-type ip-prefix</summary>
 
 ```
-FW#show ip route
+LEAF21#show bgp evpn route-type ip-prefix
+BGP routing table information for VRF default
+Router identifier 10.2.0.3, local AS number 65002
+Route status codes: * - valid, > - active, S - Stale, E - ECMP head, e - ECMP
+                    c - Contributing to ECMP, % - Pending best path selection
+Origin codes: i - IGP, e - EGP, ? - incomplete
+AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
+
+          Network                Next Hop              Metric  LocPref Weight  Path
+ * >Ec    RD: 10.1.0.4:50001 ip-prefix 0.0.0.0/0
+                                 10.0.0.1              -       100     0       65001 65101 65100 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ *  ec    RD: 10.1.0.4:50001 ip-prefix 0.0.0.0/0
+                                 10.0.0.1              -       100     0       65001 65101 65100 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ * >Ec    RD: 10.1.0.4:50002 ip-prefix 0.0.0.0/0
+                                 10.0.0.1              -       100     0       65001 65101 65100 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ *  ec    RD: 10.1.0.4:50002 ip-prefix 0.0.0.0/0
+                                 10.0.0.1              -       100     0       65001 65101 65100 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ * >Ec    RD: 10.2.0.3:1 ip-prefix 0.0.0.0/0
+                                 10.2.0.4              -       100     0       65102 65100 i Or-ID: 10.2.0.4 C-LST: 10.2.0.1 
+ *  ec    RD: 10.2.0.3:1 ip-prefix 0.0.0.0/0
+                                 10.2.0.4              -       100     0       65102 65100 i Or-ID: 10.2.0.4 C-LST: 10.2.0.1 
+ * >Ec    RD: 10.2.0.3:2 ip-prefix 0.0.0.0/0
+                                 10.2.0.4              -       100     0       65102 65100 i Or-ID: 10.2.0.4 C-LST: 10.2.0.1 
+ *  ec    RD: 10.2.0.3:2 ip-prefix 0.0.0.0/0
+                                 10.2.0.4              -       100     0       65102 65100 i Or-ID: 10.2.0.4 C-LST: 10.2.0.1 
+ * >Ec    RD: 65001:102 ip-prefix 10.10.20.0/24
+                                 10.0.0.1              -       100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ *  ec    RD: 65001:102 ip-prefix 10.10.20.0/24
+                                 10.0.0.1              -       100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ * >Ec    RD: 65002:102 ip-prefix 10.10.20.0/24
+                                 10.0.0.1              -       100     0       i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ *  ec    RD: 65002:102 ip-prefix 10.10.20.0/24
+                                 10.0.0.1              -       100     0       i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+```
+</details>
+
+<details>
+<summary>LEAF11 / show mac address-table</summary>
+
+```
+LEAF21#show mac address-table 
+          Mac Address Table
+------------------------------------------------------------------
+
+Vlan    Mac Address       Type        Ports      Moves   Last Move
+----    -----------       ----        -----      -----   ---------
+  10    aac1.ab46.07d3    DYNAMIC     Et3        1       8:26:15 ago
+  10    aac1.ab6c.483a    DYNAMIC     Vx1        1       8:26:15 ago
+  20    aac1.ab2d.c08f    DYNAMIC     Vx1        1       8:28:00 ago
+  20    aac1.abc6.faf7    DYNAMIC     Et4        1       8:26:56 ago
+Total Mac Addresses for this criterion: 4
+```
+</details>
+
+<details>
+<summary>LEAF11 / show ip route vrf all</summary>
+
+```
+LEAF21#show ip route vrf all
 
 VRF: default
 Gateway of last resort is not set
 
- C        8.8.8.8/32 is directly connected, Loopback1
- C        10.1.0.7/32 is directly connected, Loopback0
- C        10.1.2.16/31 is directly connected, Vlan110
- C        10.1.2.18/31 is directly connected, Vlan120
- B E      10.10.10.0/24 [200/0] via 10.1.2.16, Vlan110
- B E      20.20.20.0/24 [200/0] via 10.1.2.18, Vlan120
+ B I      10.0.0.0/32 [200/0]
+           via 10.2.2.4, Ethernet1
+           via 10.2.2.8, Ethernet2
+ B I      10.0.0.1/32 [200/0]
+           via 10.2.2.4, Ethernet1
+           via 10.2.2.8, Ethernet2
+ B I      10.0.0.2/31 [200/0]
+           via 10.2.2.4, Ethernet1
+           via 10.2.2.8, Ethernet2
+ B I      10.1.0.0/32 [200/0]
+           via 10.2.2.4, Ethernet1
+           via 10.2.2.8, Ethernet2
+ B I      10.1.0.1/32 [200/0]
+           via 10.2.2.4, Ethernet1
+           via 10.2.2.8, Ethernet2
+ B I      10.1.0.2/32 [200/0]
+           via 10.2.2.4, Ethernet1
+           via 10.2.2.8, Ethernet2
+ B I      10.1.0.3/32 [200/0]
+           via 10.2.2.4, Ethernet1
+           via 10.2.2.8, Ethernet2
+ B I      10.1.0.4/32 [200/0]
+           via 10.2.2.4, Ethernet1
+           via 10.2.2.8, Ethernet2
+ B I      10.1.2.0/31 [200/0]
+           via 10.2.2.4, Ethernet1
+           via 10.2.2.8, Ethernet2
+ B I      10.1.2.2/31 [200/0]
+           via 10.2.2.4, Ethernet1
+           via 10.2.2.8, Ethernet2
+ B I      10.1.2.4/31 [200/0]
+           via 10.2.2.4, Ethernet1
+           via 10.2.2.8, Ethernet2
+ B I      10.1.2.6/31 [200/0]
+           via 10.2.2.4, Ethernet1
+           via 10.2.2.8, Ethernet2
+ B I      10.1.2.8/31 [200/0]
+           via 10.2.2.4, Ethernet1
+           via 10.2.2.8, Ethernet2
+ B I      10.1.2.10/31 [200/0]
+           via 10.2.2.4, Ethernet1
+           via 10.2.2.8, Ethernet2
+ B I      10.2.0.0/32 [200/0]
+           via 10.2.2.4, Ethernet1
+           via 10.2.2.8, Ethernet2
+ B I      10.2.0.1/32 [200/0]
+           via 10.2.2.4, Ethernet1
+ B I      10.2.0.2/32 [200/0]
+           via 10.2.2.8, Ethernet2
+ C        10.2.0.3/32
+           directly connected, Loopback0
+ B I      10.2.0.4/32 [200/0]
+           via 10.2.2.4, Ethernet1
+           via 10.2.2.8, Ethernet2
+ B I      10.2.2.0/31 [200/0]
+           via 10.2.2.4, Ethernet1
+ B I      10.2.2.2/31 [200/0]
+           via 10.2.2.8, Ethernet2
+ C        10.2.2.4/31
+           directly connected, Ethernet1
+ B I      10.2.2.6/31 [200/0]
+           via 10.2.2.4, Ethernet1
+ C        10.2.2.8/31
+           directly connected, Ethernet2
+ B I      10.2.2.10/31 [200/0]
+           via 10.2.2.8, Ethernet2
+
+VRF: TENANT1
+Gateway of last resort:
+ B I      0.0.0.0/0 [200/0]
+           via VTEP 10.2.0.4 VNI 50001 router-mac 00:1c:73:24:5f:da local-interface Vxlan1
+
+ B I      10.10.10.1/32 [200/0]
+           via VTEP 10.0.0.1 VNI 50001 router-mac 00:00:00:00:02:02 local-interface Vxlan1
+ C        10.10.10.0/24
+           directly connected, Vlan10
+
+
+VRF: TENANT2
+Gateway of last resort:
+ B I      0.0.0.0/0 [200/0]
+           via VTEP 10.2.0.4 VNI 50002 router-mac 00:1c:73:24:5f:da local-interface Vxlan1
+
+ B I      10.10.20.1/32 [200/0]
+           via VTEP 10.0.0.1 VNI 50002 router-mac 00:00:00:00:02:02 local-interface Vxlan1
+ C        10.10.20.0/24
+           directly connected, Vlan20```
+</details>
+
+<details>
+<summary>FW1 / show ip route bgp</summary>
+
+```
+fw1# show ip route vrf FW bgp 
+Codes: K - kernel route, C - connected, L - local, S - static,
+       R - RIP, O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
+       T - Table, v - VNC, V - VNC-Direct, A - Babel, F - PBR,
+       f - OpenFabric, t - Table-Direct,
+       > - selected route, * - FIB route, q - queued, r - rejected, b - backup
+       t - trapped, o - offload failure
+
+IPv4 unicast VRF FW:
+B>* 0.0.0.0/0 [20/0] via 10.0.2.1, eth3, weight 1, 09:00:36
+B>* 8.8.8.8/32 [20/0] via 10.0.2.1, eth3, weight 1, 09:00:36
+B>* 10.0.1.0/32 [20/0] via 10.0.2.1, eth3, weight 1, 09:00:36
+B>* 10.0.1.2/32 [20/0] via 10.0.2.1, eth3, weight 1, 08:55:48
+B>* 10.0.2.2/31 [20/0] via 10.0.2.1, eth3, weight 1, 09:00:36
+B>* 10.2.2.12/31 [20/0] via 10.0.2.1, eth3, weight 1, 08:55:48
+B>* 10.2.2.14/31 [20/0] via 10.0.2.1, eth3, weight 1, 08:55:48
+B>* 10.10.10.0/24 [20/0] via 10.1.2.12, eth1.110, weight 1, 09:00:37
+B>* 10.10.10.1/32 [20/0] via 10.1.2.12, eth1.110, weight 1, 08:28:28
+B>* 10.10.10.2/32 [20/0] via 10.0.2.1, eth3, weight 1, 02:01:41
+B>* 10.10.20.0/24 [20/0] via 10.1.2.14, eth1.120, weight 1, 09:00:37
+B>* 10.10.20.1/32 [20/0] via 10.1.2.14, eth1.120, weight 1, 08:28:09
+B>* 10.10.20.2/32 [20/0] via 10.0.2.1, eth3, weight 1, 02:01:42
 ```
 </details>
 
 <details>
-<summary>ping SRV1 -> SRV3, 8.8.8.8</summary>
-
-```
-SRV1:/# ping -c 3 20.20.20.3
-PING 20.20.20.3 (20.20.20.3): 56 data bytes
-64 bytes from 20.20.20.3: seq=0 ttl=59 time=71.412 ms
-64 bytes from 20.20.20.3: seq=1 ttl=59 time=31.888 ms
-64 bytes from 20.20.20.3: seq=2 ttl=59 time=30.876 ms
-
---- 20.20.20.3 ping statistics ---
-3 packets transmitted, 3 packets received, 0% packet loss
-round-trip min/avg/max = 30.876/44.725/71.412 ms
-SRV1:/# ping -c 3 8.8.8.8
-PING 8.8.8.8 (8.8.8.8): 56 data bytes
-64 bytes from 8.8.8.8: seq=0 ttl=62 time=13.797 ms
-64 bytes from 8.8.8.8: seq=1 ttl=62 time=12.160 ms
-64 bytes from 8.8.8.8: seq=2 ttl=62 time=12.847 ms
-
---- 8.8.8.8 ping statistics ---
-3 packets transmitted, 3 packets received, 0% packet loss
-round-trip min/avg/max = 12.160/12.934/13.797 ms
-```
-</details>
-
-В дампе на LEAF4 видим, что запрос 10.10.10.1 -> 20.20.20.3, проходящий в разных VxLAN с разными L3VNI (50001 - от LEAF1 до LEAF4, 50002 - от LEAF4 до LEAF3). Ответ проходят аналогичным образом.
-<img width="928" height="269" alt="image" src="https://github.com/user-attachments/assets/140ba28e-d1e9-4660-ac52-8ee63765e09c" />
-<img width="927" height="269" alt="image" src="https://github.com/user-attachments/assets/e5a310e4-4911-4641-aff8-e6051a05f7ed" />
-
-При ping 8.8.8.8 видим, соответственно, запрос/ответ.
-<img width="918" height="306" alt="image" src="https://github.com/user-attachments/assets/e2fcf5bc-ca4a-4df4-88b8-2647cf3a96d8" />
 
 <details>
-<summary>ping SRV2 -> SRV3, 8.8.8.8</summary>
+<summary>FW2 / show ip route</summary>
 
 ```
-SRV2:/# ping 10.10.10.3 -c 3
-PING 10.10.10.3 (10.10.10.3): 56 data bytes
-64 bytes from 10.10.10.3: seq=0 ttl=59 time=28.307 ms
-64 bytes from 10.10.10.3: seq=1 ttl=59 time=30.267 ms
-64 bytes from 10.10.10.3: seq=2 ttl=59 time=25.047 ms
+fw2# show ip route vrf FW bgp 
+Codes: K - kernel route, C - connected, L - local, S - static,
+       R - RIP, O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
+       T - Table, v - VNC, V - VNC-Direct, A - Babel, F - PBR,
+       f - OpenFabric, t - Table-Direct,
+       > - selected route, * - FIB route, q - queued, r - rejected, b - backup
+       t - trapped, o - offload failure
 
---- 10.10.10.3 ping statistics ---
+IPv4 unicast VRF FW:
+B>* 0.0.0.0/0 [20/0] via 10.0.2.3, eth3, weight 1, 08:56:38
+B>* 8.8.8.8/32 [20/0] via 10.0.2.3, eth3, weight 1, 08:56:38
+B>* 10.0.1.0/32 [20/0] via 10.0.2.3, eth3, weight 1, 08:56:38
+B>* 10.0.1.1/32 [20/0] via 10.0.2.3, eth3, weight 1, 08:56:38
+B>* 10.0.2.0/31 [20/0] via 10.0.2.3, eth3, weight 1, 08:56:38
+B>* 10.1.2.12/31 [20/0] via 10.0.2.3, eth3, weight 1, 08:56:38
+B>* 10.1.2.14/31 [20/0] via 10.0.2.3, eth3, weight 1, 08:56:38
+B>* 10.10.10.0/24 [20/0] via 10.0.2.3, eth3, weight 1, 04:50:23
+B>* 10.10.10.1/32 [20/0] via 10.0.2.3, eth3, weight 1, 08:29:18
+B>* 10.10.10.2/32 [20/0] via 10.2.2.12, eth1.110, weight 1, 02:02:31
+B>* 10.10.20.0/24 [20/0] via 10.0.2.3, eth3, weight 1, 04:50:23
+B>* 10.10.20.1/32 [20/0] via 10.0.2.3, eth3, weight 1, 08:28:59
+B>* 10.10.20.2/32 [20/0] via 10.2.2.14, eth1.120, weight 1, 02:02:32
+```
+</details>
+
+<details>
+<summary>ping HOST3 -> HOST1, HOST2, HOST4, 8.8.8.8</summary>
+
+```
+host1:/# ping -c 3 10.10.10.2
+PING 10.10.10.2 (10.10.10.2): 56 data bytes
+64 bytes from 10.10.10.2: seq=0 ttl=64 time=4.615 ms
+64 bytes from 10.10.10.2: seq=1 ttl=64 time=3.401 ms
+64 bytes from 10.10.10.2: seq=2 ttl=64 time=3.453 ms
+
+--- 10.10.10.2 ping statistics ---
 3 packets transmitted, 3 packets received, 0% packet loss
-round-trip min/avg/max = 25.047/27.873/30.267 ms
-SRV2:/# ping 8.8.8.8 -c 3
+round-trip min/avg/max = 3.401/3.823/4.615 ms
+host1:/# ping -c 3 10.10.20.1
+PING 10.10.20.1 (10.10.20.1): 56 data bytes
+64 bytes from 10.10.20.1: seq=0 ttl=59 time=3.071 ms
+64 bytes from 10.10.20.1: seq=1 ttl=59 time=3.388 ms
+64 bytes from 10.10.20.1: seq=2 ttl=59 time=3.124 ms
+
+--- 10.10.20.1 ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max = 3.071/3.194/3.388 ms
+host1:/# ping -c 3 10.10.20.2
+PING 10.10.20.2 (10.10.20.2): 56 data bytes
+64 bytes from 10.10.20.2: seq=0 ttl=57 time=3.245 ms
+64 bytes from 10.10.20.2: seq=1 ttl=57 time=3.603 ms
+64 bytes from 10.10.20.2: seq=2 ttl=57 time=3.453 ms
+
+--- 10.10.20.2 ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max = 3.245/3.433/3.603 ms
+host1:/# ping -c 3 8.8.8.8
 PING 8.8.8.8 (8.8.8.8): 56 data bytes
-64 bytes from 8.8.8.8: seq=0 ttl=62 time=12.251 ms
-64 bytes from 8.8.8.8: seq=1 ttl=62 time=12.159 ms
-64 bytes from 8.8.8.8: seq=2 ttl=62 time=11.118 ms
+64 bytes from 8.8.8.8: seq=0 ttl=61 time=1.689 ms
+64 bytes from 8.8.8.8: seq=1 ttl=61 time=1.682 ms
+64 bytes from 8.8.8.8: seq=2 ttl=61 time=1.492 ms
 
 --- 8.8.8.8 ping statistics ---
 3 packets transmitted, 3 packets received, 0% packet loss
-round-trip min/avg/max = 11.118/11.842/12.251 ms
+round-trip min/avg/max = 1.492/1.621/1.689 ms
 ```
 </details>
-Проверки с SRV2 также проходят без потерь.
 
+<details>
+<summary>ping HOST3 -> HOST1, HOST2, HOST4, 8.8.8.8</summary>
+
+```
+host3:/# ping -c 3 10.10.10.1
+PING 10.10.10.1 (10.10.10.1): 56 data bytes
+64 bytes from 10.10.10.1: seq=0 ttl=64 time=4.013 ms
+64 bytes from 10.10.10.1: seq=1 ttl=64 time=3.566 ms
+64 bytes from 10.10.10.1: seq=2 ttl=64 time=3.413 ms
+
+--- 10.10.10.1 ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max = 3.413/3.664/4.013 ms
+host3:/# ping -c 3 10.10.20.1
+PING 10.10.20.1 (10.10.20.1): 56 data bytes
+64 bytes from 10.10.20.1: seq=0 ttl=57 time=3.471 ms
+64 bytes from 10.10.20.1: seq=1 ttl=57 time=3.958 ms
+64 bytes from 10.10.20.1: seq=2 ttl=57 time=4.217 ms
+
+--- 10.10.20.1 ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max = 3.471/3.882/4.217 ms
+host3:/# ping -c 3 10.10.20.2
+PING 10.10.20.2 (10.10.20.2): 56 data bytes
+64 bytes from 10.10.20.2: seq=0 ttl=59 time=3.798 ms
+64 bytes from 10.10.20.2: seq=1 ttl=59 time=2.985 ms
+64 bytes from 10.10.20.2: seq=2 ttl=59 time=3.448 ms
+
+--- 10.10.20.2 ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max = 2.985/3.410/3.798 ms
+host3:/# ping -c 3 8.8.8.8
+PING 8.8.8.8 (8.8.8.8): 56 data bytes
+64 bytes from 8.8.8.8: seq=0 ttl=61 time=1.499 ms
+64 bytes from 8.8.8.8: seq=1 ttl=61 time=2.050 ms
+64 bytes from 8.8.8.8: seq=2 ttl=61 time=1.926 ms
+
+--- 8.8.8.8 ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max = 1.499/1.825/2.050 ms
+```
+</details>
+
+<details>
+<summary>Трассировка / Host1 -> Host4</summary>
+
+```
+host1:/# traceroute -n 10.10.20.2
+traceroute to 10.10.20.2 (10.10.20.2), 30 hops max, 46 byte packets
+ 1  10.10.10.254  0.880 ms  0.387 ms  0.394 ms
+ 2  10.1.2.12  1.689 ms  1.389 ms  1.384 ms
+ 3  10.1.2.13  1.536 ms  1.291 ms  1.412 ms
+ 4  10.0.2.1  1.410 ms  1.402 ms  1.422 ms
+ 5  10.0.2.2  1.489 ms  1.324 ms  1.394 ms
+ 6  10.2.2.14  2.091 ms  1.809 ms  1.728 ms
+ 7  10.10.20.254  3.270 ms  2.591 ms  2.646 ms
+ 8  10.10.20.2  2.904 ms  2.852 ms  2.825 ms
+```
+</details>
+
+<details>
+<summary>Трассировка / Host3 -> Host2</summary>
+
+```
+host3:/# traceroute -n 10.10.20.1
+traceroute to 10.10.20.1 (10.10.20.1), 30 hops max, 46 byte packets
+ 1  10.10.10.254  0.840 ms  0.493 ms  0.431 ms
+ 2  10.2.2.12  1.812 ms  1.282 ms  1.224 ms
+ 3  10.2.2.13  1.406 ms  1.291 ms  1.312 ms
+ 4  10.0.2.3  1.370 ms  1.274 ms  1.345 ms
+ 5  10.0.2.0  1.404 ms  1.321 ms  1.398 ms
+ 6  10.1.2.14  1.968 ms  1.749 ms  1.668 ms
+ 7  10.10.20.254  3.357 ms  2.595 ms  2.470 ms
+ 8  10.10.20.1  2.825 ms  2.685 ms  2.613 ms```
+</details>
+
+## 7. Правила прохождения трафика
+
+## 8. Проверка отказоустойчивости
+На видео показан вариант с имитацией отказа линка между Leaf22 и FW2.
 [![Тестирование отключения линка LEAF22 -- FW2](https://img.youtube.com/vi/a_ydqCp0GHg/default.jpg)](https://youtu.be/a_ydqCp0GHg&vq=hd720)
+Наблюдаем, что  происходит следующее:
+0. В штатной ситуации default указывает на Border LEAF своего сfйта (получаем с FW)
+LEAF21#sh ip route vrf TENANT1 0.0.0.0/0
+VRF: TENANT1
+Gateway of last resort:
+ B I      0.0.0.0/0 [200/0]
+           via VTEP 10.2.0.4 VNI 50001 router-mac 00:1c:73:24:5f:da local-interface Vxlan1
 
-## 6. Конфигурации устройств фабрики
+2. При отключении интерфейса на сайте 2 пропадает default, полученный от FW2 (происходит быстро из-за настроенног BFD) и default из сайта 1 (который получаем с BGW2) становится в таблицу маршрутизации.
+LEAF21#sh ip route vrf TENANT1 0.0.0.0/0
+VRF: TENANT1
+Source Codes:
+Gateway of last resort:
+ B I      0.0.0.0/0 [200/0]
+           via VTEP 10.0.0.1 VNI 50001 router-mac 00:00:00:00:02:02 local-interface Vxlan1
+
+3. Выход во внешний мир и трафик между VRF для сайта 2 теперь идет через МСЭ сайта 1 (BGW при этом не отвечают не видны в трассировке, вероятно, особенность cEOS, т.к. в дампе трафика фиксируем запрос с TTL=1, но него нет ответа).
+host3:/# traceroute -n -w 1 10.10.20.1
+traceroute to 10.10.20.1 (10.10.20.1), 30 hops max, 46 byte packets
+ 1  10.10.10.254  0.645 ms  0.443 ms  0.439 ms
+ 2  *  *  *
+ 3  *  *  *
+ 4  10.1.2.12  3.691 ms  2.597 ms  2.543 ms
+ 5  10.1.2.13  2.794 ms  2.634 ms  2.904 ms
+ 6  10.1.2.14  2.992 ms  2.876 ms  2.834 ms
+ 7  10.10.20.254  3.958 ms  3.943 ms  3.709 ms
+ 8  10.10.20.1  3.932 ms  3.838 ms  3.939 ms
+   
+* При этом при аварийной ситуации с продолжающимися проверками с помощью ICMP фиксируем пропадание не более одного пакета.
+** Обратное переключение происходит также безболезненно.
+
+## 9. Конфигурации устройств фабрики
 [Конфигурация SPINE1](./configs/spine1.conf)<br>
 [Конфигурация SPINE2](./configs/spine2.conf)<br>
 [Конфигурация LEAF1](./configs/leaf1.conf)<br>
