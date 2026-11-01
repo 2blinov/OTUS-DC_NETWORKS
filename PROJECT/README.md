@@ -1420,7 +1420,7 @@ traceroute to 10.10.20.1 (10.10.20.1), 30 hops max, 46 byte packets
 ## 8. Проверка отказоустойчивости
 На видео показан вариант с имитацией отказа линка между Leaf22 и FW2.</br>
 [![Тестирование отключения линка LEAF22 -- FW2](https://img.youtube.com/vi/a_ydqCp0GHg/default.jpg)](https://youtu.be/a_ydqCp0GHg&vq=hd720)</br>
-Наблюдаем, что  происходит следующее:
+Наблюдаем, что  происходит следующее:</br>
 0. В штатной ситуации default указывает на Border LEAF своего сfйта (получаем с FW)
 ```
 LEAF21#sh ip route vrf TENANT1 0.0.0.0/0
