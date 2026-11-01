@@ -215,58 +215,237 @@ router bgp 65001
 </details>
 
 <details>
-<summary>Настройка SRV1</summary>
+<summary>Контекст: Настройки Border LEAF</summary>
 
 ```eos
-SRV1:/# ip addr show dev eth1
-79: eth1@if78: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP qlen 1000
-    link/ether 02:00:00:00:00:01 brd ff:ff:ff:ff:ff:ff
-    inet 10.10.10.1/24 scope global eth1
-       valid_lft forever preferred_lft forever
-SRV1:/# 
-SRV1:/# 
-SRV1:/# ip route
-default via 10.10.10.254 dev eth1 
-10.10.10.0/24 dev eth1 scope link  src 10.10.10.1 
+vlan 110
+   name TR-FW-TENANT1
+!
+vlan 120
+   name TR-FW-TENANT2
+!
+vrf instance TENANT1
+!
+vrf instance TENANT2
+!
+interface Vlan110
+   description TR-FW-TENANT1
+   vrf TENANT1
+   ip address 10.1.2.12/31
+!
+interface Vlan120
+   description TR-FW-TENANT2
+   vrf TENANT2
+   ip address 10.1.2.14/31
+!
+interface Vxlan1
+   vxlan source-interface Loopback0
+   vxlan udp-port 4789
+   vxlan vrf TENANT1 vni 50001
+   vxlan vrf TENANT2 vni 50002
+!
+ip routing
+ip routing vrf TENANT1
+ip routing vrf TENANT2
+!
+ip as-path access-list LOCAL-ORIGIN permit ^$ any
+!
+ip prefix-list PL_DEFAULT
+   seq 10 permit 0.0.0.0/0
+!
+ip prefix-list PL_TENANT1
+   seq 10 permit 10.10.10.0/24
+   seq 20 permit 10.10.10.0/24 ge 32 le 32
+!
+ip prefix-list PL_TENANT2
+   seq 10 permit 10.10.20.0/24 le 32
+   seq 20 permit 10.10.20.0/24 ge 32 le 32
+!
+ip route vrf TENANT1 10.10.10.0/24 Null0
+ip route vrf TENANT2 10.10.20.0/24 Null0
+!
+route-map RM_EXPORT_EVPN permit 10
+   match ip address prefix-list PL_DEFAULT
+!
+route-map RM_TENANT1-OUT permit 10
+   match ip address prefix-list PL_TENANT1
+   match as-path LOCAL-ORIGIN
+!
+route-map RM_TENANT2-OUT permit 10
+   match ip address prefix-list PL_TENANT2
+   match as-path LOCAL-ORIGIN
+!
+route-map SITE1-HOSTS permit 10
+   match as-path LOCAL-ORIGIN
+   set community 65001:5
+!
+router bgp 65001
+   router-id 10.1.0.4
+   maximum-paths 4 ecmp 4
+   neighbor SPINE-EVPN peer group
+   neighbor SPINE-EVPN remote-as 65001
+   neighbor SPINE-EVPN next-hop-unchanged
+   neighbor SPINE-EVPN update-source Loopback0
+   neighbor SPINE-EVPN bfd
+   neighbor SPINE-EVPN ebgp-multihop 5
+   neighbor SPINE-EVPN send-community extended
+   neighbor SPINE-UNDERLAY peer group
+   neighbor SPINE-UNDERLAY remote-as 65001
+   neighbor SPINE-UNDERLAY bfd
+   neighbor 10.1.0.1 peer group SPINE-EVPN
+   neighbor 10.1.0.2 peer group SPINE-EVPN
+   neighbor 10.1.2.6 peer group SPINE-UNDERLAY
+   neighbor 10.1.2.10 peer group SPINE-UNDERLAY
+   !
+   address-family evpn
+      neighbor SPINE-EVPN activate
+   !
+   address-family ipv4
+      no neighbor SPINE-EVPN activate
+      neighbor SPINE-UNDERLAY activate
+      network 10.1.0.4/32
+      network 10.1.2.6/31
+      network 10.1.2.10/31
+   !
+   vrf TENANT1
+      rd 10.1.0.4:50001
+      route-target import evpn 1:50001
+      route-target export evpn 1:50001
+      route-target export evpn route-map RM_EXPORT_EVPN
+      router-id 10.1.0.4
+      maximum-paths 4 ecmp 4
+      neighbor 10.1.2.13 remote-as 65101
+      neighbor 10.1.2.13 bfd
+      redistribute attached-host route-map SITE1-HOSTS
+      !
+      address-family ipv4
+         neighbor 10.1.2.13 activate
+         neighbor 10.1.2.13 route-map RM_TENANT1-OUT out
+         neighbor 10.1.2.13 prefix-list PL_DEFAULT in
+         network 10.10.10.0/24
+   !
+   vrf TENANT2
+      rd 10.1.0.4:50002
+      route-target import evpn 1:50002
+      route-target export evpn 1:50002
+      route-target export evpn route-map RM_EXPORT_EVPN
+      router-id 10.1.0.4
+      maximum-paths 4 ecmp 4
+      neighbor 10.1.2.15 remote-as 65101
+      neighbor 10.1.2.15 bfd
+      redistribute attached-host route-map SITE1-HOSTS
+      !
+      address-family ipv4
+         neighbor 10.1.2.15 activate
+         neighbor 10.1.2.15 route-map RM_TENANT2-OUT out
+         neighbor 10.1.2.15 prefix-list PL_DEFAULT in
+         network 10.10.20.0/24
 ```
 </details>
 
 <details>
-<summary>Настройкb SRV2</summary>
+<summary>Настройкb BGW</summary>
 
 ```eos
-SRV2:/# ip addr show dev eth1
-85: eth1@if84: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP qlen 1000
-    link/ether 02:00:00:00:00:02 brd ff:ff:ff:ff:ff:ff
-    inet 20.20.20.1/24 scope global eth1
-       valid_lft forever preferred_lft forever
-SRV2:/# ip route
-default via 20.20.20.254 dev eth1 
-20.20.20.0/24 dev eth1 scope link  src 20.20.20.1 
-```
-</details>
-
-<details>
-<summary>Настройкb SRV3</summary>
-
-```eos
-SRV3#sh ip int brief
-Interface            IP Address        Status     Protocol        MTU  
--------------------- ----------------- ---------- ------------ --------
-Management1          unassigned        down       down           1500          
-Port-Channel1        unassigned        up         up             1500          
-Port-Channel1.10     10.10.10.3/24     up         up             1500          
-Port-Channel1.20     20.20.20.3/24     up         up             1500          
-
-SRV3#sh ip route vrf all
-VRF: VRF1
-Gateway of last resort:
- S        0.0.0.0/0 [1/0] via 10.10.10.254, Port-Channel1.10
- C        10.10.10.0/24 is directly connected, Port-Channel1.10
-VRF: VRF2
-Gateway of last resort:
- S        0.0.0.0/0 [1/0] via 20.20.20.254, Port-Channel1.20
- C        20.20.20.0/24 is directly connected, Port-Channel1.20
+vlan 10
+   name VLAN10
+!
+vlan 20
+   name VLAN20
+!
+vrf instance TENANT1
+!
+vrf instance TENANT2
+!
+interface Loopback1
+   description VIP-DCI
+   ip address 10.0.0.0/32
+!
+interface Vlan10
+   vrf TENANT1
+   ip address 10.10.10.251/24
+!
+interface Vlan20
+   vrf TENANT2
+   ip address 10.10.20.251/24
+!
+interface Vxlan1
+   vxlan source-interface Loopback1
+   vxlan virtual-router encapsulation mac-address 00:00:00:00:01:01
+   vxlan udp-port 4789
+   vxlan vlan 10 vni 10010
+   vxlan vlan 20 vni 10020
+   vxlan vrf TENANT1 vni 50001
+   vxlan vrf TENANT2 vni 50002
+   vxlan learn-restrict any
+!
+ip routing
+ip routing vrf TENANT1
+ip routing vrf TENANT2
+!
+router bgp 65001
+   router-id 10.1.0.0
+   no bgp default ipv4-unicast
+   timers bgp 1 3
+   distance bgp 20 200 200
+   maximum-paths 4 ecmp 4
+   neighbor DCI peer group
+   neighbor DCI remote-as 65002
+   neighbor DCI send-community extended
+   neighbor SPINE-EVPN peer group
+   neighbor SPINE-EVPN remote-as 65001
+   neighbor SPINE-EVPN update-source Loopback0
+   neighbor SPINE-EVPN send-community extended
+   neighbor UNDERLAY peer group
+   neighbor UNDERLAY remote-as 65001
+   neighbor 10.0.0.3 peer group DCI
+   neighbor 10.1.0.1 peer group SPINE-EVPN
+   neighbor 10.1.0.2 peer group SPINE-EVPN
+   neighbor 10.1.2.1 peer group UNDERLAY
+   neighbor 10.1.2.3 peer group UNDERLAY
+   !
+   vlan 10
+      rd evpn domain all 10.1.0.0:10
+      route-target both 10:10010
+      route-target import export evpn domain remote 10:10
+      redistribute learned
+   !
+   vlan 20
+      rd evpn domain all 10.1.0.0:20
+      route-target both 20:10020
+      route-target import export evpn domain remote 20:20
+      redistribute learned
+   !
+   address-family evpn
+      neighbor DCI activate
+      neighbor DCI domain remote
+      neighbor SPINE-EVPN activate
+      domain identifier 1:1
+      domain identifier 2:2 remote
+      neighbor default next-hop-self received-evpn-routes route-type ip-prefix inter-domain
+   !
+   address-family ipv4
+      neighbor DCI activate
+      neighbor UNDERLAY activate
+      network 10.0.0.0/32
+      network 10.0.0.2/31
+      network 10.1.0.0/32
+      network 10.1.2.0/31
+      network 10.1.2.2/31
+   !
+   vrf TENANT1
+      rd 65001:101
+      rd evpn domain remote 65002:101
+      route-target import evpn 1:50001
+      route-target export evpn 1:50001
+   !
+   vrf TENANT2
+      rd 65001:102
+      rd evpn domain remote 65002:102
+      route-target import evpn 1:50002
+      route-target export evpn 1:50002
+      redistribute connected
+!
 ```
 </details>
 
