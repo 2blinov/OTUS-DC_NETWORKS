@@ -581,69 +581,6 @@ Neighbor          AS Session State AFI/SAFI                AFI/SAFI State   NLRI
 ```
 </details>
 
-Сайт 2:
-<details>
-<summary>LEAF21 / show bgp summary vrf all</summary>
-  
-```eos
-LEAF21#show bgp summary vrf all 
-BGP summary information for VRF default
-Router identifier 10.2.0.3, local AS number 65002
-Neighbor          AS Session State AFI/SAFI                AFI/SAFI State   NLRI Rcd   NLRI Acc   NLRI Adv
--------- ----------- ------------- ----------------------- -------------- ---------- ---------- ----------
-10.2.0.1       65002 Established   L2VPN EVPN              Negotiated             12         12          6
-10.2.0.2       65002 Established   L2VPN EVPN              Negotiated             12         12          6
-10.2.2.4       65002 Established   IPv4 Unicast            Negotiated             22         22          3
-10.2.2.8       65002 Established   IPv4 Unicast            Negotiated             22         22          3
-```
-</details>
-
-<details>
-<summary>LEAF22 / show bgp summary vrf all</summary>
-  
-```eos
-LEAF22#show bgp summary vrf all 
-BGP summary information for VRF default
-Router identifier 10.2.0.4, local AS number 65002
-Neighbor           AS Session State AFI/SAFI                AFI/SAFI State   NLRI Rcd   NLRI Acc   NLRI Adv
---------- ----------- ------------- ----------------------- -------------- ---------- ---------- ----------
-10.2.0.1        65002 Established   L2VPN EVPN              Negotiated             16         16          2
-10.2.0.2        65002 Established   L2VPN EVPN              Negotiated             16         16          2
-10.2.2.6        65002 Established   IPv4 Unicast            Negotiated             22         22          3
-10.2.2.10       65002 Established   IPv4 Unicast            Negotiated             22         22          3
-
-BGP summary information for VRF TENANT1
-Router identifier 10.2.0.4, local AS number 65002
-Neighbor           AS Session State AFI/SAFI                AFI/SAFI State   NLRI Rcd   NLRI Acc   NLRI Adv
---------- ----------- ------------- ----------------------- -------------- ---------- ---------- ----------
-10.2.2.13       65102 Established   IPv4 Unicast            Negotiated             15          1          2
-
-BGP summary information for VRF TENANT2
-Router identifier 10.2.0.4, local AS number 65002
-Neighbor           AS Session State AFI/SAFI                AFI/SAFI State   NLRI Rcd   NLRI Acc   NLRI Adv
---------- ----------- ------------- ----------------------- -------------- ---------- ---------- ----------
-10.2.2.15       65102 Established   IPv4 Unicast            Negotiated             15          1          2
-```
-</details>
-
-<details>
-<summary>BGW2 / show bgp summary vrf all</summary>
-  
-```eos
-BGW2#show bgp summary vrf all 
-BGP summary information for VRF default
-Router identifier 10.2.0.0, local AS number 65002
-Neighbor          AS Session State AFI/SAFI                AFI/SAFI State   NLRI Rcd   NLRI Acc   NLRI Adv
--------- ----------- ------------- ----------------------- -------------- ---------- ---------- ----------
-10.0.0.2       65001 Established   IPv4 Unicast            Negotiated             13         13         13
-10.0.0.2       65001 Established   L2VPN EVPN              Negotiated              9          9          9
-10.2.0.1       65002 Established   L2VPN EVPN              Negotiated              8          8         10
-10.2.0.2       65002 Established   L2VPN EVPN              Negotiated              8          8         10
-10.2.2.1       65002 Established   IPv4 Unicast            Negotiated              8          8         17
-10.2.2.3       65002 Established   IPv4 Unicast            Negotiated              8          8         17
-```
-</details>
-
 <details>
 <summary> LEAF11 / show ip bgp</summary>
   
@@ -740,6 +677,134 @@ PING 10.0.0.0 (10.0.0.0) from 10.1.0.3 : 72(100) bytes of data.
 --- 10.0.0.0 ping statistics ---
 3 packets transmitted, 3 received, 0% packet loss, time 1ms
 rtt min/avg/max/mdev = 0.346/0.380/0.440/0.042 ms, ipg/ewma 0.507/0.419 ms
+```
+</details>
+
+Сайт 2:
+<details>
+<summary>LEAF21 / show bgp summary vrf all</summary>
+  
+```eos
+LEAF21#show bgp summary vrf all 
+BGP summary information for VRF default
+Router identifier 10.2.0.3, local AS number 65002
+Neighbor          AS Session State AFI/SAFI                AFI/SAFI State   NLRI Rcd   NLRI Acc   NLRI Adv
+-------- ----------- ------------- ----------------------- -------------- ---------- ---------- ----------
+10.2.0.1       65002 Established   L2VPN EVPN              Negotiated             12         12          6
+10.2.0.2       65002 Established   L2VPN EVPN              Negotiated             12         12          6
+10.2.2.4       65002 Established   IPv4 Unicast            Negotiated             22         22          3
+10.2.2.8       65002 Established   IPv4 Unicast            Negotiated             22         22          3
+```
+</details>
+
+<details>
+<summary>LEAF22 / show bgp summary vrf all</summary>
+  
+```eos
+LEAF22#show bgp summary vrf all 
+BGP summary information for VRF default
+Router identifier 10.2.0.4, local AS number 65002
+Neighbor           AS Session State AFI/SAFI                AFI/SAFI State   NLRI Rcd   NLRI Acc   NLRI Adv
+--------- ----------- ------------- ----------------------- -------------- ---------- ---------- ----------
+10.2.0.1        65002 Established   L2VPN EVPN              Negotiated             16         16          2
+10.2.0.2        65002 Established   L2VPN EVPN              Negotiated             16         16          2
+10.2.2.6        65002 Established   IPv4 Unicast            Negotiated             22         22          3
+10.2.2.10       65002 Established   IPv4 Unicast            Negotiated             22         22          3
+
+BGP summary information for VRF TENANT1
+Router identifier 10.2.0.4, local AS number 65002
+Neighbor           AS Session State AFI/SAFI                AFI/SAFI State   NLRI Rcd   NLRI Acc   NLRI Adv
+--------- ----------- ------------- ----------------------- -------------- ---------- ---------- ----------
+10.2.2.13       65102 Established   IPv4 Unicast            Negotiated             15          1          2
+
+BGP summary information for VRF TENANT2
+Router identifier 10.2.0.4, local AS number 65002
+Neighbor           AS Session State AFI/SAFI                AFI/SAFI State   NLRI Rcd   NLRI Acc   NLRI Adv
+--------- ----------- ------------- ----------------------- -------------- ---------- ---------- ----------
+10.2.2.15       65102 Established   IPv4 Unicast            Negotiated             15          1          2
+```
+</details>
+
+<details>
+<summary>BGW2 / show bgp summary vrf all</summary>
+  
+```eos
+BGW2#show bgp summary vrf all 
+BGP summary information for VRF default
+Router identifier 10.2.0.0, local AS number 65002
+Neighbor          AS Session State AFI/SAFI                AFI/SAFI State   NLRI Rcd   NLRI Acc   NLRI Adv
+-------- ----------- ------------- ----------------------- -------------- ---------- ---------- ----------
+10.0.0.2       65001 Established   IPv4 Unicast            Negotiated             13         13         13
+10.0.0.2       65001 Established   L2VPN EVPN              Negotiated              9          9          9
+10.2.0.1       65002 Established   L2VPN EVPN              Negotiated              8          8         10
+10.2.0.2       65002 Established   L2VPN EVPN              Negotiated              8          8         10
+10.2.2.1       65002 Established   IPv4 Unicast            Negotiated              8          8         17
+10.2.2.3       65002 Established   IPv4 Unicast            Negotiated              8          8         17
+```
+</details>
+
+<details>
+<summary> LEAF21 / show ip bgp</summary>
+  
+```eos
+LEAF21#show ip bgp
+BGP routing table information for VRF default
+Router identifier 10.2.0.3, local AS number 65002
+Route status codes: s - suppressed contributor, * - valid, > - active, E - ECMP head, e - ECMP
+                    S - Stale, c - Contributing to ECMP, b - backup, L - labeled-unicast, q - Pending FIB install
+                    % - Pending best path selection
+Origin codes: i - IGP, e - EGP, ? - incomplete
+RPKI Origin Validation codes: V - valid, I - invalid, U - unknown
+AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
+
+          Network                Next Hop              Metric  AIGP       LocPref Weight  Path
+ * >Ec    10.0.0.0/32            10.0.0.2              0       -          100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ *  ec    10.0.0.0/32            10.0.0.2              0       -          100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ * >Ec    10.0.0.1/32            10.2.2.0              0       -          100     0       i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ *  ec    10.0.0.1/32            10.2.2.2              0       -          100     0       i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ * >Ec    10.0.0.2/31            10.2.2.0              0       -          100     0       i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ *  ec    10.0.0.2/31            10.2.2.2              0       -          100     0       i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ * >Ec    10.1.0.0/32            10.0.0.2              0       -          100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ *  ec    10.1.0.0/32            10.0.0.2              0       -          100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ * >Ec    10.1.0.1/32            10.0.0.2              0       -          100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ *  ec    10.1.0.1/32            10.0.0.2              0       -          100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ * >Ec    10.1.0.2/32            10.0.0.2              0       -          100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ *  ec    10.1.0.2/32            10.0.0.2              0       -          100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ * >Ec    10.1.0.3/32            10.0.0.2              0       -          100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ *  ec    10.1.0.3/32            10.0.0.2              0       -          100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ * >Ec    10.1.0.4/32            10.0.0.2              0       -          100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ *  ec    10.1.0.4/32            10.0.0.2              0       -          100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ * >Ec    10.1.2.0/31            10.0.0.2              0       -          100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ *  ec    10.1.2.0/31            10.0.0.2              0       -          100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ * >Ec    10.1.2.2/31            10.0.0.2              0       -          100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ *  ec    10.1.2.2/31            10.0.0.2              0       -          100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ * >Ec    10.1.2.4/31            10.0.0.2              0       -          100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ *  ec    10.1.2.4/31            10.0.0.2              0       -          100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ * >Ec    10.1.2.6/31            10.0.0.2              0       -          100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ *  ec    10.1.2.6/31            10.0.0.2              0       -          100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ * >Ec    10.1.2.8/31            10.0.0.2              0       -          100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ *  ec    10.1.2.8/31            10.0.0.2              0       -          100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ * >Ec    10.1.2.10/31           10.0.0.2              0       -          100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ *  ec    10.1.2.10/31           10.0.0.2              0       -          100     0       65001 i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ * >Ec    10.2.0.0/32            10.2.2.0              0       -          100     0       i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ *  ec    10.2.0.0/32            10.2.2.2              0       -          100     0       i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ * >      10.2.0.1/32            10.2.2.4              0       -          100     0       i
+ * >      10.2.0.2/32            10.2.2.8              0       -          100     0       i
+ * >      10.2.0.3/32            -                     -       -          -       0       i
+ * >Ec    10.2.0.4/32            10.2.2.7              0       -          100     0       i Or-ID: 10.2.0.4 C-LST: 10.2.0.1 
+ *  ec    10.2.0.4/32            10.2.2.11             0       -          100     0       i Or-ID: 10.2.0.4 C-LST: 10.2.0.1 
+ * >      10.2.2.0/31            10.2.2.4              0       -          100     0       i
+ *        10.2.2.0/31            10.2.2.2              0       -          100     0       i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ * >      10.2.2.2/31            10.2.2.8              0       -          100     0       i
+ *        10.2.2.2/31            10.2.2.0              0       -          100     0       i Or-ID: 10.2.0.0 C-LST: 10.2.0.1 
+ * >      10.2.2.4/31            -                     -       -          -       0       i
+ *        10.2.2.4/31            10.2.2.4              0       -          100     0       i
+ * >      10.2.2.6/31            10.2.2.4              0       -          100     0       i
+ *        10.2.2.6/31            10.2.2.11             0       -          100     0       i Or-ID: 10.2.0.4 C-LST: 10.2.0.1 
+ * >      10.2.2.8/31            -                     -       -          -       0       i
+ *        10.2.2.8/31            10.2.2.8              0       -          100     0       i
+ * >      10.2.2.10/31           10.2.2.8              0       -          100     0       i
+ *        10.2.2.10/31           10.2.2.7              0       -          100     0       i Or-ID: 10.2.0.4 C-LST: 10.2.0.1
 ```
 </details>
 
