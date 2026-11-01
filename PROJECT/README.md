@@ -918,7 +918,7 @@ round-trip min/avg/max = 11.118/11.842/12.251 ms
 </details>
 Проверки с SRV2 также проходят без потерь.
 
-[![Тестирование отключения линка LEAF22 -- FW2](https://img.youtube.com/a_ydqCp0GHg)](https://youtu.be/a_ydqCp0GHg)
+[![Тестирование отключения линка LEAF22 -- FW2](https://img.youtube.com/vi/a_ydqCp0GHg/default.jpg)](https://youtu.be/a_ydqCp0GHg)
 
 ## 6. Конфигурации устройств фабрики
 [Конфигурация SPINE1](./configs/spine1.conf)<br>
