@@ -1422,21 +1422,24 @@ traceroute to 10.10.20.1 (10.10.20.1), 30 hops max, 46 byte packets
 [![Тестирование отключения линка LEAF22 -- FW2](https://img.youtube.com/vi/a_ydqCp0GHg/default.jpg)](https://youtu.be/a_ydqCp0GHg&vq=hd720)
 Наблюдаем, что  происходит следующее:
 0. В штатной ситуации default указывает на Border LEAF своего сfйта (получаем с FW)
+```
 LEAF21#sh ip route vrf TENANT1 0.0.0.0/0
 VRF: TENANT1
 Gateway of last resort:
  B I      0.0.0.0/0 [200/0]
            via VTEP 10.2.0.4 VNI 50001 router-mac 00:1c:73:24:5f:da local-interface Vxlan1
-
+```
 2. При отключении интерфейса на сайте 2 пропадает default, полученный от FW2 (происходит быстро из-за настроенног BFD) и default из сайта 1 (который получаем с BGW2) становится в таблицу маршрутизации.
+```
 LEAF21#sh ip route vrf TENANT1 0.0.0.0/0
 VRF: TENANT1
 Source Codes:
 Gateway of last resort:
  B I      0.0.0.0/0 [200/0]
            via VTEP 10.0.0.1 VNI 50001 router-mac 00:00:00:00:02:02 local-interface Vxlan1
-
+```
 3. Выход во внешний мир и трафик между VRF для сайта 2 теперь идет через МСЭ сайта 1 (BGW при этом не отвечают не видны в трассировке, вероятно, особенность cEOS, т.к. в дампе трафика фиксируем запрос с TTL=1, но него нет ответа).
+```
 host3:/# traceroute -n -w 1 10.10.20.1
 traceroute to 10.10.20.1 (10.10.20.1), 30 hops max, 46 byte packets
  1  10.10.10.254  0.645 ms  0.443 ms  0.439 ms
@@ -1447,7 +1450,7 @@ traceroute to 10.10.20.1 (10.10.20.1), 30 hops max, 46 byte packets
  6  10.1.2.14  2.992 ms  2.876 ms  2.834 ms
  7  10.10.20.254  3.958 ms  3.943 ms  3.709 ms
  8  10.10.20.1  3.932 ms  3.838 ms  3.939 ms
-   
+```   
 * При этом при аварийной ситуации с продолжающимися проверками с помощью ICMP фиксируем пропадание не более одного пакета.
 ** Обратное переключение происходит также безболезненно.
 
