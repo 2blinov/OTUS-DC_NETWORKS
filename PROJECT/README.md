@@ -69,14 +69,14 @@ DC2 -- Loopback0
 DC2 -- Транспортные подсети
 | Link           | Network      |
 | -------------- | ------------ |
-| BGW1 – SPINE11 | 10.2.2.0/31  |
-| BGW1 – SPINE12 | 10.2.2.2/31  |
-| SPINE11 – LEAF11 | 10.2.2.4/31  |
-| SPINE11 – LEAF12 | 10.2.2.6/31  |
-| SPINE12 – LEAF11 | 10.2.2.8/31  |
-| SPINE12 – LEAF12 | 10.2.2.10/31 |
-| LEAF12 – FW1 (TENANT1) | 10.2.2.12/31 |
-| LEAF12 – FW1 (TENANT2) | 10.2.2.14/31 |
+| BGW2 – SPINE21 | 10.2.2.0/31  |
+| BGW2 – SPINE22 | 10.2.2.2/31  |
+| SPINE21 – LEAF21 | 10.2.2.4/31  |
+| SPINE21 – LEAF22 | 10.2.2.6/31  |
+| SPINE22 – LEAF21 | 10.2.2.8/31  |
+| SPINE22 – LEAF22 | 10.2.2.10/31 |
+| LEAF22 – FW2 (TENANT1) | 10.2.2.12/31 |
+| LEAF22 – FW2 (TENANT2) | 10.2.2.14/31 |
 
 DCI -- Loopback1
 | Device |    Loopback1 |
