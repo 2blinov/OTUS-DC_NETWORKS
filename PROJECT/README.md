@@ -1450,7 +1450,7 @@ num   pkts bytes target     prot opt in     out     source               destina
 1        0     0 DROP       icmp --  *      *       10.10.20.0/24        10.10.10.0/24        icmptype 8
 2        0     0 DROP       all  --  *      *       10.10.20.0/24        8.8.8.8
 ```
-Демонстрация фильтрации трафика:
+Демонстрация фильтрации трафика:<\br>
 [![Демонстрация фильтрации трафика](https://img.youtube.com/vi/uzf7huBhPa8/default.jpg)](https://youtu.be/uzf7huBhPa8&vq=hd720)</br>
 
 <img width="1390" height="157" alt="image" src="https://github.com/user-attachments/assets/cd25cf57-6070-4474-bada-93d05493674c" />
