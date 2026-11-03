@@ -1498,6 +1498,7 @@ traceroute to 10.10.20.1 (10.10.20.1), 30 hops max, 46 byte packets
 ** Обратное переключение происходит также безболезненно.
 
 ## 9. Конфигурации устройств фабрики
+[Топология ContainerLab](./configs/clab.yml)<br>
 [Конфигурация SPINE11](./configs/spine11.conf)<br>
 [Конфигурация SPINE12](./configs/spine12.conf)<br>
 [Конфигурация SPINE21](./configs/spine21.conf)<br>
